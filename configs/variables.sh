@@ -1,0 +1,7 @@
+PROJECT_NAME = FeatheredFury
+PYTHON_INTERPRETER = python3
+CONFIGS_DIR = configs
+BUILD_DIR = build
+DATA_DIR = data
+MODELS_DIR = models
+CI_DIR = .ci
