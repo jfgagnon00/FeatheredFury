@@ -31,6 +31,6 @@ source .venv/bin/activate
 
 if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
-    $PYTHON_INTERPRETER install --upgrade pip
+    $PYTHON_INTERPRETER -m pip install --upgrade pip
     $PYTHON_INTERPRETER -m pip install -r requirements.txt
 fi
