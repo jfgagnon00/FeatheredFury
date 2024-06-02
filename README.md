@@ -1,4 +1,7 @@
-<img src="data/image/chicken.jpg" width="512">
+<div align="center">
+  <h1>Feathered Fury</h1>
+  <img src="data/image/chicken.jpg" width="512">
+</div>
 
 ## Installation environment dévelopement
 
@@ -6,9 +9,11 @@
 2. Cloner ce repo
 3. A la ligne de commande
 ```
-# nécessaire que lors de la première installation.
+# nécessaire lors de la première installation seulement
+# validation + génération de activate.sh
 ./initialize.sh
 
+# active environment virtuel
 source activate.sh
 ```
 
