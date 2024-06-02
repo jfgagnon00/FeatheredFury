@@ -2,13 +2,14 @@
 
 ## Installation environment dévelopement
 
-Ces étapes ne sont nécessaire que lors de la première installation.
-
 1. S'assurer que python 3 est installer et accessible à la ligne de commande
 2. Cloner ce repo
 3. A la ligne de commande
 ```
-source initialize.sh
+# nécessaire que lors de la première installation.
+./initialize.sh
+
+source activate.sh
 ```
 
 ## Organisation des dossiers
