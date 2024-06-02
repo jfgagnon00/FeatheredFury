@@ -98,3 +98,9 @@ build/
 
 # temp files
 ~$*.docx
+
+# ajout dans playgrounds doit etre explicite
+playgrounds/
+
+# neptune.ai
+.neptune/
