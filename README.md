@@ -1,4 +1,4 @@
-# Feathered Fury
+<img src="data/image/chicken.jpg" width="512">
 
 ## Installation environment dévelopement
 
