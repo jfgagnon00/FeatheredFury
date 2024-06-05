@@ -11,7 +11,7 @@ fi
 $PYTHON_INTERPRETER -m pip install -q virtualenv
 
 # generer script pour activation environment virtuel
-echo "source ${CI_DIR}/activate_environment.sh ${PYTHON_INTERPRETER} ${PROJECT_NAME}" > activate.sh
+echo "source ${CI_DIR}/activate_environment.sh ${PYTHON_INTERPRETER} ${PROJECT_NAME} $*" > activate.sh
 chmod 755 activate.sh
 
 # indication a l'utilisateur

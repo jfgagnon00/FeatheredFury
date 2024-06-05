@@ -4,6 +4,7 @@
 
 PYTHON_INTERPRETER=$1
 ENV_NAME=$2
+FORCE_INSTALLATION=$3
 
 # verifier si deja dans environment
 if [[ "$VIRTUAL_ENV" != "" ]]
@@ -26,7 +27,14 @@ if ! [ -f .venv/bin/activate ]; then
     $PYTHON_INTERPRETER -m venv .venv --prompt $ENV_NAME
 fi
 
-echo "Activation environment pour $ENV_NAME"
+if [[ $NeedInstall -eq 0 && "$FORCE_INSTALLATION" == "--force" ]]
+then
+    NeedInstall=1
+    echo "Forcer réinstallation pour $ENV_NAME"
+else
+    echo "Activation environment pour $ENV_NAME"
+fi
+
 source .venv/bin/activate
 
 if [ $NeedInstall -eq 1 ]; then
