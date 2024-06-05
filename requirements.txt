@@ -4,4 +4,4 @@
 # specifique au projet
 pyyaml==6.0.1
 neptune==1.10.4
-kaggle
+kaggle==1.6.14
