@@ -22,3 +22,6 @@ https://stackoverflow.com/questions/76381946/docker-compose-with-secrets-from-cl
 # Model
 * [Exploring Simple Siamese Representation Learning](https://www.arxiv.org/pdf/2011.10566)
 * [A friendly introduction to Siamese Networks](https://tinyurl.com/ajuwkscj)
+
+# Python Setup Tools
+* https://setuptools.pypa.io/en/latest/userguide/entry_point.html
