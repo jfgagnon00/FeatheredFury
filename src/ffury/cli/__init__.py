@@ -1,2 +1,2 @@
-def fury():
+def ffury():
     print("Furious Feathers!")
