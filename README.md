@@ -3,7 +3,10 @@
   <img src="documentation/image/chicken.jpg" width="512">
 </div>
 
-## [Installation environment dévelopement](documentation/setup.md)
+## Liens utiles
+
+* [Installation environment dévelopement](documentation/setup.md)
+* [Utilisation](documentation/usage.md)
 
 ## Organisation des dossiers
 ```
