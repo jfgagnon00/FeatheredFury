@@ -7,9 +7,6 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-# installer virtualenv
-$PYTHON_INTERPRETER -m pip install -q virtualenv
-
 # generer script pour activation environment virtuel
 echo "source ${CI_DIR}/activate_environment.sh ${PYTHON_INTERPRETER} ${PROJECT_NAME} \$*" > activate.sh
 chmod 755 activate.sh

@@ -6,9 +6,9 @@ setup(name="feathered-fury",
       version="0.0.1",
       description="Détection espèce d'oiseau à partir d'une capture audio.",
       author="Jean-Francois Gagnon",
-      # entry_points={
-      #   "console_scripts": [
-      #       "ffury = ffury.cli:ffury",
-      #   ]
-      # }
+      entry_points={
+        "console_scripts": [
+            "ffury = ffury.cli:ffury",
+        ]
+      }
       )

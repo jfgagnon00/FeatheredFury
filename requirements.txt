@@ -5,3 +5,4 @@
 pyyaml==6.0.1
 neptune==1.10.4
 kaggle==1.6.14
+click==8.1.7
