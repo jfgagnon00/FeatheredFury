@@ -10,5 +10,4 @@ setup(name="feathered-fury",
         "console_scripts": [
             "ffury = ffury.cli:ffury",
         ]
-      }
-      )
+      })

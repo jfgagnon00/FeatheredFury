@@ -1,0 +1,3 @@
+from . import ffury
+
+ffury()

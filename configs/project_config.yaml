@@ -1,0 +1,7 @@
+#
+# Les noms de proprietes sont en majuscules
+# pour respecter la convention de nomenclature 
+# des variables d'environment
+#
+PROJECT_NAME: FeatheredFury
+PYTHON_INTERPRETER: python3
