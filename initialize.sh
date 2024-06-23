@@ -1,4 +1,6 @@
-source configs/variables.sh
+# import configuration
+# exception pour la config; le repertoire .ci doit etre connu
+source .ci/yaml_to_variables.sh configs/project_config.yaml
 
 # valider si interpreteur python est present
 ${CI_DIR}/test_python_interpreter.sh ${PYTHON_INTERPRETER}

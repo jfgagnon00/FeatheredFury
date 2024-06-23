@@ -11,12 +11,13 @@
 1. Accepter les règles de [BirdCLEF 2023](https://www.kaggle.com/competitions/birdclef-2023/rules)
 
 ### Accès au code
+1. S'assurer que [yq](https://formulae.brew.sh/formula/yq) est installer et accessible
 1. S'assurer que python 3 est installer et accessible à la ligne de commande
 1. Cloner ce repo
 1. A la ligne de commande
 ```
 # nécessaire lors de la première installation seulement
-# validation + génération de activate.sh
+# génération de activate.sh
 ./initialize.sh
 
 # active environment virtuel
