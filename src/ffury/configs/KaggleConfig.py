@@ -1,4 +1,4 @@
-from ..configs import MetaObject
+from .MetaObject import MetaObject
 
 class KaggleConfig(MetaObject):
     """

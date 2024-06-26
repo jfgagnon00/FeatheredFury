@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ..configs import MetaObject
+from .MetaObject import MetaObject
 
 class ProjectConfig(MetaObject):
     """

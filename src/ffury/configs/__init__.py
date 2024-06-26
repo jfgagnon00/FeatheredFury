@@ -1,27 +1,17 @@
-import yaml
+# ajout yaml include extension
+import ffury.configs._yaml_include_extension
 
+from .KaggleConfig import KaggleConfig
 from .MetaObject import MetaObject
+from .ProjectConfig import ProjectConfig
 
-from pathlib import Path
 
-# ajout mot clef aux fichiers .yaml
-# pour inclure d'autres fichiers .yaml
-_YAML_INCLUDE_KEYWORD = "!include"
+# nom fichier config par defaut 
+DEFAULT_CONFIG_FILE = "ffury_configs.yaml"
 
-def _yaml_include_parse(loader, node):
-    # include path relatif au fichier .yaml lui meme
-    filename = Path.joinpath(Path(loader.name).parent, Path(node.value))
-
-    # processer l'include
-    return MetaObject.from_yaml(filename)
-
-if not _YAML_INCLUDE_KEYWORD in yaml.Loader.yaml_constructors:
-    # enregistrer le nouveau mot clef s'il n'est pas present
-    yaml.add_constructor(_YAML_INCLUDE_KEYWORD, _yaml_include_parse)
-
-def create_config(filename):
+def load_config(filename):
     """
-    Creee une configuration a partir d'un fichier
+    Load une configuration a partir d'un fichier
     """
     return MetaObject.from_yaml(filename)
 
@@ -31,3 +21,19 @@ def override_config(instance, object):
     lues a fichier de filename
     """
     MetaObject.override_from_object(instance, object)
+
+def create_config(filename=DEFAULT_CONFIG_FILE):
+    # configurations par defaut
+    project = ProjectConfig()
+    dataset = KaggleConfig()
+
+    # creation des overrides
+    configOverrides = load_config(filename)
+
+    if not configOverrides is None:
+        # appliquer overrides sur configiguration par defaut
+        override_config(project, configOverrides.project)
+        override_config(dataset, configOverrides.dataset)
+
+    return MetaObject.from_kwargs(project=project,
+                                  dataset=dataset)
