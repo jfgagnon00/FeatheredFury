@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from ..configs import MetaObject
 
 class ProjectConfig(MetaObject):
@@ -12,3 +14,8 @@ class ProjectConfig(MetaObject):
         self.DATA_DIR = "data"
         self.MODELS_DIR = "models"
         self.CI_DIR = ".ci"
+
+    @property
+    def dataRawDir(self):
+        "Utilitaire pour avoir data/raw"
+        return Path(self.DATA_DIR).joinpath("raw")

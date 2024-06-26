@@ -10,13 +10,16 @@ from tqdm import tqdm
 @click.option("--force", is_flag=True, default=False, show_default=True, help="Force download")
 @click.option("--verbose/--no-verbose", default=True, show_default=True, help="Affiche progression")
 @click.option("--clear", is_flag=True, default=False, show_default=True, help="Efface .zip intermediaire")
-@click.argument("path", type=click.Path())
+@click.option("--path", type=click.Path(), help="Override path de download")
 @ConfigDecorator
 def dataset(config, force, verbose, clear, path):
     """
     Encapsule installation du dataset venant de Kaggle
     """
     logger = Logger(verbose)
+
+    if path is None:
+        path = config.project.dataRawDir
 
     competition = config.dataset.competition
     _download(competition, path, force, verbose)

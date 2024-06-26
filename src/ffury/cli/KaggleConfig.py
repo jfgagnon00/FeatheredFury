@@ -6,3 +6,7 @@ class KaggleConfig(MetaObject):
     """
     def __init__(self):
         self.competition = ""
+
+    @property
+    def csvFilename(self):
+        return "train_metadata.csv"
