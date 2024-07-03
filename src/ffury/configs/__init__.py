@@ -2,7 +2,7 @@
 import ffury.configs._yaml_include_ctor
 import ffury.configs._yaml_relative_path_ctor
 
-from .KaggleConfig import KaggleConfig
+from .BirdClefConfig import BirdClefConfig
 from .MetaObject import MetaObject
 from .ProjectConfig import ProjectConfig
 
@@ -26,7 +26,7 @@ def override_config(instance, object):
 def create_config(filename=DEFAULT_CONFIG_FILE):
     # configurations par defaut
     project = ProjectConfig()
-    dataset = KaggleConfig()
+    dataset = BirdClefConfig()
 
     # creation des overrides
     configOverrides = load_config(filename)
@@ -34,7 +34,9 @@ def create_config(filename=DEFAULT_CONFIG_FILE):
     if not configOverrides is None:
         # appliquer overrides sur configiguration par defaut
         override_config(project, configOverrides.project)
-        override_config(dataset, configOverrides.dataset)
+
+        if "dataset" in configOverrides:
+            override_config(dataset, configOverrides.dataset)
 
     return MetaObject.from_kwargs(project=project,
                                   dataset=dataset)

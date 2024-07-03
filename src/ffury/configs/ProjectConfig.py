@@ -16,6 +16,6 @@ class ProjectConfig(MetaObject):
         self.CI_DIR = ""
 
     @property
-    def dataRawDir(self):
+    def DATA_RAW_DIR(self):
         "Utilitaire pour avoir data/raw"
         return Path(self.DATA_DIR).joinpath("raw")

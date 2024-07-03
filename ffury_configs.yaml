@@ -3,6 +3,3 @@
 #
 project:
   !include configs/project_config.yaml
-
-dataset:
-  !include configs/dataset_config.yaml

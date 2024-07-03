@@ -19,7 +19,7 @@ def dataset(config, force, verbose, clear, path):
     logger = Logger(verbose)
 
     if path is None:
-        path = config.project.dataRawDir
+        path = config.project.DATA_RAW_DIR
 
     competition = config.dataset.competition
     _download(competition, path, force, verbose)
