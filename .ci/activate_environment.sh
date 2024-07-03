@@ -19,7 +19,7 @@ if [ $InVenv -eq 1 ]; then
     return
 fi
 
-# verifier si snake environment existe
+# verifier si environment existe
 NeedInstall=0
 if ! [ -f .venv/bin/activate ]; then
     NeedInstall=1
@@ -41,4 +41,7 @@ if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
     $PYTHON_INTERPRETER -m pip install --upgrade pip
     $PYTHON_INTERPRETER -m pip install -r requirements.txt
+
+    # s'assurer que les jupyter notebook pointent aussi sur bon environment
+    $PYTHON_INTERPRETER -m ipykernel install --sys-prefix --name $PYTHON_INTERPRETER --display-name $ENV_NAME
 fi
