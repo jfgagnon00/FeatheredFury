@@ -3,10 +3,23 @@
 # pour respecter la convention de nomenclature 
 # des variables d'environment
 #
+# les path sont relatifs au fichier lui-meme
+#
 PROJECT_NAME: FeatheredFury
+
 PYTHON_INTERPRETER: python3
-CONFIGS_DIR: configs
-BUILD_DIR: build
-DATA_DIR: data
-MODELS_DIR: models
-CI_DIR: .ci
+
+CONFIGS_DIR: 
+  !relative_path .
+
+BUILD_DIR: 
+  !relative_path ../build
+
+DATA_DIR: 
+  !relative_path ../data
+
+MODELS_DIR: 
+  !relative_path ../models
+
+CI_DIR: 
+  !relative_path ../.ci

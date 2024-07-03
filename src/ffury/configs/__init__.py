@@ -1,5 +1,6 @@
 # ajout yaml include extension
-import ffury.configs._yaml_include_extension
+import ffury.configs._yaml_include_ctor
+import ffury.configs._yaml_relative_path_ctor
 
 from .KaggleConfig import KaggleConfig
 from .MetaObject import MetaObject
