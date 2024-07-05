@@ -43,5 +43,5 @@ if [ $NeedInstall -eq 1 ]; then
     $PYTHON_INTERPRETER -m pip install -r requirements.txt
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
-    $PYTHON_INTERPRETER -m ipykernel install --user --name $PYTHON_INTERPRETER --display-name $ENV_NAME
+    $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME
 fi
