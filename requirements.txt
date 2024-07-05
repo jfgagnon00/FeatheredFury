@@ -13,3 +13,4 @@ notebook==7.2.1
 matplotlib==3.9.0
 ipykernel==6.29.5
 librosa==0.10.2.post1
+numpy<2 # limitation librosa
