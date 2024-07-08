@@ -21,7 +21,7 @@
    ├── initialize.sh      <- Script pour préparer environment virtuel de python
    ├── models             <- Trained and serialized models, model predictions, or model summaries
    ├── playgrounds        <- Experimentation script pythons. Ajout dans repo doit etre explicite.
-   ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
+   ├── jupyterlabs        <- Jupyter labs. Naming convention is a number (for ordering),
    │   │                     the creator's initials, and a short `-` delimited escription, e.g.
    │   └── template_00-user_name-step.ipynb <- Template de notebook
    ├── documentation      <- Documentation et references.
