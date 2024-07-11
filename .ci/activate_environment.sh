@@ -9,9 +9,9 @@ FORCE_INSTALLATION=$3
 # verifier si deja dans environment
 if [[ "$VIRTUAL_ENV" != "" ]]
 then
-  InVenv=1
+    InVenv=1
 else
-  InVenv=0
+    InVenv=0
 fi
 
 if [ $InVenv -eq 1 ]; then

@@ -1,5 +1,0 @@
-#
-# Configurations globales pour le projet.
-#
-project:
-  !include configs/project_config.yaml

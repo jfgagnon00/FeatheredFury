@@ -1,0 +1,5 @@
+#
+# Configurations globales pour le projet.
+#
+!ffury.configs.ProjectConfig
+paths: !include configs/paths_config.yaml

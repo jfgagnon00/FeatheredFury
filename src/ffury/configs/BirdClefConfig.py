@@ -1,6 +1,8 @@
-from .MetaObject import MetaObject
+from ..yaml import YamlDeserializable
 
-class BirdClefConfig(MetaObject):
+
+@YamlDeserializable
+class BirdClefConfig:
     """
     Encapsule les proprietes globales du dataset BirdCLEF 2023
     """
@@ -27,7 +29,7 @@ class BirdClefConfig(MetaObject):
         return self.url + "/data"
 
     @property
-    def csvFilename(self):
+    def csv_filename(self):
         return "train_metadata.csv"
     
     @property

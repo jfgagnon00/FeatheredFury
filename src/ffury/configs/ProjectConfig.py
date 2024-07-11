@@ -1,21 +1,31 @@
-from pathlib import Path
+from pathlib import PurePath
 
-from .MetaObject import MetaObject
+from ..yaml import YamlDeserializable
 
-class ProjectConfig(MetaObject):
+from .PathsConfig import PathsConfig
+from .BirdClefConfig import BirdClefConfig
+
+
+@YamlDeserializable
+class ProjectConfig:
     """
-    Encapsule les proprietes globales au projet
+    Configurations globales
     """
     def __init__(self):
-        self.PROJECT_NAME = ""
-        self.PYTHON_INTERPRETER = ""
-        self.CONFIGS_DIR = ""
-        self.BUILD_DIR = ""
-        self.DATA_DIR = ""
-        self.MODELS_DIR = ""
-        self.CI_DIR = ""
+        self.paths = PathsConfig()
+        self.dataset = BirdClefConfig()
 
-    @property
-    def DATA_RAW_DIR(self):
-        "Utilitaire pour avoir data/raw"
-        return Path(self.DATA_DIR).joinpath("raw")
+    def get_audio_filename(self, filename):
+        """
+        Commodite pour composer le chemin complet pour avoir un ficheir audio
+        """
+        return PurePath.joinpath(self.paths.DATA_RAW_DIR,
+                                 self.dataset.audio_dir, 
+                                 filename)
+    
+    def get_dataset_raw_filename(self):
+        """
+        Utilitaire pour loader dataset raw
+        """
+        return PurePath.joinpath(self.paths.DATA_RAW_DIR, 
+                                 self.dataset.csv_filename)

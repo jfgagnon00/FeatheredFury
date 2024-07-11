@@ -29,5 +29,8 @@ def ffury():
     from .dataset import dataset
     _cli.add_command(dataset)
 
+    from .train import train
+    _cli.add_command(train)
+
     # lance le command line
     _cli()

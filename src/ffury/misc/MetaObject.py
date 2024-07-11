@@ -1,5 +1,3 @@
-import yaml
-
 class MetaObject(object):
     """
     Utilitaire pour transformer un dictionnaire
@@ -36,38 +34,16 @@ class MetaObject(object):
         return cls.from_dict(kwargs)
 
     @classmethod
-    def from_yaml(cls, filename):
-        try:
-            with open(filename) as f:
-                attributes = yaml.load(f, yaml.Loader)
-        except Exception as e:
-            print(e)
-            return None
-        else:
-            return cls.from_dict(attributes)
-
-    @classmethod
     def override_from_kwargs(cls, instance, **kwargs):
         cls.override_from_dict(instance, kwargs)
 
-    @classmethod
-    def override_from_dict(cls, instance, attributes):
+    @staticmethod
+    def override_from_dict(instance, attributes):
         if isinstance(attributes, dict):
             instance.__dict__.update(attributes)
         else:
             raise RuntimeError("MetaObject can only "
                                "be constructed from dict")
-
-    @classmethod
-    def override_from_yaml(cls, instance, filename):
-        try:
-            with open(filename) as f:
-                attributes = yaml.load(f, yaml.Loader)
-        except Exception as e:
-            print(e)
-            raise RuntimeError("Could not create attributes for MetaObject")
-        else:
-            cls.override_from_dict(instance, attributes)
 
     @classmethod
     def override_from_object(cls, instance, object):
