@@ -23,5 +23,8 @@ https://stackoverflow.com/questions/76381946/docker-compose-with-secrets-from-cl
 * [Exploring Simple Siamese Representation Learning](https://www.arxiv.org/pdf/2011.10566)
 * [A friendly introduction to Siamese Networks](https://tinyurl.com/ajuwkscj)
 
+# Audio Spectrogram Transformer
+* [AST Github implementation](https://github.com/YuanGongND/ast)
+
 # Python Setup Tools
 * https://setuptools.pypa.io/en/latest/userguide/entry_point.html
