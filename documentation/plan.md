@@ -1,6 +1,5 @@
 # Tasks
 - analyse + preprocess
-    - finir notebook (done)
     - generer configuration pour split
 
 - train/test/validation split

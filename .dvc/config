@@ -1,0 +1,6 @@
+[core]
+    remote = dvc_origin
+    autostage = true
+['remote "dvc_origin"']
+    url = gdrive://1XBjbrwdlT5oRpO3IQOxwAC15ED5HP_I5
+    gdrive_acknowledge_abuse = true
