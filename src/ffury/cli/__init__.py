@@ -33,7 +33,4 @@ def ffury():
     from .dataset_preprocess import preprocess
     _cli.add_command(dataset_group)
 
-    from .train import train
-    _cli.add_command(train)
-
     _cli()

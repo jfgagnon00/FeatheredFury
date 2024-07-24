@@ -3,3 +3,4 @@
 #
 !ffury.configs.ProjectConfig
 paths: !include configs/paths_config.yaml
+preprocess: !include configs/preprocess_config.yaml

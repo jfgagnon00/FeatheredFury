@@ -1,4 +1,4 @@
-from pathlib import PurePath
+from pathlib import Path
 from ..yaml.yaml_decorators import YamlDeserializable
 
 
@@ -23,4 +23,4 @@ class PathsConfig:
     @property
     def DATA_RAW_DIR(self):
         "Commodite pour avoir data/raw"
-        return PurePath(self.DATA_DIR).joinpath("raw")
+        return Path.joinpath(self.DATA_DIR, "raw").resolve()

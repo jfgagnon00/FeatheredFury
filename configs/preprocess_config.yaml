@@ -1,0 +1,20 @@
+!ffury.configs.PreprocessConfig
+
+# split parameters -----
+split_stratify_on: primary_label
+split_train_size: 0.6
+split_test_size: 0.2
+
+# audio preprocessing parameters -----
+
+# audio resampling (implictly mono)
+clip_sampling_rate_hz: 22050
+
+# audio clip split into segments
+clip_segment_size_ms: 3000
+
+# audio segment tranformed into log mel spectrogram
+spectrogram_stft_frame_size_ms: 10
+spectrogram_stft_window_size_ms: 25
+spectrogram_fmin: 0
+spectrogram_fmax: 8192

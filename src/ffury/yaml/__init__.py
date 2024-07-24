@@ -18,7 +18,7 @@ from .yaml_decorators import YamlDeserializable, YamlTag
 def _resolve_relative_path(loader, node):
     base_path = Path(loader.stream.name).parent
     filename = loader.construct_scalar(node)
-    return Path(base_path).joinpath(filename).resolve()
+    return Path.joinpath(base_path, filename).resolve()
 
 @YamlTag("!include")
 def _yaml_include_deserialize(loader, node):
