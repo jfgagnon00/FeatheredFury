@@ -29,3 +29,10 @@ class ProjectConfig:
         """
         return PurePath.joinpath(self.paths.DATA_RAW_DIR, 
                                  self.dataset.csv_filename)
+
+    def get_dataset_explored_filename(self):
+        """
+        Utilitaire pour loader dataset raw
+        """
+        return PurePath.joinpath(self.paths.DATA_RAW_DIR, 
+                                 "data_explored.csv")
