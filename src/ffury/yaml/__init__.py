@@ -12,13 +12,13 @@ Tags supportes (voir plus bas pour details):
 
 import yaml
 
-from pathlib import PurePath
+from pathlib import Path
 from .yaml_decorators import YamlDeserializable, YamlTag
 
 def _resolve_relative_path(loader, node):
-    base_path = PurePath(loader.stream.name).parent
+    base_path = Path(loader.stream.name).parent
     filename = loader.construct_scalar(node)
-    return PurePath(base_path).joinpath(filename)
+    return Path(base_path).joinpath(filename).resolve()
 
 @YamlTag("!include")
 def _yaml_include_deserialize(loader, node):

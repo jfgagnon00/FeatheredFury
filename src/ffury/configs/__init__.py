@@ -10,7 +10,7 @@ from .BirdClefConfig import BirdClefConfig
 # nom fichier config par defaut 
 DEFAULT_CONFIG_FILE = f"{ffury.__name__}.yaml"
 
-def load_config(filename=DEFAULT_CONFIG_FILE):
+def load_config(filename : str = DEFAULT_CONFIG_FILE) -> ProjectConfig:
     """
     Load une configuration a partir d'un fichier
     """
