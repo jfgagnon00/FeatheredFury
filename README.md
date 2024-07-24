@@ -12,12 +12,13 @@
 ```
    ├── .ci                <- Scripts bash et configurations propres a la gestion du CI
    ├── LICENSE
-   ├── README.md          <- The top-level README for developers using this project
+   ├── README.md          <- README haut niveau pour les developers utilisant ce projet
    ├── build              <- Destination de tous les resultats temporaires (cree au besoin
    |                         par le pipeline)
    ├── configs            <- Contient toutes les configurations du projet
    ├── data
-   │   ├── data_raw.csv   <- Le data resultant de l'exploration 
+   │   ├── data_raw.csv   <- Le data resultant de l'exploration
+       |                     Creee via Jupyter Lab
    |   └── raw            <- Le data original, immutable.
    ├── initialize.sh      <- Script pour préparer environment virtuel de python
    ├── models             <- Trained and serialized models, model predictions, or model summaries
