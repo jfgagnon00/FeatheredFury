@@ -38,6 +38,6 @@ class ProjectConfig:
         """
         Utilitaire pour loader dataset raw
         """
-        path = Path.joinpath(self.paths.DATA_RAW_DIR, 
+        path = Path.joinpath(self.paths.DATA_DIR, 
                              "data_explored.csv")
         return str(path.resolve())
