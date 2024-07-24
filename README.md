@@ -28,6 +28,6 @@
    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
    ├── setup.py           <- Makes project pip installable (pip install -e .) so src can
    |                         be imported
-   ├── ffury_configs.yaml <- Point d'entre pour les configurations globales
+   ├── ffury.yaml         <- Point d'entre pour les configurations globales
    └── src                <- Code source utilise pour le projet
 ```
