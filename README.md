@@ -17,7 +17,8 @@
    |                         par le pipeline)
    ├── configs            <- Contient toutes les configurations du projet
    ├── data
-   │   └── raw            <- The original, immutable data dump.
+   │   ├── data_raw.csv   <- Le data resultant de l'exploration 
+   |   └── raw            <- Le data original, immutable.
    ├── initialize.sh      <- Script pour préparer environment virtuel de python
    ├── models             <- Trained and serialized models, model predictions, or model summaries
    ├── playgrounds        <- Experimentation script pythons. Ajout dans repo doit etre explicite.
