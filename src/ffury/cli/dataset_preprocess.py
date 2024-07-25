@@ -4,7 +4,10 @@ from logging import Logger
 from numpy.typing import ArrayLike
 from pandas import read_csv, DataFrame
 from sklearn.model_selection import train_test_split
-from typing import Union
+from typing import(
+    Tuple,
+    Union
+)
 
 from .dataset import dataset_group
 from . import ProjectConfigDecorator
@@ -35,9 +38,9 @@ def preprocess(project_config: ProjectConfig,
 
     data_df = _load(logger, 
                     project_config.get_dataset_explored_filename())
-    _split(logger, 
-           data_df, 
-           project_config.preprocess)
+    train, test, validation = _split(logger, 
+                                     data_df, 
+                                     project_config)
 
 def _load(logger: Logger, 
           filename: str) -> DataFrame:
@@ -48,12 +51,13 @@ def _load(logger: Logger,
 
 def _split(logger: Logger, 
            data: DataFrame, 
-           config: PreprocessConfig) -> None:
-    hold_ratio = config.split_train_size + config.split_test_size
+           config: ProjectConfig) -> Tuple[DataFrame, DataFrame, DataFrame]:
+    split_config = config.preprocess
+    hold_ratio = split_config.split_train_size + split_config.split_test_size
     hold_size = int(data.shape[0] * hold_ratio)
 
     validation_size = data.shape[0] - hold_size
-    test_size = int(data.shape[0] * config.split_test_size)
+    test_size = int(data.shape[0] * split_config.split_test_size)
     train_size = data.shape[0] - test_size - validation_size
 
     logger.info(f"Train size     : {train_size}")
@@ -70,21 +74,33 @@ def _split(logger: Logger,
     
     train, validation = train_test_split(data, 
                                          train_size=hold_size, 
-                                         stratify=_get_stratify(config, data),)
+                                         stratify=_get_stratify(split_config, data),)
     
     train, test = train_test_split(train, 
                                    train_size=train_size, 
-                                   stratify=_get_stratify(config, train))
+                                   stratify=_get_stratify(split_config, train))
     
-    # validation du split
+    # validation split donne resultat attendu
     assert train.shape[0] == train_size
     assert test.shape[0] == test_size
     assert validation.shape[0] == validation_size
-    
-    
-def _get_stratify(config: ProjectConfig, 
+
+    # sauvegarder les splits
+    _write_csv(logger, train, config.get_dataset_train_filename())
+    _write_csv(logger, test, config.get_dataset_test_filename())
+    _write_csv(logger, validation, config.get_dataset_validation_filename())
+
+    return train, test, validation
+
+def _get_stratify(config: PreprocessConfig, 
                   data: DataFrame) -> Union[ArrayLike, None]:
     if config.split_stratify_on is None:
         return None
 
     return data[config.split_stratify_on]
+
+def _write_csv(logger: Logger,
+               data: DataFrame,
+               filename: str) -> None:
+    logger.info(f"Ecritudre de '{filename}'")
+    data.to_csv(filename, index=False)

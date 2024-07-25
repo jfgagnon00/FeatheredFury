@@ -28,7 +28,7 @@ class ProjectConfig:
     
     def get_dataset_raw_filename(self) -> str:
         """
-        Utilitaire pour loader dataset raw
+        Obtenir le chemin complet pour le dataset raw
         """
         path = Path.joinpath(self.paths.DATA_RAW_DIR, 
                              self.dataset.csv_filename)
@@ -36,8 +36,32 @@ class ProjectConfig:
 
     def get_dataset_explored_filename(self) -> str:
         """
-        Utilitaire pour loader dataset raw
+        Obtenir le chemin complet pour le dataset explore
         """
         path = Path.joinpath(self.paths.DATA_DIR, 
                              "data_explored.csv")
+        return str(path.resolve())
+
+    def get_dataset_train_filename(self) -> str:
+        """
+        Obtenir le chemin complet pour le dataset train
+        """
+        path = Path.joinpath(self.paths.DATA_DIR, 
+                             "data_train.csv")
+        return str(path.resolve())
+
+    def get_dataset_test_filename(self) -> str:
+        """
+        Obtenir le chemin complet pour le dataset train
+        """
+        path = Path.joinpath(self.paths.DATA_DIR, 
+                             "data_test.csv")
+        return str(path.resolve())
+    
+    def get_dataset_validation_filename(self) -> str:
+        """
+        Obtenir le chemin complet pour le dataset train
+        """
+        path = Path.joinpath(self.paths.DATA_DIR, 
+                             "data_validation.csv")
         return str(path.resolve())

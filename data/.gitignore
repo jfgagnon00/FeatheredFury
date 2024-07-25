@@ -1,2 +1,5 @@
 raw/
 /data_explored.csv
+/data_test.csv
+/data_train.csv
+/data_validation.csv
