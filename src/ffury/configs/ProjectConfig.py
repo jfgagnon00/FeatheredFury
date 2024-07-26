@@ -20,11 +20,15 @@ class DatasetType(IntEnum):
 
     @property
     def _csv_filename(self):
-        return f"data_{self.name.lower()}.csv" 
+        return f"data_{self.name_lowercase}.csv" 
 
     @property
     def _hdf5_filename(self):
-        return f"data_{self.name.lower()}.hdf5" 
+        return f"data_{self.name_lowercase}.hdf5" 
+
+    @property
+    def name_lowercase(self):
+        return self.name.lower()
 
 @YamlDeserializable
 class ProjectConfig:

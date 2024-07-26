@@ -3,3 +3,6 @@ raw/
 /data_test.csv
 /data_train.csv
 /data_validation.csv
+/data_test.hdf5
+/data_train.hdf5
+/data_validation.hdf5

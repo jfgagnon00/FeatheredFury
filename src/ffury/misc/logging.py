@@ -26,8 +26,7 @@ def create_logger(name: str = None,
         handler.setFormatter(formatter)
         logger = logging.getLogger(name)
         logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
-        logger.disabled = not verbose
+        logger.setLevel(logging.DEBUG if verbose else logging.INFO)
         return logger
 
     return None

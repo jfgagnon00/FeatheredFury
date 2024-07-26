@@ -1,28 +1,24 @@
 import click
 
 from logging import Logger
-from numpy.typing import ArrayLike
 from pandas import (
     read_csv, 
     DataFrame
 )
 from sklearn.model_selection import train_test_split
-from typing import(
-    Tuple,
-    Union
-)
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
-from ..dataset._split import split
-from ..dataset._preprocess import preprocess_parallel
-from ..misc.logging import create_logger
 from ..configs import (
     DatasetType,
     load_config,
-    PreprocessConfig,
     ProjectConfig
 )
+from ..dataset._BirdCLEF._ParallelPreprocessor import ParallelPreprocessor
+from ..dataset._hdf5 import create_file
+from ..dataset._split import split
+from ..misc.concurrent import create_thread_pool_executor
+from ..misc.logging import create_logger
 
 
 @dataset_group.command()
@@ -49,21 +45,21 @@ def preprocess(project_config: ProjectConfig,
                                     project_config.preprocess,
                                     data_df)
     
-    _save(logger, 
-          train, 
-          project_config.get_csv_filename(DatasetType.TRAIN))
-    _save(logger, 
-          test, 
-          project_config.get_csv_filename(DatasetType.TEST))
-    _save(logger, 
-          validation, 
-          project_config.get_csv_filename(DatasetType.VALIDATION))
+    with create_thread_pool_executor() as executor:
+        preprocessor = ParallelPreprocessor(logger,
+                                            project_config.preprocess,
+                                            executor)
+        for data, type_ in [(train, DatasetType.TRAIN),
+                            (test, DatasetType.TEST),
+                            (validation, DatasetType.VALIDATION)]:
+            _save(logger, 
+                  data, 
+                  project_config.get_csv_filename(type_))
 
-    preprocess_parallel(logger, 
-                        project_config.preprocess, 
-                        train,
-                        test,
-                        validation)
+            logger.info(f"Preprocessing {type_.name_lowercase}")
+            filename = project_config.get_hdf5_filename(type_)
+            with create_file(filename, "w") as f:
+                preprocessor.run(f, data)
 
 def _load(logger: Logger, 
           filename: str) -> DataFrame:
