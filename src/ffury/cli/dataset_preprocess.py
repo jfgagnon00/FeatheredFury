@@ -18,6 +18,7 @@ from ..dataset._split import split
 from ..dataset._preprocess import preprocess_parallel
 from ..misc.logging import create_logger
 from ..configs import (
+    DatasetType,
     load_config,
     PreprocessConfig,
     ProjectConfig
@@ -42,7 +43,7 @@ def preprocess(project_config: ProjectConfig,
         project_config.preprocess = load_config(config)
 
     data_df = _load(logger, 
-                    project_config.get_dataset_explored_filename())
+                    project_config.get_csv_filename(DatasetType.EXPLORED))
     
     train, test, validation = split(logger, 
                                     project_config.preprocess,
@@ -50,13 +51,13 @@ def preprocess(project_config: ProjectConfig,
     
     _save(logger, 
           train, 
-          project_config.get_dataset_train_filename())
+          project_config.get_csv_filename(DatasetType.TRAIN))
     _save(logger, 
           test, 
-          project_config.get_dataset_test_filename())
+          project_config.get_csv_filename(DatasetType.TEST))
     _save(logger, 
           validation, 
-          project_config.get_dataset_validation_filename())
+          project_config.get_csv_filename(DatasetType.VALIDATION))
 
     preprocess_parallel(logger, 
                         project_config.preprocess, 

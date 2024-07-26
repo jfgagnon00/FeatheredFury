@@ -2,7 +2,10 @@ import ffury
 
 from ..yaml import load_yaml
 
-from .ProjectConfig import ProjectConfig
+from .ProjectConfig import (
+    DatasetType,
+    ProjectConfig
+)
 from .PathsConfig import PathsConfig
 from .BirdClefConfig import BirdClefConfig
 
