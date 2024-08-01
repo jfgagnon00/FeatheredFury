@@ -4,6 +4,10 @@ from librosa import (
     to_mono
 )
 from librosa.feature import melspectrogram
+from pandas import (
+    Categorical,
+    DataFrame
+)
 from numpy import (
     max as np_max,
     pad,
@@ -11,6 +15,17 @@ from numpy import (
 from numpy.typing import NDArray
 from typing import List
 from ..configs import PreprocessConfig
+
+
+_MELSPECTROGRAM = "melspectrogram"
+_SPECIE = "specie"
+_SPECIES_CSV = "data_species.csv"
+_PRIMARY_LABEL = "primary_label"
+_COMMON_NAME = "common_name"
+_FILENAME = "filename"
+_LATITUDE = "latitude"
+_LONGITUDE = "longitude"
+
 
 def generate_segment_spectrograms(audio: NDArray,
                                   sampling_rate: int,
@@ -56,3 +71,19 @@ def generate_segment_spectrograms(audio: NDArray,
         spectrograms.append(S_db)
 
     return spectrograms
+
+def generate_uinique_species(data: DataFrame) -> tuple[DataFrame, NDArray]:
+    # regrouper primary_label et common_name a partir du dataframe
+    # les 2 proprietes sont uniques; represente espece
+    species_str = data[[_PRIMARY_LABEL, _COMMON_NAME]].groupby(_PRIMARY_LABEL).first()
+    species_str.reset_index(inplace=True)
+
+    # transformer information d'espece en index (plus compacte sur disque)
+    # one hot encoding pourra etre facilement reconstruit a partir de cet index
+    species_codes = Categorical(data[_PRIMARY_LABEL],
+                                categories=species_str[_PRIMARY_LABEL])
+
+    # validation
+    assert data.shape[0] == species_codes.shape[0]
+
+    return species_str, species_codes.codes

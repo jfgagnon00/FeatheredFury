@@ -1,3 +1,6 @@
+"""
+DEPRECATED: dask devrait remplacer l'implementation courante
+"""
 from concurrent.futures import (
     as_completed, 
     ProcessPoolExecutor, 
