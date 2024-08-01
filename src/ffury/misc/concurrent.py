@@ -1,5 +1,11 @@
+from concurrent.futures import (
+    as_completed, 
+    ProcessPoolExecutor, 
+    ThreadPoolExecutor, 
+    wait
+)
 from itertools import islice
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
+from multiprocessing import get_context
 
 def parallel_for(iterables,
                  task_fn,
@@ -63,4 +69,5 @@ def create_thread_pool_executor(max_workers=None):
     return ThreadPoolExecutor(max_workers=max_workers)
 
 def create_process_pool_executor(max_workers=None):
-    return ProcessPoolExecutor(max_workers=max_workers)
+    return ProcessPoolExecutor(max_workers=max_workers,
+                               mp_context=get_context("spawn"))

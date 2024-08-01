@@ -1,5 +1,0 @@
-outs:
-- md5: 1a3cd99a757b124c6d0eff329f9ee5a2
-  size: 72208
-  hash: md5
-  path: data_train.hdf5

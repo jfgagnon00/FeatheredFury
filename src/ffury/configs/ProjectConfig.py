@@ -17,6 +17,7 @@ class DatasetType(IntEnum):
     VALIDATION = auto()
     RAW = auto()
     EXPLORED = auto()
+    PREPROCESS = auto()
 
     @property
     def _csv_filename(self):
