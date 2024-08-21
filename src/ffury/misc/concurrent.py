@@ -1,22 +1,16 @@
-"""
-DEPRECATED: dask devrait remplacer l'implementation courante
-"""
-from concurrent.futures import (
-    as_completed, 
-    ProcessPoolExecutor, 
-    ThreadPoolExecutor, 
+from  dask.distributed import (
+    as_completed,
+    Client,
     wait
 )
 from itertools import islice
-from multiprocessing import get_context
 
 def parallel_for(iterables,
                  task_fn,
                  *task_args,
                  task_completed=None,
-                 max_workers=None,
-                 executor=None,
-                 chunk_size=None):
+                 chunk_size=None,
+                 client=None):
     """
     Parallelise l'appel de task_fn sur chaque element de iterables.
 
@@ -29,18 +23,15 @@ def parallel_for(iterables,
     task_completed:
         callback appele apres que chaque appel a task_fn ait termine
 
-    max_workers:
-        configure le nombre de thread a utiliser
-
-    executor:
-        configuration custom pour les threads/process
+    client:
+        dask client
 
     chunk_size:
         au lieu de faire l'appel a task_fn pour chaque iterable, decoupe
         iterables en chunk_size elements. task_fn sera reponsable de faire
         la 'sous iteration'
     """
-    exec = ThreadPoolExecutor(max_workers=max_workers) if executor is None else executor
+    exec = Client() if client is None else client
 
     def chunkify_iterables():
         if chunk_size is None:
@@ -65,12 +56,8 @@ def parallel_for(iterables,
         for f in as_completed(futures):
             task_completed(f.result())
 
-    if executor is None:
-        exec.shutdown()
+    if client is None:
+        exec.close()
 
-def create_thread_pool_executor(max_workers=None):
-    return ThreadPoolExecutor(max_workers=max_workers)
-
-def create_process_pool_executor(max_workers=None):
-    return ProcessPoolExecutor(max_workers=max_workers,
-                               mp_context=get_context("spawn"))
+def create_dask_local_client(**kwargs):
+    return Client(**kwargs)

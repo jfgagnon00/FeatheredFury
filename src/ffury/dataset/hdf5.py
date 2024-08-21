@@ -24,10 +24,12 @@ def _write_version(file: File) -> None:
 def version():
     return f"{_VERSION_MAJOR}.{_VERSION_MINOR}.{_VERSION_BUILD}"
 
-def create_file(filename: str,
+def open_file(filename: str,
                 mode: str) -> File:
-    file = File(filename, mode=mode)
-    _write_version(file)
+    file = File(filename, 
+                mode=mode)
+    if mode == "w" or (mode == "a" and not VERSION_KEY in file):
+        _write_version(file)
     return file
 
 def join_keys(*args):

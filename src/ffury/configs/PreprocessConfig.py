@@ -26,13 +26,25 @@ class PreprocessConfig:
     
     @property
     def spectrogram_hop_length(self):
+        # number of samples to hop to get 1 spectrogram element
         return ceil(self.clip_sampling_rate_hz * self.spectrogram_stft_frame_size_ms / 1000)
     
     @property
-    def spectrogram_shape(self):
-        return (1, # instance
-                self.spectrogram_n_mels, # height
-                ceil(self.clip_segment_size_ms / self.spectrogram_stft_frame_size_ms)) # width
+    def spectrogram_segment_length(self):
+        return ceil(self.clip_segment_size_ms / self.spectrogram_stft_frame_size_ms)
+
+    @property
+    def spectrogram_segment_hop_length(self):
+        # number of spectrogram elements to hop to get 1 clip segement hop
+        return ceil(self.clip_segment_hop_size_ms / self.spectrogram_stft_frame_size_ms)
+
+    @property
+    def spectrogram_segment_shape(self):
+        # comme on store nos donnes sous format hdf5 et qu'on doit ajouter
+        # via l'axe 0, on met spectrogram_n_mels dans l'axe 1
+        # c-a-d shape == (time, n_mels)
+        return (self.spectrogram_segment_length, # width
+                self.spectrogram_n_mels) # height
     
     @property
     def segment_hop_length(self):

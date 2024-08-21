@@ -6,17 +6,19 @@ from librosa import (
 from librosa.feature import melspectrogram
 from pandas import (
     Categorical,
-    DataFrame
+    DataFrame,
+    Index
 )
+from pandas.api.typing import DataFrameGroupBy
 from numpy import (
     max as np_max,
-    pad,
 )
 from numpy.typing import NDArray
-from typing import List
+from typing import Generator
 from ..configs import PreprocessConfig
 
 
+_MELSPECTROGRAM_SEGMENT = "melspectrogram_segments"
 _MELSPECTROGRAM = "melspectrogram"
 _SPECIE = "specie"
 _SPECIES_CSV = "data_species.csv"
@@ -27,52 +29,59 @@ _LATITUDE = "latitude"
 _LONGITUDE = "longitude"
 
 
-def generate_segment_spectrograms(audio: NDArray,
-                                  sampling_rate: int,
-                                  config: PreprocessConfig) -> List[NDArray]:
+def generate_spectrogram(audio: NDArray,
+                         sampling_rate: int,
+                         config: PreprocessConfig) -> NDArray:
     """
-    Separe audio en plusieurs segments (selon config) et genere leurs spectrograms
+    # Separe audio en plusieurs segments (selon config) et genere leurs spectrograms
     """
-    if len(audio) > 1:
+    if audio.shape[0] > 1:
         audio = to_mono(audio)
 
     if sampling_rate != config.clip_sampling_rate_hz:
         audio = resample(audio,
-                            orig_sr=sampling_rate,
-                            target_sr=config.clip_sampling_rate_hz)
-        
-    segment_length = config.segment_length
-    segment_hop = config.segment_hop_length
+                         orig_sr=sampling_rate,
+                         target_sr=config.clip_sampling_rate_hz)
 
-    spectrograms = []
+    # log mel spectrogram
+    S = melspectrogram(y=audio,
+                       sr=config.clip_sampling_rate_hz,
+                       n_fft=config.spectrogram_n_ftt,
+                       hop_length=config.spectrogram_hop_length,
+                       n_mels=config.spectrogram_n_mels,
+                       fmin=config.spectrogram_fmin,
+                       fmax=config.spectrogram_fmax)
 
-    for offset in range(0, len(audio), segment_hop):
-        # extraire segment
-        segment = audio[offset:offset + segment_length]
+    S_db = power_to_db(S,
+                       ref=np_max)
 
-        # padding sur le dernier segment
-        padding = segment_length - len(segment)
-        if padding > 0:
-            segment = pad(segment, (0, padding), mode="wrap")
+    # shape du spectrogram est (n_mels, time)
+    # si on veut ajouter plus tard, c'est plus simple d'avoir (time, n_mels)
+    return S_db.T
 
-        # log mel spectrogram
-        S = melspectrogram(y=segment,
-                            sr=config.clip_sampling_rate_hz,
-                            n_fft=config.spectrogram_n_ftt,
-                            hop_length=config.spectrogram_hop_length,
-                            n_mels=config.spectrogram_n_mels,
-                            fmin=config.spectrogram_fmin,
-                            fmax=config.spectrogram_fmax)
+def get_num_segments(spectrogram_length: int,
+                     config: PreprocessConfig) -> int:
+    return spectrogram_length // config.spectrogram_segment_hop_length
 
-        S_db = power_to_db(S,
-                           ref=np_max)
+def generate_segments(spectrogram_length: int,
+                      config: PreprocessConfig) -> Generator[int, None, None]:
+    length = config.spectrogram_segment_length
+    hop = config.spectrogram_segment_hop_length
 
-        # ajouter aux resultats
-        spectrograms.append(S_db)
+    for offset in range(0, spectrogram_length, hop):
+        start = offset
+        end = offset + length
 
-    return spectrograms
+        if end >= spectrogram_length:
+            # imcomplete segment
+            break
 
-def generate_uinique_species(data: DataFrame) -> tuple[DataFrame, NDArray]:
+        yield start, end
+
+def generate_species_groups(data: DataFrame) -> tuple[DataFrameGroupBy, DataFrame, Index]:
+    # regrouper les attributs par espece
+    species_groups = data.groupby(_PRIMARY_LABEL)
+    
     # regrouper primary_label et common_name a partir du dataframe
     # les 2 proprietes sont uniques; represente espece
     species_str = data[[_PRIMARY_LABEL, _COMMON_NAME]].groupby(_PRIMARY_LABEL).first()
@@ -80,10 +89,10 @@ def generate_uinique_species(data: DataFrame) -> tuple[DataFrame, NDArray]:
 
     # transformer information d'espece en index (plus compacte sur disque)
     # one hot encoding pourra etre facilement reconstruit a partir de cet index
-    species_codes = Categorical(data[_PRIMARY_LABEL],
-                                categories=species_str[_PRIMARY_LABEL])
+    species_categories = Categorical(data[_PRIMARY_LABEL],
+                                     categories=species_str[_PRIMARY_LABEL])
 
     # validation
-    assert data.shape[0] == species_codes.shape[0]
+    assert data.shape[0] == species_categories.shape[0]
 
-    return species_str, species_codes.codes
+    return species_groups, species_str, species_categories.categories

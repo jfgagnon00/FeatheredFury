@@ -1,6 +1,16 @@
 # Tasks
 - analyse + preprocess
-    - generer configuration pour split
+    - baser sur investigation, preprocess == melspectogram et faire les segments par espece
+    - split
+        - je pense prendre few shot learning pour faire embbeding et trouver les moyennes par classes des embeddings
+            - la methode va etre prototypical network avec mediane
+            - je vais aussi sortir une variance par classe en plus de la moyenne
+            - moyenne + variance va pouvoir me donner un z score ; threshold a determiner
+            - toutes ces informations seront appliquees dans le train ; mettre ici pour comptrendre pourquoi ca influence le split
+
+        - few short learning demande de separer train/test/validate en support et query ET ils doivent avoir des classes distinctes. Ex, les classes dans train support NE SONT PAS dans train query ni test ni validation. weird mais c'est ce que j'ai compris
+
+        - comme on travaille avec des segments, faut splitter les segments et non les especes. faut probablement refaire l'analyse exploratoire
 
 - train/test/validation split
     - mettre configuration et classes wrapper
