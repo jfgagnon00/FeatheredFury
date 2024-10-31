@@ -130,8 +130,7 @@ def preprocess(project_config: ProjectConfig,
                 writer_futures.clear()
 
                 # interleave generation spectrogram avec ecriture sur disque
-                future = client.submit(_write_hdf5,
-                                       hdf5_segments_filename,
+                future = client.submit(_write_specie_hdf5,
                                        Path.joinpath(project_config.paths.DATA_DIR,
                                                      _MELSPECTROGRAM,
                                                      f"{specie_str}.hdf5"),
@@ -152,7 +151,6 @@ def preprocess(project_config: ProjectConfig,
             for s in segment_futures:
                 # print( s.result() )
                 pass
-
 
 def _wait_progress(futures, 
                    progress: tqdm) -> None:
@@ -182,17 +180,17 @@ def _generate_spectrogram(audio_filename: str,
                                                              float, 
                                                              int, 
                                                              NDArray]:
-    audio, sampling_rate = load(audio_filename)
+    audio, sampling_rate = load(audio_filename, 
+                                sr=config.clip_sampling_rate_hz)
+    duration = len(audio) / sampling_rate
+    expected = config.clip_segment_size_ms / 1000
+
+    if duration <= expected:
+        raise ValueError(f"Audio clip too short - {duration}, expected {expected}")
 
     spectrogram = generate_spectrogram(audio, 
                                        sampling_rate,
                                        config)
-    
-    duration = len(audio) / sampling_rate
-    ll = spectrogram.shape[0]
-
-    if duration <= (config.clip_segment_size_ms / 1000):
-        raise ValueError(f"Too short - {duration}, {ll}")
 
     return filename, \
            latitude, \
@@ -220,32 +218,24 @@ def _init_segments_hdf5(segments_filename: str):
                                  dtype=int32,
                                  maxshape=(None, 1))
 
-def _write_hdf5(segments_filename: str,
-                spectrogram_filename: str,
-                config: PreprocessConfig,
-                infos: List[tuple[str, float, float, int, NDArray]]) -> None:
+def _write_specie_hdf5(spectrogram_filename: str,
+                       infos: List[tuple[str, float, float, int, NDArray]]) -> None:
     spectrogram_filename = Path(spectrogram_filename)
     spectrogram_filename.parent.mkdir(exist_ok=True, parents=True)
 
     layouts = []
 
-    with open_file(segments_filename, "a") as hdf5_segments:
-        with open_file(spectrogram_filename, "w") as hdf5_spectrogram:
-            for filename, latitude, longitude, specie_code, spectrogram in infos:
-                hdf5_spectrogram.create_dataset(filename, 
-                                                data=spectrogram)
-
-                _append_spectrogram_segments(hdf5_segments,
-                                             latitude, 
-                                             longitude, 
-                                             specie_code,
-                                             spectrogram.shape[0],
-                                             config)
-
-                layouts.append((spectrogram_filename, filename, spectrogram.shape[0]))
-
-            hdf5_spectrogram.flush()
-        hdf5_segments.flush()
+    with open_file(spectrogram_filename, "w") as hdf5_spectrogram:
+        for filename, latitude, longitude, specie_code, spectrogram in infos:
+            hdf5_spectrogram.create_dataset(filename, 
+                                            data=spectrogram)
+            layouts.append((spectrogram_filename, 
+                            filename, 
+                            latitude, 
+                            longitude, 
+                            specie_code,
+                            spectrogram.shape[0]))
+        hdf5_spectrogram.flush()
 
     return layouts
 
