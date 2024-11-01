@@ -6,6 +6,9 @@
 * [mddunlap924/Rainforest---Audio-Classificaiton - Audio-Classification](https://github.com/mddunlap924/Rainforest---Audio-Classificaiton)
 * [Audio Spectrogram Transformer (AST) Github implementation](https://github.com/YuanGongND/ast)
 
+# Dataset
+* [BirdCLEF 2023](https://www.kaggle.com/competitions/birdclef-2023)
+
 # Misc
 ## Info Cookie Cutter
 * https://drivendata.github.io/cookiecutter-data-science/
