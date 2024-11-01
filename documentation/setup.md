@@ -12,6 +12,7 @@
 
 ### Accès au code
 1. S'assurer que [yq](https://formulae.brew.sh/formula/yq) est installer et accessible
+> Notez que sur environment orienté Linux, [yq](https://github.com/mikefarah/yq) peut s'installer via wget.
 1. S'assurer que python 3 est installer et accessible à la ligne de commande
 1. Cloner ce repo
 1. A la ligne de commande
