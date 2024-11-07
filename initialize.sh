@@ -3,7 +3,7 @@
 source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
 # valider si interpreteur python est present
-${CI_DIR}/test_python_interpreter.sh ${PYTHON_INTERPRETER}
+PYTHON_INTERPRETER=$(${CI_DIR}/test_python_interpreter.sh ${PYTHON_INTERPRETER})
 if [ $? -ne 0 ]; then
     echo "$PYTHON_INTERPRETER n'est pas accessible"
 	exit 1
