@@ -13,6 +13,9 @@
 ### Accès au code
 1. S'assurer que [yq](https://formulae.brew.sh/formula/yq) est installer et accessible
 > Notez que sur environment orienté Linux, [yq](https://github.com/mikefarah/yq) peut s'installer via wget.
+> Notez que la variable d'environment PATH peut avoir à être modifiée.
+1. S'assurer que [ffmpeg](https://www.ffmpeg.org/download.html) est installer et accessible.
+> Notez que la variable d'environment PATH peut avoir à être modifiée.
 1. S'assurer que python 3 est installer et accessible à la ligne de commande
 1. Cloner ce repo
 1. A la ligne de commande
