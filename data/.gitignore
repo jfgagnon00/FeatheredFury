@@ -1,2 +1,5 @@
 raw/
 /data_explored.csv
+/melspectrogram
+/data_groups.hdf5
+/data_species.csv

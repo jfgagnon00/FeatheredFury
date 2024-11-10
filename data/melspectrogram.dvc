@@ -1,0 +1,6 @@
+outs:
+- md5: 69d14a254b3e18c8c837573fcf0e8658.dir
+  size: 227010816
+  nfiles: 5
+  hash: md5
+  path: melspectrogram

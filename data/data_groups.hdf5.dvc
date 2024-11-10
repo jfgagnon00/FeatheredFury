@@ -1,0 +1,5 @@
+outs:
+- md5: abf7c1980b7033032852ebd95d07f716
+  size: 16892
+  hash: md5
+  path: data_groups.hdf5

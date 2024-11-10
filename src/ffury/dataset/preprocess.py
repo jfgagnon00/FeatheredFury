@@ -18,7 +18,7 @@ from typing import Generator
 from ..configs import PreprocessConfig
 
 
-_MELSPECTROGRAM_SEGMENT = "melspectrogram_segments"
+_MELSPECTROGRAM_GROUPS = "melspectrogram_groups"
 _MELSPECTROGRAM = "melspectrogram"
 _SPECIE = "specie"
 _SPECIES_CSV = "data_species.csv"
@@ -42,9 +42,13 @@ def generate_spectrogram(audio: NDArray,
         audio = resample(audio,
                          orig_sr=sampling_rate,
                          target_sr=config.clip_sampling_rate_hz)
+        
+    if config.spectrogram_stft_window_size_ms < config.spectrogram_stft_frame_size_ms:
+        raise ValueError(f"spectrogram_stft_window_size_ms {config.spectrogram_stft_window_size_ms} < spectrogram_stft_frame_size_ms {config.spectrogram_stft_frame_size_ms}")
 
-    # log mel spectrogram
+    # mel spectrogram
     S = melspectrogram(y=audio,
+                       power=2,
                        sr=config.clip_sampling_rate_hz,
                        n_fft=config.spectrogram_n_ftt,
                        hop_length=config.spectrogram_hop_length,
@@ -52,33 +56,26 @@ def generate_spectrogram(audio: NDArray,
                        fmin=config.spectrogram_fmin,
                        fmax=config.spectrogram_fmax)
 
-    S_db = power_to_db(S,
-                       ref=np_max)
+    S_db = power_to_db(S, ref=np_max)
 
-    # shape du spectrogram est (n_mels, time)
-    # si on veut ajouter plus tard, c'est plus simple d'avoir (time, n_mels)
-    return S_db.T
-
-def get_num_segments(spectrogram_length: int,
-                     config: PreprocessConfig) -> int:
-    return spectrogram_length // config.spectrogram_segment_hop_length
-
-def generate_segments(spectrogram_length: int,
-                      config: PreprocessConfig) -> Generator[int, None, None]:
-    length = config.spectrogram_segment_length
-    hop = config.spectrogram_segment_hop_length
-
-    for offset in range(0, spectrogram_length, hop):
-        start = offset
-        end = offset + length
-
-        if end >= spectrogram_length:
-            # imcomplete segment
-            break
-
-        yield start, end
+    # shape du spectrogram est (n_mels, n_frames)
+    # n_frames represente le temps
+    return S_db
 
 def generate_species_groups(data: DataFrame) -> tuple[DataFrameGroupBy, DataFrame, Index]:
+    """
+    Extrait les informations d'especes
+
+    Parametres:
+        data: Le dataset explore.
+
+    Retour:
+        Tuple (data regroupe par espece, dataset avec primary_label et common_name, index des especes)
+
+    Note:
+        L'index des especes permet de trouver un nom a partir d'un entier et de retrouver 
+        l'entier a partir d'un nom. Facilite les traitements subsequents.
+    """
     # regrouper les attributs par espece
     species_groups = data.groupby(_PRIMARY_LABEL)
     
