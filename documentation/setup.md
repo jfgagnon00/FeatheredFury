@@ -27,3 +27,7 @@
 # active environment virtuel
 source activate.sh
 ```
+
+### Management de projet
+1. Créer un compte sur [Trello](https://trello.com/home)
+1. Demander à être ajouté au projet FeatheredFury
