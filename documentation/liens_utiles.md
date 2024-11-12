@@ -9,6 +9,9 @@
 # Dataset
 * [BirdCLEF 2023](https://www.kaggle.com/competitions/birdclef-2023)
 
+# Managment de projet
+* [Trello | FeatheredFury](https://trello.com/b/lm047mnt/featheredfury)
+
 # Misc
 ## Info Cookie Cutter
 * https://drivendata.github.io/cookiecutter-data-science/
