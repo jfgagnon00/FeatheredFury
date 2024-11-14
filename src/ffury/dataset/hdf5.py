@@ -28,7 +28,7 @@ def open_file(filename: str,
                 mode: str) -> File:
     file = File(filename, 
                 mode=mode)
-    if mode == "w" or (mode == "a" and not VERSION_KEY in file):
+    if mode == "w" or ((mode == "a" or mode == "r+") and not VERSION_KEY in file):
         _write_version(file)
     return file
 
