@@ -1,15 +1,16 @@
-def halton_sequence(b):
+def halton_sequence(b, count):
     """
     Generateur pour sequence Halton.
 
     Parametre:
-        b: base (nombre premier, 2, 3, 11 etc)
+        b    : base (nombre premier, 2, 3, 11 etc)
+        count: Quantite d'elements generes
 
     Retour:
         Nombre dans l'interval [0, 1]
     """
     n, d = 0, 1
-    while True:
+    for _ in range(count):
         x = d - n
         if x == 1:
             n = 1

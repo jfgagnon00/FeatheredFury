@@ -25,7 +25,6 @@ class PreprocessConfig:
         # train/test/validation split
         self.split_train_size = 0
         self.split_test_size = 0
-        self.split_validation_size = 0
 
     @property
     def spectrogram_n_ftt(self):

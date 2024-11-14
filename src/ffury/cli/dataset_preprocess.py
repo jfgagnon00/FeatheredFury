@@ -1,33 +1,9 @@
 import click
 
-from dask.distributed import (
-    as_completed,
-    wait
-)
-from h5py import (
-    Dataset,
-    VirtualLayout, 
-    VirtualSource
-)
-from itertools import islice
-from logging import Logger
-from librosa import load
-from numpy import (
-    array,
-    int32,
-    float32
-)
-from numpy.typing import NDArray
-from pandas import (
-    DataFrame,
-    read_csv,
-)
+from dask.distributed import as_completed
+from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
-from typing import (
-    List,
-    Union
-)
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
@@ -35,24 +11,22 @@ from ..configs import (
     DatasetType,
     load_config,
     PreprocessConfig,
-    ProjectConfig,
+    ProjectConfig
 )
-from ..dataset.hdf5 import (
-    open_file,
-)
+
 from ..dataset.preprocess import (
-    generate_spectrogram,
     generate_species_groups,
-    _MELSPECTROGRAM_GROUPS,
-    _MELSPECTROGRAM,
-    _SPECIES_CSV,
+    generate_specie_groups,
+    write_hdf5_dataset,
+    write_species_dataframe,
+    split,
+    write_hdf5_groups,
     _FILENAME,
-    _LONGITUDE,
-    _LATITUDE,
-    _SPECIE
+    _MELSPECTROGRAM,
+    _SPECIES_CSV
 )
+from ..feature.spectrogram import spectrogram_from_file
 from ..misc.concurrent import create_dask_local_client
-from ..misc.halton import halton_sequence
 from ..misc.logging import create_logger
 
 
@@ -75,7 +49,9 @@ def preprocess(project_config: ProjectConfig,
 
     # charger data explore
     filename = project_config.get_csv_filename(DatasetType.EXPLORED)
-    data_df = _load(logger, filename)
+    logger.info(f"Lecture '{filename}'")
+    data_df = read_csv(filename)
+    logger.info(f"{data_df.shape[0]} elements")
 
     # generer information par espece oiseau
     species_groups, species_str, species_categories = generate_species_groups(data_df)
@@ -83,159 +59,106 @@ def preprocess(project_config: ProjectConfig,
     # estime count pour progress bar
     count = 1
     for _, specie_infos in species_groups:
-        count += len(specie_infos)
+        count += 1
+        count += len(specie_infos) * 2
 
-    tmp_filename = Path.joinpath(project_config.paths.BUILD_DIR, "data_temp.csv")
-    tmp_filename.parent.mkdir(exist_ok=True, parents=True)
+    logger.info(f"Creation spectrogrames + information de groupe")
 
-    logger.info(f"Creation spectrograms + information de groupe")
+    groups_df_filename = Path.joinpath(project_config.paths.BUILD_DIR, "groups.csv")
+    groups_df_mode = "w"
 
     # traiter en parallele les donnees
     with tqdm(total=count) as progress:
         with create_dask_local_client(memory_limit="2GB") as client:
-            writer_futures = []
+            previous_writer_futures = []
+            current_writer_futures = []
             spectrogram_futures = []
-            write_header = True
 
             # ecrire dataset primary_label, common_name dans fichier .csv
             # plus simple que hdf5 et eviter le traitement des strings
-            filename = Path.joinpath(project_config.paths.DATA_DIR, 
-                                     _SPECIES_CSV)
-            future = client.submit(_write_species_str,
-                                   species_str,
-                                   filename)
-            writer_futures.append(future)
+            future = client.submit(write_species_dataframe,
+                                   Path.joinpath(project_config.paths.DATA_DIR, 
+                                                 _SPECIES_CSV),
+                                   species_str)
+            current_writer_futures.append(future)
 
             # 1 espece d'oiseau a la fois; minimise la quantite de fichiers sur disque
             # et ne surchage pas les capacites d'execution
             for specie_str, specie_infos in species_groups:
-                specie_code = species_categories.get_loc(specie_str)
+                # resampler l'audio en groupes (pas besoin du data en tant que tel)
+                # puisque que des vues sont utilisees
+                future = client.submit(generate_specie_groups,
+                                       groups_df_filename,
+                                       groups_df_mode,
+                                       Path.joinpath(project_config.paths.DATA_DIR, _MELSPECTROGRAM),
+                                       specie_infos,
+                                       specie_str,
+                                       species_categories.get_loc(specie_str),
+                                       project_config.preprocess)
+                current_writer_futures.append(future)
 
-                for _, infos in specie_infos.iterrows():
-                    filename = infos[_FILENAME]
-                    latitude = infos[_LATITUDE]
-                    longitude = infos[_LONGITUDE]
-                    future = client.submit(_generate_spectrogram,
+                for _, filename in specie_infos[_FILENAME].items():
+                    # generer le spectrogram
+                    future = client.submit(spectrogram_from_file,
                                            project_config.get_audio_filename(filename),
-                                           filename,
-                                           latitude,
-                                           longitude,
-                                           specie_code,
                                            project_config.preprocess)
                     spectrogram_futures.append(future)
-
-                # attendre que les dernieres ecritures soient terminee
-                # groups_hdf5_filename ne peut etre ecrit que par 1 thread/process
-                _wait_progress(writer_futures, progress)
-                writer_futures.clear()
-
-                # interleave generation spectrogram avec ecriture sur disque
-                specie_hdf5_filename = Path.joinpath(project_config.paths.DATA_DIR,
-                                                     _MELSPECTROGRAM,
-                                                     f"{specie_str}.hdf5")
-                future = client.submit(_write_specie_spectrogram,
-                                       specie_hdf5_filename,
-                                       spectrogram_futures)
-                writer_futures.append(future)
-
-                # resampler
-                future = client.submit(_create_specie_groups,
-                                       tmp_filename,
-                                       write_header,
-                                       specie_hdf5_filename,
-                                       project_config.preprocess,
-                                       future)
-                writer_futures.append(future)
+                    
+                    # ecrire le spectrogram
+                    future = client.submit(write_hdf5_dataset,
+                                           Path.joinpath(project_config.paths.DATA_DIR,
+                                                         _MELSPECTROGRAM,
+                                                         filename).with_suffix(".hdf5"),
+                                           "w",
+                                           _MELSPECTROGRAM,
+                                           future)
+                    current_writer_futures.append(future)
 
                 # ne pas surcharger le scheduler ni le footprint memoire
                 # chaque spectrogram est relativement long a faire dans tous les cas
                 _wait_progress(spectrogram_futures, progress)
                 spectrogram_futures.clear()
 
-                write_header = False
+                _wait_progress(previous_writer_futures, progress)
+                previous_writer_futures.clear()
+                previous_writer_futures = current_writer_futures
+                current_writer_futures = []
+
+                groups_df_mode = "a"
 
             # attendre que la derniere ecriture soit faite
-            _wait_progress(writer_futures, progress)
+            _wait_progress(previous_writer_futures, progress)
+            previous_writer_futures.clear()
 
-    logger.info(f"Creation des groupes")
+    logger.info(f"Split")
+    train_df, test_df, validation_df = split(groups_df_filename, 
+                                             project_config.preprocess)
 
-    # creation du fichier final
-    hdf5_groups_filename = Path.joinpath(project_config.paths.DATA_DIR, 
-                                         "data_groups.hdf5")
-    hdf5_groups_filename.parent.mkdir(exist_ok=True, parents=True)
-    _create_hdf5_groups(tmp_filename,
-                        hdf5_groups_filename,
-                        project_config.preprocess)
+    logger.info(f"Ecriture data train")
+    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
+                                    "data_train.hdf5"),
+                      "w",
+                      train_df,
+                      project_config.preprocess)
+    
+    logger.info(f"Ecriture data test")
+    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
+                                    "data_test.hdf5"),
+                      "w",
+                      test_df,
+                      project_config.preprocess)
+    
+    logger.info(f"Ecriture data validation")
+    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
+                                    "data_validation.hdf5"),
+                      "w",
+                      validation_df,
+                      project_config.preprocess)
 
 def _wait_progress(futures, 
                    progress: tqdm) -> None:
     for f in as_completed(futures):
         progress.update()
-
-def _load(logger: Logger, 
-          filename: str) -> DataFrame:
-    logger.info(f"Lecture '{filename}'")
-    data_df = read_csv(filename)
-    logger.info(f"{data_df.shape[0]} elements")
-    return data_df
-
-def _write_species_str(species_str: DataFrame,
-                       filename: str) -> NDArray:
-    filename = Path(filename)
-    filename.parent.mkdir(exist_ok=True, parents=True)
-    species_str.to_csv(filename, index=False)
-
-def _generate_spectrogram(audio_filename: str,
-                          filename: str,
-                          latitude: float,
-                          longitude: float,
-                          specie_code: int,
-                          config: PreprocessConfig) -> tuple[str, 
-                                                             float, 
-                                                             float, 
-                                                             int, 
-                                                             NDArray]:
-    # resampler fichier audio
-    audio, sampling_rate = load(audio_filename, 
-                                sr=config.clip_sampling_rate_hz)
-    duration = len(audio) / sampling_rate
-    expected = config.segment_size_ms / 1000
-
-    if duration <= expected:
-        # clip audio trop court par rapport a la taille attendu d'un segment
-        raise ValueError(f"Audio clip too short - {duration}, expected {expected}")
-
-    spectrogram = generate_spectrogram(audio, 
-                                       sampling_rate,
-                                       config)
-
-    return filename, \
-           latitude, \
-           longitude, \
-           specie_code, \
-           spectrogram
-
-def _write_specie_spectrogram(spectrogram_filename: str,
-                              infos: List[tuple[str, float, float, int, NDArray]]) -> \
-                                List[tuple[str, float, float, int, NDArray]]:
-    spectrogram_filename = Path(spectrogram_filename)
-    spectrogram_filename.parent.mkdir(exist_ok=True, parents=True)
-
-    layouts = []
-
-    with open_file(spectrogram_filename, "w") as hdf5_spectrogram:
-        for filename, latitude, longitude, specie_code, spectrogram in infos:
-            hdf5_spectrogram.create_dataset(filename, 
-                                            data=spectrogram)
-            layouts.append((filename, 
-                            latitude, 
-                            longitude, 
-                            specie_code,
-                            spectrogram.shape))
-
-        hdf5_spectrogram.flush()
-    
-    return layouts
 
 def _create_hdf5_groups(temp_filename: str,
                         hdf5_filename: str,
@@ -282,76 +205,3 @@ def _create_hdf5_groups(temp_filename: str,
         
         hdf5_file.create_virtual_dataset(_MELSPECTROGRAM_GROUPS, group_layout)
         hdf5_file.flush()
-
-def _create_specie_groups(temp_filename: str,
-                          write_header: bool,
-                          specie_hdf5_filename: str,
-                          config: PreprocessConfig,
-                          infos: List[tuple[str, float, float, int, tuple[int, int]]]) -> None:
-    if config.group_count < 1:
-        raise ValueError(f"group_count < 1: {config.group_count}")
-
-    # construire array pour remapper nombre [0, 1] a index dans infos
-    # doit tenir compte de spectrogram_length
-    length = 0
-    lengths = []
-    for _, \
-        _, \
-        _, \
-        _, \
-        spectrogram_shape in infos:
-        lengths.append((length, length + spectrogram_shape[1]))
-        length += spectrogram_shape[1]
-
-    # determiner la quantite de frames necessaire pour group, segment et hop
-    _, \
-        segment_frame_length, \
-        group_hop_frame_length = config.group_info()
-
-    group_datas = []
-  
-    for g in islice(halton_sequence(3), config.group_count):
-        # ramapper [0, 1] a [0, length]
-        group_begin = int(g * length)
-
-        # trouver le fichier et la position dans le fichier qui 
-        # correspond a group_begin
-        for i, (begin, end) in enumerate(lengths):
-            if end > group_begin:
-                break
-        group_begin = group_begin - begin
-
-        group_data = {}
-
-        # obtrenir les informations specifiques du fichier
-        group_data["specie_hdf5_filename"] = specie_hdf5_filename
-        group_data["specie_hdf5_dataset"], \
-            group_data["latitude"], \
-            group_data["longitude"], \
-            group_data["specie_code"], \
-            group_data["spectrogram_shape"] = infos[i]
-
-        # segment => vue sur le data source specifie par 
-        # specie_hdf5_filename et specie_hdf5_dataset
-        segment_sources = []
-        for s in range(config.group_segment_count):
-            segment_begin = group_begin
-            segment_end = group_begin + segment_frame_length
-
-            if segment_end >= spectrogram_shape[1]:
-                segment_end = spectrogram_shape[1]
-                segment_begin = spectrogram_shape[1] - segment_frame_length
-
-            segment_sources.append((segment_begin, segment_end))
-            group_begin += group_hop_frame_length
-
-        group_data["segments"] = segment_sources
-        group_datas.append(group_data)
-
-    # limitation hdf5 ; les dataset virtuels doivent etre creee en 1 seul etape
-    # le resize n'est pas supporte
-    group_df = DataFrame(group_datas)
-    group_df.to_csv(temp_filename, 
-                    mode="w" if write_header else "a", 
-                    index=False,
-                    header=write_header)
