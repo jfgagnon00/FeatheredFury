@@ -22,8 +22,7 @@ from ..dataset.preprocess import (
     split,
     write_hdf5_groups,
     _FILENAME,
-    _MELSPECTROGRAM,
-    _SPECIES_CSV
+    _MELSPECTROGRAM
 )
 from ..feature.spectrogram import spectrogram_from_file
 from ..misc.concurrent import create_dask_local_client
@@ -77,8 +76,7 @@ def preprocess(project_config: ProjectConfig,
             # ecrire dataset primary_label, common_name dans fichier .csv
             # plus simple que hdf5 et eviter le traitement des strings
             future = client.submit(write_species_dataframe,
-                                   Path.joinpath(project_config.paths.DATA_DIR, 
-                                                 _SPECIES_CSV),
+                                   project_config.get_csv_filename(DatasetType._SPECIES),
                                    species_str)
             current_writer_futures.append(future)
 
@@ -135,22 +133,19 @@ def preprocess(project_config: ProjectConfig,
                                              project_config.preprocess)
 
     logger.info(f"Ecriture data train")
-    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
-                                    "data_train.hdf5"),
+    write_hdf5_groups(project_config.get_hdf5_filename(DatasetType.TRAIN),
                       "w",
                       train_df,
                       project_config.preprocess)
     
     logger.info(f"Ecriture data test")
-    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
-                                    "data_test.hdf5"),
+    write_hdf5_groups(project_config.get_hdf5_filename(DatasetType.TEST),
                       "w",
                       test_df,
                       project_config.preprocess)
     
     logger.info(f"Ecriture data validation")
-    write_hdf5_groups(Path.joinpath(project_config.paths.DATA_DIR, 
-                                    "data_validation.hdf5"),
+    write_hdf5_groups(project_config.get_hdf5_filename(DatasetType.VALIDATION),
                       "w",
                       validation_df,
                       project_config.preprocess)

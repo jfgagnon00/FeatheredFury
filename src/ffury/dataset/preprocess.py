@@ -25,7 +25,6 @@ from ..misc.halton import halton_sequence
 _MELSPECTROGRAM_GROUPS = "melspectrogram_groups"
 _MELSPECTROGRAM = "melspectrogram"
 _SPECIE = "specie"
-_SPECIES_CSV = "data_species.csv"
 _PRIMARY_LABEL = "primary_label"
 _COMMON_NAME = "common_name"
 _FILENAME = "filename"

@@ -1,7 +1,7 @@
 raw/
 /data_explored.csv
 /melspectrogram
-/data_species.csv
 /data_test.hdf5
 /data_train.hdf5
 /data_validation.hdf5
+/data__species.csv
