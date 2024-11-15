@@ -13,6 +13,11 @@
 * [Trello | FeatheredFury](https://trello.com/b/lm047mnt/featheredfury)
 
 # Misc
+## Neptune.AI
+* [Exemple logging métrique](../playgrounds/jfgagnon/test_logging_neptuneai.py)
+* [Exemple logging modèle checkpoint](../playgrounds/jfgagnon/test_track_model_neptuneai.py)
+* [Tracking models end-to-end](https://docs.neptune.ai/tutorials/tracking_models_e2e/)
+
 ## Info Cookie Cutter
 * https://drivendata.github.io/cookiecutter-data-science/
 
