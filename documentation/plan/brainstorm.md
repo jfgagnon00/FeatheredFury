@@ -26,12 +26,16 @@
 
 - CI
     - Environment developpement
-        python, dask pour coder 
+        python, dask, sklearn pour coder 
         dvc + google drive pour tracker data
-        neptune ai pour tracker metriques
+        neptune ai pour tracker metriques + modeles
+        keras ou pytorch pour modeles
+        docker & docker hub pour images
 
     - Automatisation
-        nos modules offrent interface commande line
+        - nos modules offrent interface commande line
+        - github actions ; container sur docker hub
+        - manque solution pour un vrai dag.... ben on peut mettre Dask mais semble un peu rough
 
     - Flow de travail
         - sur chaque push du main, on re-entraine et on log les metriques sur Neptune AI
@@ -39,13 +43,23 @@
         - sauvegarde du modele sur NeptuneAI (a investiguer pour limitations)
     - DockerHUB pour environments CI
         - besoin GPU?
-    - Utiliser branche pour distinguer Dev/Staging/Prod
+    - Utiliser branche pour distinguer Dev/Staging/Prod de l'app
     - Utiliser tag pour marquer versions
 
 - Modeles
     - celui du papier (aussi montre dans video youtube)
-    - transfer learning vgg ou resnet 
+    - remplacer CNN par LSTM ou GRU
+        - ou carrément voir le papier SED A tutorial pour voir si RNN pourrait pas fitter dans ca
+    - transfer learning vgg16, resnet, EfficientNet ou MobileNet 
+        probleme avec size du data
 
 - Gestion projet
     - Trello
         - Etablir des phases pour le projet
+            - pipeline de base
+            - entrainement
+                - suivi metriques + modele
+            - Prototype local pour app et service
+                - suivi metriques + buisness stuff ()
+            - deploiement dans web : selon chatgpt
+
