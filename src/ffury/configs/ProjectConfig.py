@@ -19,6 +19,9 @@ class DatasetType(IntEnum):
     EXPLORED = auto()
     PREPROCESS = auto()
 
+    # a usage interne
+    _SPECIES = auto()
+
     @property
     def _csv_filename(self):
         return f"data_{self.name_lowercase}.csv" 
