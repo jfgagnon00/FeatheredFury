@@ -37,4 +37,6 @@
    |                         be imported
    ├── ffury.yaml         <- Point d'entré pour les configurations globales
    └── src                <- Code source utilise pour le projet
+       ├── client         <- Application client.
+       └── api            <- Api
 ```
