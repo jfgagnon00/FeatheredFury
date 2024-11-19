@@ -20,9 +20,9 @@ from pandas import (
 )
 from pathlib import Path
 from ffury.configs import (
+    SpectrogramConfig,
     load_config,
-    ProjectConfig,
-    PreprocessConfig
+    ProjectConfig
 )
 
 _MELSPECTROGRAM = "melspectrogram"

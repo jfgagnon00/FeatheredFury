@@ -1,0 +1,5 @@
+!ffury.configs.SplitConfig
+
+# split parameters (somme != 1, valildation prend le reste) -----
+split_train_size: 0.6
+split_test_size: 0.2

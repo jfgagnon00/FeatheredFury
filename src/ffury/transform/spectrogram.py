@@ -8,11 +8,11 @@ from librosa.feature import melspectrogram
 from numpy import max as np_max
 from numpy.typing import NDArray
 
-from ..configs import PreprocessConfig
+from ..configs import SpectrogramConfig
 
 def spectrogram_from_ndarray(audio: NDArray,
                              sampling_rate: int,
-                             config: PreprocessConfig) -> NDArray:
+                             config: SpectrogramConfig) -> NDArray:
     """
     # Genere melspectrogram de audio
     """
@@ -43,7 +43,7 @@ def spectrogram_from_ndarray(audio: NDArray,
     return S_db
 
 def spectrogram_from_file(audio_filename: str,
-                          config: PreprocessConfig) ->  NDArray:
+                          config: SpectrogramConfig) ->  NDArray:
     # resampler fichier audio
     audio, sampling_rate = load(audio_filename, 
                                 sr=config.clip_sampling_rate_hz)

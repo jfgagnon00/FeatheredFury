@@ -19,7 +19,7 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 from typing import Tuple
 
-from ..configs import PreprocessConfig
+from ..configs import SpectrogramConfig
 from ..dataset.hdf5 import open_file
 from ..misc.halton import halton_sequence
 
@@ -72,7 +72,7 @@ def generate_specie_groups(dataframe_filename: str,
                            specie_infos: DataFrame,
                            specie_str: str,
                            specie_code: int,
-                           config: PreprocessConfig) -> None:
+                           config: SpectrogramConfig) -> None:
     """
     Resample l'audio d'une espece complete pour avoir une quantite fixe de groupes
     """
@@ -164,7 +164,7 @@ def write_species_dataframe(filename: str,
     species_str.to_csv(filename, index=False)
 
 def split(dataframe_filename: str,
-          config: PreprocessConfig,
+          config: SpectrogramConfig,
           logger: Logger) -> Tuple[DataFrame, DataFrame, DataFrame]:
     data = read_csv(dataframe_filename)
 
@@ -205,7 +205,7 @@ def split(dataframe_filename: str,
 def write_hdf5_groups(hdf5_filename: str,
                       hdf5_mode: str,
                       data_df: DataFrame,
-                      config: PreprocessConfig) -> None:
+                      config: SpectrogramConfig) -> None:
     hdf5_filename = Path(hdf5_filename)
     hdf5_filename.parent.mkdir(exist_ok=True, parents=True)
     with open_file(hdf5_filename, hdf5_mode) as hdf5_file:

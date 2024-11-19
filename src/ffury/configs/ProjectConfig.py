@@ -6,9 +6,11 @@ from pathlib import Path
 
 from ..yaml import YamlDeserializable
 
+from .AudioGroupConfig import AudioGroupConfig
 from .PathsConfig import PathsConfig
 from .BirdClefConfig import BirdClefConfig
-from .PreprocessConfig import PreprocessConfig
+from .SpectrogramConfig import SpectrogramConfig
+from .SplitConfig import SplitConfig
 
 
 class DatasetType(IntEnum):
@@ -19,8 +21,8 @@ class DatasetType(IntEnum):
     EXPLORED = auto()
     PREPROCESS = auto()
 
-    # a usage interne
-    _SPECIES = auto()
+    # usage interne
+    _SPECIES = ("SPECIES", -1)
 
     @property
     def _csv_filename(self):
@@ -37,12 +39,15 @@ class DatasetType(IntEnum):
 @YamlDeserializable
 class ProjectConfig:
     """
-    Configurations globales
+    Configurations globales. Offre quelques 
+    fonctionalites pour obtenir nom de fichier.
     """
     def __init__(self):
         self.paths = PathsConfig()
         self.dataset = BirdClefConfig()
-        self.preprocess = PreprocessConfig()
+        self.spectrogram = SpectrogramConfig()
+        self.split = SplitConfig()
+        self.audio_group = AudioGroupConfig()
 
     def get_audio_filename(self, filename: str) -> str:
         """

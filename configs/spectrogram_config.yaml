@@ -1,0 +1,11 @@
+!ffury.configs.SpetrigramConfig
+
+# audio resampling (implicitement mono)
+clip_sampling_rate_hz: 22050
+
+# tranformation en mel spectrogram
+spectrogram_stft_window_size_ms: 200
+spectrogram_stft_frame_size_ms: 100
+spectrogram_fmin: 500
+spectrogram_fmax: 10000
+spectrogram_n_mels: 128

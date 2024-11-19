@@ -3,4 +3,6 @@
 #
 !ffury.configs.ProjectConfig
 paths: !include configs/paths_config.yaml
-preprocess: !include configs/preprocess_config.yaml
+spectrogram: !include configs/spectrogram_config.yaml
+split: !include configs/split_config.yaml
+audio_group: !include configs/audio_group.yaml

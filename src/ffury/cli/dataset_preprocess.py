@@ -4,13 +4,14 @@ from dask.distributed import as_completed
 from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
+from pprint import pprint
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
 from ..configs import (
     DatasetType,
+    SpectrogramConfig,
     load_config,
-    PreprocessConfig,
     ProjectConfig
 )
 
@@ -40,6 +41,17 @@ def preprocess(project_config: ProjectConfig,
     """
     Encapsule preprocess du dataset (creation spectrograms + sauvegarde HDF5 + split)
     """
+
+    print("+++++ ici")
+    pprint( type(project_config) )
+    pprint( vars(project_config) )
+    print( project_config.date )
+    # print( project_config.paths.date )
+    # print( project_config.preprocess.date )
+
+    return
+
+
     logger = create_logger(file=__file__)
 
     if not config is None:
@@ -158,7 +170,7 @@ def _wait_progress(futures,
 
 def _create_hdf5_groups(temp_filename: str,
                         hdf5_filename: str,
-                        config: PreprocessConfig):
+                        config: SpectrogramConfig):
     # TODO: sous performant et dangeureux - refaire quand le temps le permetra
     from ast import literal_eval
 
