@@ -1,1 +1,12 @@
-# TODO
+name: FeatheredFury
+on: [push]
+jobs:
+  run:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # TODO
