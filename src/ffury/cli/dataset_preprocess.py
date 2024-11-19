@@ -50,7 +50,7 @@ def preprocess(project_config: ProjectConfig,
     filename = project_config.get_csv_filename(DatasetType.EXPLORED)
     logger.info(f"Lecture '{filename}'")
     data_df = read_csv(filename)
-    logger.info(f"{data_df.shape[0]} elements")
+    logger.info(f"    {data_df.shape[0]} elements")
 
     # generer information par espece oiseau
     species_groups, species_str, species_categories = generate_species_groups(data_df)
@@ -134,8 +134,7 @@ def preprocess(project_config: ProjectConfig,
 
     logger.info(f"Split")
     train_df, test_df, validation_df = split(groups_df_filename, 
-                                             project_config.preprocess,
-                                             logger)
+                                             project_config.preprocess)
 
     logger.info(f"Ecriture data train")
     write_hdf5_groups(project_config.get_hdf5_filename(DatasetType.TRAIN),
@@ -155,53 +154,13 @@ def preprocess(project_config: ProjectConfig,
                       validation_df,
                       project_config.preprocess)
 
+    # prendre en note une signture des parametres utilises pour le preprocessing
+    logger.info(f"Ecriture MD5")
+    filename = Path.joinpath(project_config.paths.DATA_DIR, "data_preprocessed.md5")
+    with open(filename, "w") as file:
+        print( project_config.preprocess.md5(), file=file)
+
 def _wait_progress(futures, 
                    progress: tqdm) -> None:
     for f in as_completed(futures):
         progress.update()
-
-def _create_hdf5_groups(temp_filename: str,
-                        hdf5_filename: str,
-                        config: PreprocessConfig):
-    # TODO: sous performant et dangeureux - refaire quand le temps le permetra
-    from ast import literal_eval
-
-    data_df = read_csv(temp_filename)
-    data_df["spectrogram_shape"] = data_df["spectrogram_shape"].apply(literal_eval)
-    data_df["segments"] = data_df["segments"].apply(literal_eval)
-
-    # cree des dataset vide ; la clef doit etre presente
-    # avant d'ecrire les donnees (contrainte multiprocessing)
-    with open_file(hdf5_filename, "w") as hdf5_file:
-        hdf5_file.create_dataset(_LATITUDE,
-                                 data=data_df["latitude"].astype(float32))
-        
-        hdf5_file.create_dataset(_LONGITUDE,
-                                 data=data_df["longitude"].astype(float32))
-        
-        hdf5_file.create_dataset(_SPECIE,
-                                 data=data_df["specie_code"].astype(int32))
-        
-        # les groupes sont des vues sur d'autres fichiers hdf5
-        # d'ou VirtualLayout et create_virtual_dataset
-        _, segment_frame_length, _ = config.group_info()
-        group_shape = (data_df.shape[0],
-                       config.group_segment_count, 
-                       config.spectrogram_n_mels,
-                       segment_frame_length)
-        
-        group_layout = VirtualLayout(# batch, n_segments, n_mels, n_frames)
-                                     shape=group_shape,
-                                     dtype=float32)
-        
-        for g, tuple_row in enumerate(data_df.iterrows()):
-            r = tuple_row[1]
-            source = VirtualSource(r["specie_hdf5_filename"], 
-                                   r["specie_hdf5_dataset"],
-                                   r["spectrogram_shape"],
-                                   dtype=float32)
-            for s, (segment_begin, segment_end) in enumerate(r["segments"]):
-                group_layout[g, s, ...] = source[..., segment_begin:segment_end]
-        
-        hdf5_file.create_virtual_dataset(_MELSPECTROGRAM_GROUPS, group_layout)
-        hdf5_file.flush()

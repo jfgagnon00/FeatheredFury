@@ -5,3 +5,4 @@ raw/
 /data_train.hdf5
 /data_validation.hdf5
 /data__species.csv
+/data_preprocessed.md5

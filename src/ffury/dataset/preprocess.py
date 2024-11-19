@@ -2,7 +2,6 @@ from h5py import (
     VirtualLayout, 
     VirtualSource
 )
-from logging import Logger
 from numpy import (
     int32,
     float32
@@ -22,6 +21,7 @@ from typing import Tuple
 from ..configs import PreprocessConfig
 from ..dataset.hdf5 import open_file
 from ..misc.halton import halton_sequence
+from ..misc.logging import create_logger
 
 _MELSPECTROGRAM_GROUPS = "melspectrogram_groups"
 _MELSPECTROGRAM = "melspectrogram"
@@ -164,8 +164,7 @@ def write_species_dataframe(filename: str,
     species_str.to_csv(filename, index=False)
 
 def split(dataframe_filename: str,
-          config: PreprocessConfig,
-          logger: Logger) -> Tuple[DataFrame, DataFrame, DataFrame]:
+          config: PreprocessConfig) -> Tuple[DataFrame, DataFrame, DataFrame]:
     data = read_csv(dataframe_filename)
 
     hold_ratio = config.split_train_size + config.split_test_size
@@ -175,6 +174,7 @@ def split(dataframe_filename: str,
     test_size = int(data.shape[0] * config.split_test_size)
     train_size = data.shape[0] - test_size - validation_size
 
+    logger = create_logger(file=__file__)
     logger.info(f"Train size     : {train_size}")
     logger.info(f"Test size      : {test_size}")
     logger.info(f"Validation size: {validation_size}")

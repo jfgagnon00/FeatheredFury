@@ -1,8 +1,20 @@
 import yaml
 
+from hashlib import md5
 from inspect import isclass
 
 from ..misc.MetaObject import MetaObject
+
+def _md5(instance):
+    """
+    Calcule le md5 des proprietes trouves par var()
+    """
+    attributes = vars(instance)
+    hash = md5()
+    for k in sorted(attributes.keys()):
+        value = attributes[k]
+        hash.update( str(value).encode() )
+    return hash.hexdigest()
 
 def tag_from_class(cls):
     """
@@ -57,5 +69,8 @@ def YamlDeserializable(cls):
     tag = tag_from_class(cls)
     yaml.add_constructor(tag, YamlSimpleDeserialzation)
     cls.yaml_tag = tag
+    
+    # ajout hashing md5 pour chaque yaml deserialisable
+    cls.md5 = lambda self: _md5(self)
 
     return cls
