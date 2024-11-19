@@ -130,7 +130,8 @@ def preprocess(project_config: ProjectConfig,
 
     logger.info(f"Split")
     train_df, test_df, validation_df = split(groups_df_filename, 
-                                             project_config.preprocess)
+                                             project_config.preprocess,
+                                             logger)
 
     logger.info(f"Ecriture data train")
     write_hdf5_groups(project_config.get_hdf5_filename(DatasetType.TRAIN),
