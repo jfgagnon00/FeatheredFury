@@ -25,7 +25,7 @@ from ..dataset.preprocess import (
     _FILENAME,
     _MELSPECTROGRAM
 )
-from ..feature.spectrogram import spectrogram_from_file
+from ..transform import spectrogram_from_file
 from ..misc.concurrent import create_dask_local_client
 from ..misc.logging import create_logger
 
@@ -39,19 +39,8 @@ from ..misc.logging import create_logger
 def preprocess(project_config: ProjectConfig, 
                config: str) -> None:
     """
-    Encapsule preprocess du dataset (creation spectrograms + sauvegarde HDF5 + split)
+    Encapsule preprocess du dataset (creation spectrograms + split)
     """
-
-    print("+++++ ici")
-    pprint( type(project_config) )
-    pprint( vars(project_config) )
-    print( project_config.date )
-    # print( project_config.paths.date )
-    # print( project_config.preprocess.date )
-
-    return
-
-
     logger = create_logger(file=__file__)
 
     if not config is None:

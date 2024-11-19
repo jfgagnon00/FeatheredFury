@@ -22,7 +22,7 @@ class DatasetType(IntEnum):
     PREPROCESS = auto()
 
     # usage interne
-    _SPECIES = ("SPECIES", -1)
+    _SPECIES = ("SPECIES", 36)
 
     @property
     def _csv_filename(self):

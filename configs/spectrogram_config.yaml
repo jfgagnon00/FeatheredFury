@@ -1,4 +1,4 @@
-!ffury.configs.SpetrigramConfig
+!ffury.configs.SpectrogramConfig
 
 # audio resampling (implicitement mono)
 clip_sampling_rate_hz: 22050

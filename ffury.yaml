@@ -5,4 +5,4 @@
 paths: !include configs/paths_config.yaml
 spectrogram: !include configs/spectrogram_config.yaml
 split: !include configs/split_config.yaml
-audio_group: !include configs/audio_group.yaml
+audio_group: !include configs/audio_group_config.yaml
