@@ -56,12 +56,16 @@ def preprocess(project_config: ProjectConfig,
     species_groups, species_str, species_categories = generate_species_groups(data_df)
 
     # estime count pour progress bar
+    # write_species_dataframe
     count = 1
     for _, specie_infos in species_groups:
+        # write_species_dataframe
         count += 1
+
+        # spectrogram_from_file + write_hdf5_dataset
         count += len(specie_infos) * 2
 
-    logger.info(f"Creation spectrogrames + information de groupe")
+    logger.info(f"Creation spectrogrames + information de groupes")
 
     groups_df_filename = Path.joinpath(project_config.paths.BUILD_DIR, "groups.csv")
     groups_df_mode = "w"
