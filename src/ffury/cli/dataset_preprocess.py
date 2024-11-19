@@ -4,14 +4,13 @@ from dask.distributed import as_completed
 from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
-from pprint import pprint
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
 from ..configs import (
     DatasetType,
-    SpectrogramConfig,
     load_config,
+    PreprocessConfig,
     ProjectConfig
 )
 
@@ -25,7 +24,7 @@ from ..dataset.preprocess import (
     _FILENAME,
     _MELSPECTROGRAM
 )
-from ..transform import spectrogram_from_file
+from ..feature import spectrogram_from_file
 from ..misc.concurrent import create_dask_local_client
 from ..misc.logging import create_logger
 
@@ -159,7 +158,7 @@ def _wait_progress(futures,
 
 def _create_hdf5_groups(temp_filename: str,
                         hdf5_filename: str,
-                        config: SpectrogramConfig):
+                        config: PreprocessConfig):
     # TODO: sous performant et dangeureux - refaire quand le temps le permetra
     from ast import literal_eval
 
