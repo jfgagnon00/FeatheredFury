@@ -228,18 +228,18 @@ def write_hdf5_groups(hdf5_filename: str,
                                      shape=group_shape,
                                      dtype=float32)
         
-        for g in range(0, data_df.shape[0], config.group_segment_count):
+        for g in range(0, data_df.shape[0]):
             r = data_df.iloc[g]
             source = VirtualSource(r.hdf5_source, 
                                    r.dataset,
                                    (config.spectrogram_n_mels, r.spectrogram_frame_length),
                                    dtype=float32)
-            
+
             segment_begin = r.group_begin
             for s in range(config.group_segment_count):
                 segment_end = segment_begin + r.segment_frame_length
                 group_layout[g, s, ...] = source[..., segment_begin:segment_end]
-                segment_begin = r.group_hop_frame_length
+                segment_begin += r.group_hop_frame_length
 
         hdf5_file.create_virtual_dataset(_MELSPECTROGRAM_GROUPS, group_layout)
         hdf5_file.flush()
