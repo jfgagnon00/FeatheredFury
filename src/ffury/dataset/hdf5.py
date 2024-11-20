@@ -1,4 +1,6 @@
-from datetime import datetime
+"""
+Encapsule creation de fichier hdf5 pour marquer version des process
+"""
 from h5py import (
     File,
     string_dtype
@@ -19,7 +21,6 @@ VERSION_TIMESTAMP_ATTRIBUT = "timestamp"
 def _write_version(file: File) -> None:
     group = file.create_group(VERSION_KEY)
     group.attrs[VERSION_NUMBER_ATTRIBUT] = version().encode(_STRING_ENCODING)
-    # group.attrs[VERSION_TIMESTAMP_ATTRIBUT] = datetime.now()
 
 def version():
     return f"{_VERSION_MAJOR}.{_VERSION_MINOR}.{_VERSION_BUILD}"

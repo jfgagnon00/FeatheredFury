@@ -33,4 +33,7 @@ def ffury():
     from .dataset_preprocess import preprocess
     _cli.add_command(dataset_group)
 
+    from .dag import dag
+    _cli.add_command(dag)
+
     _cli()

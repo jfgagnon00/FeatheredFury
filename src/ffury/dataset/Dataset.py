@@ -17,6 +17,10 @@ from ..configs import (
 
 
 class Dataset():
+    """
+    Encapsuler le format et l'organisation des donnees. Utilisateur ne voit que des objets
+    de style nympy array
+    """
     def __init__(self, project_config: ProjectConfig, dataset_type: DatasetType):
         self._init_species_label(project_config)
         self._init_dataset(project_config, dataset_type)
@@ -51,5 +55,4 @@ class Dataset():
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]
             }
         )
-
         self._melspectrogram_groups = self._hdf5_file[_MELSPECTROGRAM_GROUPS]
