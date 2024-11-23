@@ -50,24 +50,72 @@
         </div>
     </div>
 </div>
+<script>document.getElementById('file').addEventListener('change', function() {
+    console.log('Fichier sélectionné :', this.files[0].name);
+});</script>
+<!-- <div id="container">
+    <h2>Waveform:</h2>
+    <div  id="result" style="margin-top: 20px;"> </div>
+</div>
 
 <script>
-    // Vérification de la taille du fichier avant soumission
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        var fileInput = document.getElementById('file');
-        var file = fileInput.files[0];
-        var fileFeedback = document.getElementById('fileFeedback');
-        var uploadStatus = document.getElementById('uploadStatus');
+    const form = document.getElementById('uploadForm');
+    const waveformImg = document.getElementById('result');
 
-        if (file && file.size > 4 * 1024 * 1024) { // 4 Mo
-            e.preventDefault(); // Empêche la soumission du formulaire
-            fileFeedback.textContent = 'Le fichier dépasse la taille maximale de 4 Mo.';
-            uploadStatus.textContent = '';
-        } else {
-            fileFeedback.textContent = '';
-            uploadStatus.textContent = 'Téléchargement en cours...';
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a file!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/model/uploadfile', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const imageBase64 = data.waveform_image;
+
+                // Afficher l'image encodée en base64 dans la page
+                const img = document.createElement('img');
+                img.src = `data:image/png;base64,${imageBase64}`;
+                document.getElementById('result').innerHTML = ''; // Nettoyer les résultats précédents
+                document.getElementById('result').appendChild(img);
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.error}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while uploading the file.");
         }
     });
-</script>
+    // // Vérification de la taille du fichier avant soumission
+    // document.getElementById('uploadForm').addEventListener('submit', function (e) {
+    //     var fileInput = document.getElementById('file');
+    //     var file = fileInput.files[0];
+    //     var fileFeedback = document.getElementById('fileFeedback');
+    //     var uploadStatus = document.getElementById('uploadStatus');
+
+    //     if (file && file.size > 4 * 1024 * 1024) { // 4 Mo
+    //         e.preventDefault(); // Empêche la soumission du formulaire
+    //         fileFeedback.textContent = 'Le fichier dépasse la taille maximale de 4 Mo.';
+    //         uploadStatus.textContent = '';
+    //     } else {
+    //         fileFeedback.textContent = '';
+    //         uploadStatus.textContent = 'Téléchargement en cours...';
+    //     }
+    // });
+</script> -->
+
 
 {% endblock %}
