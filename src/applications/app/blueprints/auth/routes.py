@@ -19,7 +19,6 @@ def logout():
     flash('Vous avez été déconnecté.')
     return redirect(url_for('home.index'))
 
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -105,8 +104,3 @@ def save_user(username, password):
         if not file_exists:
             writer.writeheader()
         writer.writerow({'username': username, 'password': password})
-
-@auth.route('/dashboard')
-def dashboard():
-    logging.info("LBienvenue")
-    return "Bienvenue sur votre tableau de bord."

@@ -145,8 +145,8 @@
 # # if __name__ == "__main__":
 # #     app.run(debug=True)
 
+#from flask import render_template
 from app import create_app
-from flask import render_template
 
 # Créer l'application Flask
 app = create_app()

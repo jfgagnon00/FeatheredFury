@@ -1,6 +1,9 @@
-from flask import Blueprint, jsonify, render_template, session, request, current_app
-import logging 
-import os
+import base64
+import json
+from flask import Blueprint, jsonify, render_template, session, request, current_app 
+import logging   
+import requests
+
 
 model = Blueprint('model', __name__)#, template_folder='../templates/home')
 
@@ -17,45 +20,38 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 @model.route('/uploadfile', methods=['GET', 'POST'])
-def index(): 
-    
-    user = session.get('user')
+def index():     
+    user = session.get('user') 
     if  user :
-        if request.method == 'POST':
-            logging.info('-----------------Upload file post--------------------------')
+        if request.method == 'POST': 
             if 'file' not in request.files:
                 logging.warning('Aucun fichier trouvé dans la requête.')
                 return jsonify({'error': 'Aucun fichier trouvé !'}), 400
 
             file = request.files['file']
-            logging.info(file)
+            #logging.warning(f"----------------------------- debut :      fichier : {file.filename}")
 
             if file.filename == '':
                 logging.warning('Nom de fichier vide.')
                 return jsonify({'error': 'Nom de fichier vide !'}), 400
 
-            if not allowed_file(file.filename):
-                logging.warning(f"Type de fichier non autorisé : {file.filename}")
-                return jsonify({'error': 'Type de fichier non autorisé !'}), 400
-
-            try:
-                # Enregistrer le fichier dans le dossier spécifié
-                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(file_path)
+            if file:
+                #headers = {'Content-Type': 'application/octet-stream'}  
+                response = requests.post('http://127.0.0.1:8000/api/waveform', files={'file': (file.filename, file.stream, file.content_type)})
+                result = response.json()
+                #logging.info(f"**************************** Fichier sauvegardé sous : {json.dumps(result, indent=4)}")
+                images = {
+                    'image_waveform' : result['image_waveform'], 
+                    'image_spectogramme' : result['image_spectogramme'], 
+                    #'file_audio' : file.filename # base64.b64encode(file.read()).decode('utf-8')
+                }
                 
-                logging.info(file_path)
-                logging.info(f"Fichier téléversé avec succès : {file.filename}")
-
-                return jsonify({
-                    'message': 'Fichier téléversé avec succès !',
-                    'filename': file.filename
-                }), 200
-
-            except Exception as e:
-                    logging.error(f"Erreur lors du téléversement du fichier : {e}")
-                    return jsonify({'error': 'Une erreur est survenue lors du téléversement.'}), 500
-
-            #return "post" 
-        # get
+                # Passer l'image base64 à la page HTML
+                return render_template('model/waveformResponse.html', result=images)
+                return render_template('waveform.html')
+            # if not allowed_file(file.filename):
+            #     logging.warning(f"Type de fichier non autorisé : {file.filename}")
+            #     return jsonify({'error': 'Type de fichier non autorisé !'}), 400
         return render_template('model/upload.html')
-    return "Pas connecté."
+    else :  
+        return "Pas connecté."
