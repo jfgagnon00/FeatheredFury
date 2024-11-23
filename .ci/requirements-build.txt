@@ -1,0 +1,5 @@
+# commun pour le developement
+-r requirements-common.txt
+
+# specifique pour environment de build
+python-terraform==0.10.1

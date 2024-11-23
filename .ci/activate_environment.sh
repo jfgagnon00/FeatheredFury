@@ -39,8 +39,9 @@ source .venv/bin/activate
 
 if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
+
     $PYTHON_INTERPRETER -m pip install --upgrade pip
-    $PYTHON_INTERPRETER -m pip install -r requirements.txt
+    $PYTHON_INTERPRETER -m pip install -r "$(dirname $0)/requirements-local.txt"
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
     $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME
