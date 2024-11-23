@@ -1,4 +1,4 @@
-name: Production Workflow
+name: Production Metric Monitoring
 on:
   schedule:
     - cron: ${{vars.MONITORING_CRON_FREQEUNCY}}
