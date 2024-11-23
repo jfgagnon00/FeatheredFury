@@ -1,0 +1,34 @@
+name: Staging Workflow
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  Setup:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Environment
+        run: |
+          pip install -r .ci/requirements-build.txt
+          source .ci/yaml_to_variables.sh configs/paths_config.yaml
+  Deployment:
+    needs: [Setup]
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        deployment_kind: [app, service]
+    steps:
+      - name: Deploy ${{matric.deployment_kind}}
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          NEPTUNE_PROJECT: ${{ secrets.NEPTUNE_PROJECT }}
+          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+        run: |
+          cd .ci/${{matric.deployment_kind}}
+          terraform init
+          terraform plan
+          terraform apply
