@@ -12,14 +12,11 @@ from .properties import (
     _COMMON_NAME,
     _DURATION_MS,
     _FILENAME,
-    _GROUP_BEGIN,
-    _GROUP_HOP_FRAME_LENGTH,
+    _GROUP_BEGIN_MS,
     _LATITUDE,
     _LONGITUDE,
     _PRIMARY_LABEL,
-    _SEGMENT_FRAME_LENGTH,
-    _SPECIE,
-    _SPECTROGRAM_FRAME_LENGTH,
+    _SPECIE
 )
 
 from ..configs import (
@@ -72,64 +69,51 @@ def generate_specie_groups(specie_infos: DataFrame,
         raise ValueError(f"group_count < 1: {config.group_count}")
 
     # construire structure pour remapper nombre [0, 1] a index dans specie_infos
-    # doit tenir compte de spectrogram_length
-    length = 0
-    lengths = []
+    total_duration_ms = 0
+    duration_ms_infos = []
     for index, duration_ms in specie_infos[_DURATION_MS].items():
-        # estimer de la longeur en framew du spectrograme a partir 
-        # de la duree du fichier audio et la fenetre de transformation du spectrogramme
-        spectrogram_frame_length = duration_ms / config.spectrogram_stft_frame_size_ms
-        spectrogram_frame_length = int(spectrogram_frame_length) + 1
-
-        # index dans specie_infos, taille spectrogramme, quand debute le fichier courant, quand termine le fichier courant
-        lengths.append((index, spectrogram_frame_length, length, length + spectrogram_frame_length))
-        length += spectrogram_frame_length
+        # index, duration, begin, end
+        duration_ms_infos.append((index, duration_ms, total_duration_ms, total_duration_ms + duration_ms))
+        total_duration_ms += duration_ms
 
     # determiner la quantite de frames necessaire pour (group, segment, group_hop)
-    group_frame_length, \
-        segment_frame_length, \
-        group_hop_frame_length = config.group_info()
+    group_ms_length, _, _ = config.group_ms_infos()
 
     # donnees a sauvegarder par groupe
     group_datas = {
         _FILENAME: [],
-        _SPECTROGRAM_FRAME_LENGTH: [],
-        _GROUP_BEGIN: [],
-        _SEGMENT_FRAME_LENGTH: [],
-        _GROUP_HOP_FRAME_LENGTH: [],
+        _SPECIE: [],
         _LATITUDE: [],
         _LONGITUDE: [],
-        _SPECIE: [],
+        _DURATION_MS: [],
+        _GROUP_BEGIN_MS: [],
     }
 
     # generer les groupes
     for t in halton_sequence(3, config.group_count):
-        # ramapper [0, 1] a [0, length]
-        group_begin = int(t * length)
+        # ramapper [0, 1] a [0, total_duration_ms]
+        group_begin_ms = int(t * total_duration_ms)
 
         # trouver le fichier et la position dans le fichier qui 
         # correspond a group_begin
-        for index, spectrogram_frame_length, begin, end in lengths:
-            if end > group_begin:
+        for index, duration_ms, begin_ms, end_ms in duration_ms_infos:
+            if end_ms > group_begin_ms:
                 break
 
-        group_begin = group_begin - begin
-        group_end = group_begin + group_frame_length
+        group_begin_ms = group_begin_ms - begin_ms
+        group_end_ms = group_begin_ms + group_ms_length
 
         # clamper avec les limites du fichier
-        if group_end > spectrogram_frame_length:
-            group_end = spectrogram_frame_length
-            group_begin = spectrogram_frame_length - group_frame_length
+        if group_end_ms > duration_ms:
+            group_begin_ms = duration_ms - group_ms_length
 
         # sauvegarder information
         group_datas[_FILENAME].append(specie_infos.loc[index, _FILENAME])
-        group_datas[_SPECTROGRAM_FRAME_LENGTH].append(spectrogram_frame_length)
-        group_datas[_GROUP_BEGIN].append(group_begin)
-        group_datas[_SEGMENT_FRAME_LENGTH].append(segment_frame_length)
-        group_datas[_GROUP_HOP_FRAME_LENGTH].append(group_hop_frame_length)
         group_datas[_LATITUDE].append( specie_infos.loc[index, _LATITUDE] )
         group_datas[_LONGITUDE].append( specie_infos.loc[index, _LONGITUDE] )
         group_datas[_SPECIE].append( specie_code )
+        group_datas[_DURATION_MS].append(duration_ms)
+        group_datas[_GROUP_BEGIN_MS].append(group_begin_ms)
 
     return DataFrame(group_datas)
 

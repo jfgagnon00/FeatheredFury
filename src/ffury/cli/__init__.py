@@ -30,8 +30,8 @@ def ffury():
     # doit etre ajoute
     from .dataset import dataset_group
     from .dataset_install import install
-    from .dataset_index_split import index_split
-    from .dataset_split import split
+    from .dataset_index import index
+    from .dataset_preprocess import preprocess
     _cli.add_command(dataset_group)
 
     _cli()

@@ -11,8 +11,8 @@ from ..configs import (
 from ..transforms.properties import (
     _LATITUDE,
     _LONGITUDE,
-    _MELSPECTROGRAM_GROUPS,
-    _SPECIE
+    _SPECIE,
+    _SPECTROGRAM_GROUPS
 )
 
 
@@ -56,4 +56,4 @@ class IndexedDataset():
                 _LATITUDE: self._hdf5_file[_LATITUDE],
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]
             })
-        self._melspectrogram_groups = self._hdf5_file[_MELSPECTROGRAM_GROUPS]
+        self._melspectrogram_groups = self._hdf5_file[_SPECTROGRAM_GROUPS]

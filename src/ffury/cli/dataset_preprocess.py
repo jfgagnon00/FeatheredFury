@@ -1,5 +1,3 @@
-import click
-
 from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
@@ -9,35 +7,24 @@ from .dataset import dataset_group
 
 from ..configs import (
     DatasetType,
-    load_config,
     ProjectConfig
 )
 from ..misc.logging import create_logger
-from ..misc.md5 import md5
 from ..transforms import (
     copy_specie_groups_data,
     generate_specie_groups,
     generate_species_groups,
-    split as transform_split
+    split
 )
 
 
 @dataset_group.command()
-@click.option("--config", 
-              type=click.Path(exists=True), 
-              default=None,
-              help="Override preprocess config")
 @ProjectConfigDecorator
-def split(project_config: ProjectConfig, 
-          config: str) -> None:
+def preprocess(project_config: ProjectConfig) -> None:
     """
     Resample le dataset en groupes et les split en train/test/validation
     """
     logger = create_logger(file=__file__)
-
-    if not config is None:
-        logger.info(f"Override preprocess config: '{config}'")
-        project_config.preprocess = load_config(config)
 
     # charger data explore
     filename = project_config.get_csv_filename(DatasetType.EXPLORED)
@@ -51,7 +38,7 @@ def split(project_config: ProjectConfig,
     # ecrire dataset primary_label, common_name dans fichier .csv
     # evite d'avoir des strings partout
     filename = Path(project_config.get_csv_filename(DatasetType._SPECIES))
-    logger.info(f"Creation '{filename}'")
+    logger.info(f"Ecriture '{filename}'")
     filename.parent.mkdir(exist_ok=True, parents=True)
     species_str.to_csv(filename, index=False)
 
@@ -78,8 +65,8 @@ def split(project_config: ProjectConfig,
         append = True
 
     logger.info(f"Split")
-    train_df, test_df, validation_df = transform_split(read_csv(groups_df_filename), 
-                                                       project_config.preprocess)
+    train_df, test_df, validation_df = split(read_csv(groups_df_filename), 
+                                                      project_config.preprocess)
     
     train_df.to_csv(project_config.get_csv_filename(DatasetType.TRAIN), 
                     mode="w", 
@@ -94,7 +81,8 @@ def split(project_config: ProjectConfig,
                          index=False)
 
     # prendre en note une signature des parametres utilises pour le preprocessing
-    logger.info(f"Ecriture MD5")
-    filename = Path.joinpath(project_config.paths.DATA_DIR, "data_split.md5")
+    filename = Path.joinpath(project_config.paths.DATA_DIR, "data_preprocessed.md5")
+    logger.info(f"Ecriture '{filename}'")
     with open(filename, "w") as file:
-        print( md5(project_config.preprocess), file=file)
+        print(project_config.preprocess.split_sampling_md5(), 
+              file=file)

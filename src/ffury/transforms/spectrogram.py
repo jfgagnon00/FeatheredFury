@@ -18,13 +18,15 @@ def spectrogram_from_audio(audio: NDArray,
     """
     if config.spectrogram_stft_window_size_ms < config.spectrogram_stft_frame_size_ms:
         raise ValueError(f"spectrogram_stft_window_size_ms {config.spectrogram_stft_window_size_ms} < spectrogram_stft_frame_size_ms {config.spectrogram_stft_frame_size_ms}")
-    
-    audio, sampling_rate = waveform_apply_config(audio, 
-                                                 sampling_rate,
-                                                 config)
+
+    if sampling_rate != config.clip_sampling_rate_hz:
+        raise ValueError(f"sampling_rate {sampling_rate} != clip_sampling_rate_hz {config.clip_sampling_rate_hz}")
+
+    if len(audio.shape) > 1 and audio.shape[1] != 1:
+        raise ValueError(f"audio.shape {audio.shape} is not mono")
 
     S = melspectrogram(y=audio,
-                       power=2,
+                       power=config.spectrogram_power,
                        sr=config.clip_sampling_rate_hz,
                        n_fft=config.spectrogram_n_ftt,
                        hop_length=config.spectrogram_hop_length,

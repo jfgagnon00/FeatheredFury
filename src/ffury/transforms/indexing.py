@@ -13,15 +13,14 @@ from pandas import (
 from pathlib import Path
 
 from .properties import (
-    _GROUP_BEGIN,
-    _SEGMENT_FRAME_LENGTH,
-    _GROUP_HOP_FRAME_LENGTH,
+    _DURATION_MS,
     _FILENAME,
+    _GROUP_BEGIN_MS,
     _LATITUDE,
     _LONGITUDE,
-    _MELSPECTROGRAM,
-    _MELSPECTROGRAM_GROUPS,
     _SPECIE,
+    _SPECTROGRAM_GROUPS,
+    _SPECTROGRAM,
 )
 
 from ..configs import ProjectConfig
@@ -36,8 +35,7 @@ def write_hdf5_dataset(hdf5_filename: str,
 
     with open_file(filename, "w") as hdf5_file:
         hdf5_file.create_dataset(dataset, 
-                                 data=data,
-                                 compression="gzip")
+                                 data=data)
         hdf5_file.flush()
 
 def write_hdf5_groups(hdf5_filename: str,
@@ -54,12 +52,16 @@ def write_hdf5_groups(hdf5_filename: str,
         
         hdf5_file.create_dataset(_SPECIE,
                                  data=data_df[_SPECIE].astype(int32))
+        
+        _, \
+            segment_frame_length, \
+            group_hop_frame_length = config.preprocess.group_frame_infos()
 
         # batch, n_segments, n_mels, n_frames)
         group_shape = (data_df.shape[0],
                        config.preprocess.group_segment_count, 
                        config.preprocess.spectrogram_n_mels,
-                       data_df.iloc[0].segment_frame_length)
+                       segment_frame_length)
         
         # les groupes sont des vues sur d'autres fichiers hdf5
         # d'ou VirtualLayout et create_virtual_dataset
@@ -69,19 +71,28 @@ def write_hdf5_groups(hdf5_filename: str,
         for g in range(0, data_df.shape[0]):
             r = data_df.iloc[g]
 
-            filename = Path.joinpath(config.paths.BUILD_DIR, _MELSPECTROGRAM, r[_FILENAME])
-            filename = Path(filename).with_suffix(".hdf5")
+            hdf5_source = Path.joinpath(config.paths.BUILD_DIR, _SPECTROGRAM, r[_FILENAME])
+            hdf5_source = hdf5_source.with_suffix(".hdf5")
 
-            source = VirtualSource(filename, 
-                                   _MELSPECTROGRAM,
-                                   (config.preprocess.spectrogram_n_mels, r.spectrogram_frame_length),
+            spectrogram_frame_length = r[_DURATION_MS] / config.preprocess.spectrogram_stft_frame_size_ms
+            spectrogram_frame_length = int(spectrogram_frame_length) + 1
+
+            source = VirtualSource(hdf5_source,
+                                   _SPECTROGRAM,
+                                   (config.preprocess.spectrogram_n_mels, spectrogram_frame_length),
                                    dtype=float32)
 
-            segment_begin = r[_GROUP_BEGIN]
-            for s in range(config.preprocess.group_segment_count):
-                segment_end = segment_begin + r[_SEGMENT_FRAME_LENGTH]
-                group_layout[g, s, ...] = source[..., segment_begin:segment_end]
-                segment_begin += r[_GROUP_HOP_FRAME_LENGTH]
+            segment_frame_begin = r[_GROUP_BEGIN_MS] / config.preprocess.spectrogram_stft_frame_size_ms
+            segment_frame_begin = int(segment_frame_begin)
 
-        hdf5_file.create_virtual_dataset(_MELSPECTROGRAM_GROUPS, group_layout)
+            for s in range(config.preprocess.group_segment_count):
+                segment_frame_end = segment_frame_begin + segment_frame_length
+
+                # validation non debordement
+                assert segment_frame_end < spectrogram_frame_length
+
+                group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
+                segment_frame_begin += group_hop_frame_length
+
+        hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, group_layout)
         hdf5_file.flush()

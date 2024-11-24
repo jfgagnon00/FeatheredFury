@@ -1,4 +1,6 @@
 from math import ceil
+
+from ..misc.md5 import md5_from_iterable
 from ..yaml import YamlDeserializable
 
 
@@ -21,10 +23,13 @@ class PreprocessConfig:
         self.spectrogram_fmin = 0
         self.spectrogram_fmax = 0
         self.spectrogram_n_mels = 0
+        self.spectrogram_power = 2
 
         # train/test/validation split
         self.split_train_size = 0
         self.split_test_size = 0
+        self.split_train_random_state = 42
+        self.split_test_random_state = 24
 
     @property
     def spectrogram_n_ftt(self):
@@ -34,17 +39,52 @@ class PreprocessConfig:
     def spectrogram_hop_length(self):
         # number of samples to hop to get 1 spectrogram element
         return ceil(self.clip_sampling_rate_hz * self.spectrogram_stft_frame_size_ms / 1000)
+    
+    def split_sampling_md5(self):
+        """
+        Utilitaire pour avoir une signature sur les parametres de split/resampling
+        """
+        return md5_from_iterable([
+            self.split_train_size,
+            self.split_test_size,
+            self.split_train_random_state,
+            self.split_test_random_state,
+            self.segment_size_ms,
+            self.segment_overlap_size_ms,
+            self.group_segment_count,
+            self.group_count])
 
-    def group_info(self):
+    def spectrogram_md5(self):
+        """
+        Utilitaire pour avoir une signature sur les parametres de spectrogram
+        """
+        return md5_from_iterable([
+            self.clip_sampling_rate_hz,
+            self.spectrogram_stft_window_size_ms,
+            self.spectrogram_stft_frame_size_ms,
+            self.spectrogram_fmin,
+            self.spectrogram_fmax,
+            self.spectrogram_n_mels,
+            self.spectrogram_power])
+
+    def group_frame_infos(self):
         """
         Retourne tuple avec la quantite de frames du spectrograme necessaire 
-        pour avoir (groupe_length, segment_length, hop_length)
+        pour avoir (groupe_length, segment_length, groupe_hop_length)
         """
         # nombre de frames du spectrograme requis pour avoir 1 overlap
         overlap_frame_length = int(self.segment_overlap_size_ms / self.spectrogram_stft_frame_size_ms + 0.5)
         segment_frame_length = int(self.segment_size_ms / self.spectrogram_stft_frame_size_ms + 0.5)
-        hop_frame_length = segment_frame_length - overlap_frame_length
+        group_hop_frame_length = segment_frame_length - overlap_frame_length
 
-        group_frame_length = (self.group_segment_count - 1) * hop_frame_length + segment_frame_length
+        group_frame_length = (self.group_segment_count - 1) * group_hop_frame_length + segment_frame_length
 
-        return group_frame_length, segment_frame_length, hop_frame_length
+        return group_frame_length, segment_frame_length, group_hop_frame_length
+
+    def group_ms_infos(self):
+        """
+        Retourne tuple avec la quantite de ms necessaire 
+        pour avoir (groupe_length, segment_length, groupe_hop_length)
+        """
+        group_ms_length = (self.group_segment_count - 1) * self.segment_overlap_size_ms + self.segment_size_ms
+        return group_ms_length, self.segment_size_ms, self.segment_overlap_size_ms

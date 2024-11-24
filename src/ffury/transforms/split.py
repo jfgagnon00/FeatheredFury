@@ -31,11 +31,13 @@ def split(data: DataFrame,
         raise ValueError("train_size et/ou test_size ne semblent pas valide")
     
     train, validation = train_test_split(data, 
-                                         train_size=hold_size, 
+                                         train_size=hold_size,
+                                         random_state=config.split_test_random_state,
                                          stratify=data[_SPECIE])
     
     train, test = train_test_split(train, 
-                                   train_size=train_size, 
+                                   train_size=train_size,
+                                   random_state=config.split_train_random_state,
                                    stratify=train[_SPECIE])
     
     # validation split donne resultat attendu
