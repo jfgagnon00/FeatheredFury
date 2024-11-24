@@ -19,6 +19,7 @@ class PathsConfig:
         self.DATA_DIR = ""
         self.MODELS_DIR = ""
         self.CI_DIR = ""
+        self.CD_DIR = ""
 
     @property
     def DATA_RAW_DIR(self):

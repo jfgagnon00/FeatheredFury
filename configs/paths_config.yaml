@@ -20,3 +20,5 @@ DATA_DIR: !relative_path ../data
 MODELS_DIR: !relative_path ../models
 
 CI_DIR: !relative_path ../.ci
+
+CD_DIR: !relative_path ../.cd
