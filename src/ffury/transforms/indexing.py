@@ -75,7 +75,7 @@ def write_hdf5_groups(hdf5_filename: str,
             hdf5_source = hdf5_source.with_suffix(".hdf5")
 
             spectrogram_frame_length = r[_DURATION_MS] / config.preprocess.spectrogram_stft_frame_size_ms
-            spectrogram_frame_length = int(spectrogram_frame_length) + 1
+            spectrogram_frame_length = int(spectrogram_frame_length + 0.5) + 1
 
             source = VirtualSource(hdf5_source,
                                    _SPECTROGRAM,
@@ -89,7 +89,7 @@ def write_hdf5_groups(hdf5_filename: str,
                 segment_frame_end = segment_frame_begin + segment_frame_length
 
                 # validation non debordement
-                assert segment_frame_end < spectrogram_frame_length
+                assert segment_frame_end <= spectrogram_frame_length
 
                 group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
                 segment_frame_begin += group_hop_frame_length
