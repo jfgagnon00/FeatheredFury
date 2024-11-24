@@ -24,7 +24,7 @@ from .properties import (
 )
 
 from ..configs import ProjectConfig
-from ..dataset.hdf5 import open_file
+from ..misc.hdf5 import open_file
 
 
 def write_hdf5_dataset(hdf5_filename: str,
@@ -40,7 +40,8 @@ def write_hdf5_dataset(hdf5_filename: str,
 
 def write_hdf5_groups(hdf5_filename: str,
                       data_df: DataFrame,
-                      config: ProjectConfig) -> None:
+                      config: ProjectConfig,
+                      log_debug_info=False) -> None:
     hdf5_filename = Path(hdf5_filename)
     hdf5_filename.parent.mkdir(exist_ok=True, parents=True)
     with open_file(hdf5_filename, "w") as hdf5_file:
@@ -85,14 +86,34 @@ def write_hdf5_groups(hdf5_filename: str,
             segment_frame_begin = r[_GROUP_BEGIN_MS] / config.preprocess.spectrogram_stft_frame_size_ms
             segment_frame_begin = int(segment_frame_begin)
 
+            if log_debug_info:
+                print(hdf5_filename)
+
             for s in range(config.preprocess.group_segment_count):
                 segment_frame_end = segment_frame_begin + segment_frame_length
 
                 # validation non debordement
                 assert segment_frame_end <= spectrogram_frame_length
 
+                if log_debug_info:
+                    print("    ", str(hdf5_source), g, s, (segment_frame_begin, segment_frame_end))
+
                 group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
                 segment_frame_begin += group_hop_frame_length
 
         hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, group_layout)
         hdf5_file.flush()
+
+def _md5_filename(config: ProjectConfig) -> str:
+    return Path.joinpath(config.paths.BUILD_DIR, "data_indexed.md5")
+
+def write_indexing_md5(config: ProjectConfig) -> str:
+    filename = _md5_filename(config)
+    with open(filename, "w") as file:
+        print(config.preprocess.spectrogram_md5(), 
+              file=file)
+
+def read_indexing_md5(config: ProjectConfig) -> str:
+    filename = _md5_filename(config)
+    with open(filename, "r") as file:
+        return file.read().strip()

@@ -14,7 +14,8 @@ from ..transforms import (
     copy_specie_groups_data,
     generate_specie_groups,
     generate_species_groups,
-    split
+    split,
+    write_split_sampling_md5
 )
 
 
@@ -81,8 +82,5 @@ def preprocess(project_config: ProjectConfig) -> None:
                          index=False)
 
     # prendre en note une signature des parametres utilises pour le preprocessing
-    filename = Path.joinpath(project_config.paths.DATA_DIR, "data_preprocessed.md5")
-    logger.info(f"Ecriture '{filename}'")
-    with open(filename, "w") as file:
-        print(project_config.preprocess.split_sampling_md5(), 
-              file=file)
+    logger.info(f"Ecriture signature md5")
+    write_split_sampling_md5(project_config)

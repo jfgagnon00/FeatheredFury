@@ -16,7 +16,8 @@ from ..transforms import (
     waveform_apply_config,
     waveform_from_file,
     write_hdf5_dataset,
-    write_hdf5_groups
+    write_hdf5_groups,
+    write_indexing_md5
 )
 from ..transforms.properties import (
     _FILENAME,
@@ -76,8 +77,5 @@ def index(project_config: ProjectConfig) -> None:
         wait(writer_futures)
 
     # prendre en note une signature des parametres utilises pour l'indexation
-    filename = Path.joinpath(project_config.paths.BUILD_DIR, "data_indexed.md5")
-    logger.info(f"Ecriture '{filename}'")
-    with open(filename, "w") as file:
-        print(project_config.preprocess.spectrogram_md5(), 
-              file=file)
+    logger.info(f"Ecriture signature md5")
+    write_indexing_md5(project_config)

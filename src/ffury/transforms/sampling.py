@@ -128,3 +128,17 @@ def copy_specie_groups_data(specie_data: DataFrame,
         dst = Path.joinpath(config.paths.DATA_DIR, _AUDIO, f)
         dst.parent.mkdir(exist_ok=True, parents=True)
         copyfile(src, dst)
+
+def _md5_filename(config: ProjectConfig) -> str:
+    return Path.joinpath(config.paths.DATA_DIR, "data_preprocessed.md5")
+
+def write_split_sampling_md5(config: ProjectConfig) -> str:
+    filename = _md5_filename(config)
+    with open(filename, "w") as file:
+        print(config.preprocess.split_sampling_md5(), 
+              file=file)
+
+def read_split_sampling_md5(config: ProjectConfig) -> str:
+    filename = _md5_filename(config)
+    with open(filename, "r") as file:
+        return file.read().strip()
