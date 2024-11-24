@@ -6,3 +6,8 @@ raw/
 /data_validation.hdf5
 /data__species.csv
 /data_preprocessed.md5
+/audio
+/data_split.md5
+/data_validation.csv
+/data_train.csv
+/data_test.csv

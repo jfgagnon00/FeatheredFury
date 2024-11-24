@@ -77,6 +77,6 @@ class ProjectConfig:
            type_ == DatasetType.EXPLORED:
             raise ValueError(f"{type_.name} n'est pas supporte en format hdf5")
 
-        path = Path.joinpath(self.paths.DATA_DIR, 
+        path = Path.joinpath(self.paths.BUILD_DIR, 
                              type_._hdf5_filename)
         return str(path.resolve())

@@ -1,5 +1,0 @@
-outs:
-- md5: 404d48084757b1c36eb05ab9d858e28c
-  size: 813256
-  hash: md5
-  path: data_test.hdf5
