@@ -10,13 +10,12 @@ from ..configs import PreprocessConfig
 def waveform_from_file(audio_filename: str,
                        config: PreprocessConfig) ->  NDArray:
     """
-    Load fichier audio et s'assure qu'il soit mono et a le sampling rate 
-    demander dans la config de preprocessing
+    Load fichier audio
     """
     # resampler fichier audio
     audio, sampling_rate = load(audio_filename, 
-                                sr=config.clip_sampling_rate_hz,
-                                mono=True)
+                                sr=None,
+                                mono=None)
     duration = len(audio) / sampling_rate
     expected_min = config.segment_size_ms / 1000
 
