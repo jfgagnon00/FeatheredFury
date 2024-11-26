@@ -39,7 +39,7 @@ fi
 if [ -f .venv/bin/activate ]; then
     source .venv/bin/activate
 else
-    source .venv/Scrips/activate
+    source .venv/Scritps/activate
 fi
 
 if [ $NeedInstall -eq 1 ]; then
