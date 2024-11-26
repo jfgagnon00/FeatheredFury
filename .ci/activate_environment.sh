@@ -35,7 +35,12 @@ else
     echo "Activation environment pour $ENV_NAME"
 fi
 
-source .venv/bin/activate
+# diff between windows and linux
+if [ -f .venv/bin/activate ]; then
+    source .venv/bin/activate
+else
+    source .venv/Scrips/activate
+fi
 
 if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
