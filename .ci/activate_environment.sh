@@ -2,6 +2,23 @@
 
 # script pour gerer l'installation/activation de l'environnement virtuel
 
+# Function to get the absolute path of the current script
+get_script_path() {
+    # In case the script is sourced or executed directly
+    local script="$0"
+
+    # If the script is sourced (i.e., BASH_SOURCE[0] will hold the source path)
+    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+        script="${BASH_SOURCE[0]}"
+    fi
+
+    # Resolve symlinks and get the absolute path
+    local script_dir
+    script_dir=$(dirname "$(readlink -f "$script" 2>/dev/null || echo "$script")")
+
+    echo "$script_dir"
+}
+
 PYTHON_INTERPRETER=$1
 ENV_NAME=$2
 FORCE_INSTALLATION=$3
@@ -41,7 +58,7 @@ if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
 
     $PYTHON_INTERPRETER -m pip install --upgrade pip
-    $PYTHON_INTERPRETER -m pip install -r "$(dirname $0)/requirements-local.txt"
+    $PYTHON_INTERPRETER -m pip install -r "$(get_script_path)/requirements-local.txt"
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
     $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME
