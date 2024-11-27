@@ -9,6 +9,7 @@ from ..yaml import YamlDeserializable
 from .PathsConfig import PathsConfig
 from .BirdClefConfig import BirdClefConfig
 from .PreprocessConfig import PreprocessConfig
+from .TrainConfig import TrainConfig
 
 
 class DatasetType(IntEnum):
@@ -43,6 +44,7 @@ class ProjectConfig:
         self.paths = PathsConfig()
         self.dataset = BirdClefConfig()
         self.preprocess = PreprocessConfig()
+        self.train = TrainConfig()
 
     def get_audio_filename(self, filename: str) -> str:
         """

@@ -8,6 +8,8 @@ from .ProjectConfig import (
 )
 from .PathsConfig import PathsConfig
 from .BirdClefConfig import BirdClefConfig
+from .PreprocessConfig import PreprocessConfig
+from .TrainConfig import TrainConfig
 
 
 # nom fichier config par defaut 
