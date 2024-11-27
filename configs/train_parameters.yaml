@@ -1,0 +1,5 @@
+!ffury.configs.TrainParameters
+
+learning_rate:  0.001
+epochs:  1
+batch_size:  32

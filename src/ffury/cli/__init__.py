@@ -10,6 +10,7 @@ from ..configs import (
     DEFAULT_CONFIG_FILE
 )
 
+
 ProjectConfigDecorator = click.make_pass_decorator(ProjectConfig)
 
 @click.group()

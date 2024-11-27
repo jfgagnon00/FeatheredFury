@@ -9,7 +9,5 @@ class TrainConfig:
     def __init__(self):
         self.model = None
         self.trainer = None
-        self.learning_rate = 0
-        self.epoch = 0
-        self.batch_size = 0
-        self.test_every_n_steps = 1
+        self.metrics = None
+        self.parameters = None

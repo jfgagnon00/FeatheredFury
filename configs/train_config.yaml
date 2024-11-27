@@ -1,8 +1,6 @@
 !ffury.configs.TrainConfig
 
 model:  None
-trainer:  None
-learning_rate:  0.001
-epoch:  1
-batch_size:  32
-test_every_n_steps: 5
+trainer: !ffury.trainers.KerasTrainer {}
+metrics: None
+parameters: !include train_parameters.yaml

@@ -10,6 +10,7 @@ from .PathsConfig import PathsConfig
 from .BirdClefConfig import BirdClefConfig
 from .PreprocessConfig import PreprocessConfig
 from .TrainConfig import TrainConfig
+from .TrainParameters import TrainParameters
 
 
 # nom fichier config par defaut 
