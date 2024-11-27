@@ -2,6 +2,16 @@
 
 # script pour gerer l'installation/activation de l'environnement virtuel
 
+SCRIPT="$0"
+
+# si le script est source BASH_SOURCE[0] devrait avoir la source
+# sauf sur Mac...
+if [[ "${BASH_SOURCE[0]}" != "" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    SCRIPT="${BASH_SOURCE[0]}"
+fi
+
+# resoudre symlinks and obtenir path absolue
+SCRIPT_DIR=$(dirname "$(readlink -f "$SCRIPT" 2>/dev/null || echo "$SCRIPT")")
 PYTHON_INTERPRETER=$1
 ENV_NAME=$2
 FORCE_INSTALLATION=$3
@@ -21,7 +31,7 @@ fi
 
 # verifier si environment existe
 NeedInstall=0
-if ! [ -f .venv/bin/activate ]; then
+if ! [ -f .venv/bin/activate ] && ! [ -f .venv/Scripts/activate ]; then
     NeedInstall=1
     echo "Création environment pour $ENV_NAME"
     $PYTHON_INTERPRETER -m venv .venv --prompt $ENV_NAME
@@ -35,7 +45,7 @@ else
     echo "Activation environment pour $ENV_NAME"
 fi
 
-# diff between windows and linux
+# difference entre windows et linux/mac
 if [ -f .venv/bin/activate ]; then
     source .venv/bin/activate
 else
@@ -45,19 +55,8 @@ fi
 if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
 
-    # In case the script is sourced or executed directly
-    script="$0"
-
-    # If the script is sourced (i.e., BASH_SOURCE[0] will hold the source path)
-    if [[ "${BASH_SOURCE[0]}" != "" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
-        script="${BASH_SOURCE[0]}"
-    fi
-
-    # Resolve symlinks and get the absolute path
-    script_dir=$(dirname "$(readlink -f "$script" 2>/dev/null || echo "$script")")
-
     $PYTHON_INTERPRETER -m pip install --upgrade pip
-    $PYTHON_INTERPRETER -m pip install -r "${script_dir}/requirements-local.txt"
+    $PYTHON_INTERPRETER -m pip install -r "${SCRIPT_DIR}/requirements-local.txt"
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
     $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME
