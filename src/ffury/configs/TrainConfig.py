@@ -8,6 +8,6 @@ class TrainConfig:
     """
     def __init__(self):
         self.model_factory = None
-        self.trainer = None
         self.metrics = None
+        self.trainer = None
         self.parameters = None
