@@ -16,11 +16,12 @@ from ..yaml.yaml_decorators import YamlDeserializable
 @YamlDeserializable
 class KerasTrainer:
     """
-    Encapsule boucle d'entrainement avec Keras
-    """
-    def __init__(self):
-        pass
+    Encapsule boucle d'entrainement avec Keras.
 
+    LIMITATION: Il est possible que python lance une erreur 'Too many file open'
+                Je ne sais pas encore quel est la source du probleme mais un workaround
+                est de hausser la limite avec 'ulimit -n 4096'.
+    """
     def __call__(self,
                  paths: PathsConfig,
                  parameters: TrainParameters,
