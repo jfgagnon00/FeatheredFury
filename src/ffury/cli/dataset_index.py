@@ -6,11 +6,11 @@ from tqdm import tqdm
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
+
 from ..configs import (
     DatasetType,
     ProjectConfig
 )
-
 from ..transforms import (
     spectrogram_from_audio,
     waveform_apply_config,

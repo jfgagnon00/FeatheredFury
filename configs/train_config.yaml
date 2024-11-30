@@ -1,6 +1,6 @@
 !ffury.configs.TrainConfig
 
-model:  None
-trainer: !ffury.trainers.KerasTrainer {}
+model_factory: !ffury.keras_adapters.KerasDummyModelFactory {}
+trainer: !ffury.keras_adapters.KerasTrainer {}
 metrics: None
 parameters: !include train_parameters.yaml

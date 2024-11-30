@@ -11,3 +11,5 @@ class TrainParameters:
         self.learning_rate = 0
         self.epochs = 0
         self.batch_size = 0
+        self.optimizer = ""
+        self.loss = ""

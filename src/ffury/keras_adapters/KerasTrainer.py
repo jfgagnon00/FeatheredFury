@@ -1,0 +1,62 @@
+from pathlib import Path
+from typing import (
+    Any,
+    Callable
+)
+
+from ..configs import (
+    PathsConfig,
+    TrainParameters
+)
+from ..misc.logging import create_logger
+from ..misc.Profile import Profile
+from ..yaml.yaml_decorators import YamlDeserializable
+
+
+@YamlDeserializable
+class KerasTrainer:
+    """
+    Encapsule boucle d'entrainement avec Keras
+    """
+    def __init__(self):
+        pass
+
+    def __call__(self,
+                 paths: PathsConfig,
+                 parameters: TrainParameters,
+                 metrics: Callable,
+                 model: Any, 
+                 x_train: Any,
+                 y_train: Any,
+                 x_valid: Any,
+                 y_valid: Any,) -> None:
+        # ces imports sont extremement lent - sortir de l'entete
+        # https://github.com/keras-team/keras/issues/7408
+        from tensorflow.config import list_physical_devices
+        from keras.callbacks import ModelCheckpoint
+        from tqdm.keras import TqdmCallback
+
+        logger = create_logger(file=__file__)
+
+        logger.info("Device disponible")
+        logger.info([f"{d.device_type}, {d.name}" for d in list_physical_devices()])
+
+        model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + "-{epoch:03d}.keras")
+        model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
+
+        with Profile() as profile:
+            history = model.fit(x_train, y_train,
+                                epochs=parameters.epochs,
+                                batch_size=parameters.batch_size,
+                                validation_data=(x_valid, y_valid),
+
+                                # simplifier logging
+                                verbose=0,
+                                callbacks=[TqdmCallback(),
+                                           ModelCheckpoint(str(model_checkpoint),
+                                                           monitor="val_accuracy",
+                                                           mode="max",
+                                                           verbose=0,
+                                                           save_freq="epoch",
+                                                           save_best_only=False),
+                                          ])
