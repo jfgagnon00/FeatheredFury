@@ -20,7 +20,7 @@ def train(project_config: ProjectConfig) -> None:
     model = project_config.train.model_factory.create_from_config(project_config)
 
     train = IndexedDataset(project_config, 
-                        DatasetType.TRAIN)
+                           DatasetType.TRAIN)
 
     validation = IndexedDataset(project_config, 
                                 DatasetType.VALIDATION)
