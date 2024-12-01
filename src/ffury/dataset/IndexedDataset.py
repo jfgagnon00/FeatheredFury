@@ -77,9 +77,7 @@ class IndexedDataset():
     def _init_dataset(self, project_config: ProjectConfig, dataset_type: DatasetType):
         filename = project_config.get_hdf5_filename(dataset_type)
         self._hdf5_file = open_file(filename, "r")
-        self._y = DataFrame({
-                _SPECIE: self._hdf5_file[_SPECIE],
-            })
+        self._y = self._hdf5_file[_SPECIE]
         self._lat_long = DataFrame({
                 _LATITUDE: self._hdf5_file[_LATITUDE],
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]
