@@ -1,10 +1,6 @@
 !ffury.configs.TrainConfig
 
-model_factory: !ffury.keras_adapters.KerasDummyModelFactory
-  num_classes: 5
-
+model_factory: !ffury.keras_adapters.KerasDummyModelFactory {}
 metrics: !ffury.keras_adapters.KerasMetrics {}
-
 trainer: !ffury.keras_adapters.KerasTrainer {}
-
 parameters: !include train_parameters.yaml

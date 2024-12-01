@@ -41,6 +41,7 @@ class ProjectConfig:
     Configurations globales
     """
     def __init__(self):
+        self.num_classes = 0
         self.paths = PathsConfig()
         self.dataset = BirdClefConfig()
         self.preprocess = PreprocessConfig()

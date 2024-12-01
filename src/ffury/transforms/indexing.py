@@ -3,13 +3,12 @@ from h5py import (
     VirtualSource
 )
 from numpy import (
-    int32,
+    int16,
     float32
 )
+from numpy import eye
 from numpy.typing import NDArray
-from pandas import (
-    DataFrame,
-)
+from pandas import DataFrame
 from pathlib import Path
 
 from .properties import (
@@ -40,8 +39,16 @@ def write_hdf5_dataset(hdf5_filename: str,
 
 def write_hdf5_groups(hdf5_filename: str,
                       data_df: DataFrame,
-                      config: ProjectConfig,
+                      project_config: ProjectConfig,
                       log_debug_info=False) -> None:
+    """
+    Ecriture des groupes sous format hdf5. Voir jupyter notebooks pour 
+    comprendre ce qu'est un groupe. 
+    
+    Note:
+    Les spectrogrammes sont reference via un VirtualLayout afin de d'eliminer
+    la redondance des donnees et simplifier le loading lors de l'entrainement.
+    """
     hdf5_filename = Path(hdf5_filename)
     hdf5_filename.parent.mkdir(exist_ok=True, parents=True)
     with open_file(hdf5_filename, "w") as hdf5_file:
@@ -50,18 +57,20 @@ def write_hdf5_groups(hdf5_filename: str,
         
         hdf5_file.create_dataset(_LONGITUDE,
                                  data=data_df[_LONGITUDE].astype(float32))
-        
-        hdf5_file.create_dataset(_SPECIE,
-                                 data=data_df[_SPECIE].astype(int32))
-        
+
+        # one hot encode _SPECIE
+        I = eye(project_config.num_classes, dtype=int16)
+        hdf5_file.create_dataset(_SPECIE, 
+                                 data=I[ data_df[_SPECIE] ])
+
         _, \
             segment_frame_length, \
-            group_hop_frame_length = config.preprocess.group_frame_infos()
+            group_hop_frame_length = project_config.preprocess.group_frame_infos()
 
         # batch, n_segments, n_mels, n_frames)
         group_shape = (data_df.shape[0],
-                       config.preprocess.group_segment_count, 
-                       config.preprocess.spectrogram_n_mels,
+                       project_config.preprocess.group_segment_count, 
+                       project_config.preprocess.spectrogram_n_mels,
                        segment_frame_length)
         
         # les groupes sont des vues sur d'autres fichiers hdf5
@@ -72,24 +81,24 @@ def write_hdf5_groups(hdf5_filename: str,
         for g in range(0, data_df.shape[0]):
             r = data_df.iloc[g]
 
-            hdf5_source = Path.joinpath(config.paths.BUILD_DIR, _SPECTROGRAM, r[_FILENAME])
+            hdf5_source = Path.joinpath(project_config.paths.BUILD_DIR, _SPECTROGRAM, r[_FILENAME])
             hdf5_source = hdf5_source.with_suffix(".hdf5")
 
-            spectrogram_frame_length = r[_DURATION_MS] / config.preprocess.spectrogram_stft_frame_size_ms
+            spectrogram_frame_length = r[_DURATION_MS] / project_config.preprocess.spectrogram_stft_frame_size_ms
             spectrogram_frame_length = int(spectrogram_frame_length + 0.5) + 1
 
             source = VirtualSource(hdf5_source,
                                    _SPECTROGRAM,
-                                   (config.preprocess.spectrogram_n_mels, spectrogram_frame_length),
+                                   (project_config.preprocess.spectrogram_n_mels, spectrogram_frame_length),
                                    dtype=float32)
 
-            segment_frame_begin = r[_GROUP_BEGIN_MS] / config.preprocess.spectrogram_stft_frame_size_ms
+            segment_frame_begin = r[_GROUP_BEGIN_MS] / project_config.preprocess.spectrogram_stft_frame_size_ms
             segment_frame_begin = int(segment_frame_begin)
 
             if log_debug_info:
                 print(hdf5_filename)
 
-            for s in range(config.preprocess.group_segment_count):
+            for s in range(project_config.preprocess.group_segment_count):
                 segment_frame_end = segment_frame_begin + segment_frame_length
 
                 # validation non debordement
@@ -104,16 +113,16 @@ def write_hdf5_groups(hdf5_filename: str,
         hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, group_layout)
         hdf5_file.flush()
 
-def _md5_filename(config: ProjectConfig) -> str:
-    return Path.joinpath(config.paths.BUILD_DIR, "data_indexed.md5")
+def _md5_filename(project_config: ProjectConfig) -> str:
+    return Path.joinpath(project_config.paths.BUILD_DIR, "data_indexed.md5")
 
-def write_indexing_md5(config: ProjectConfig) -> str:
-    filename = _md5_filename(config)
+def write_indexing_md5(project_config: ProjectConfig) -> str:
+    filename = _md5_filename(project_config)
     with open(filename, "w") as file:
-        print(config.preprocess.spectrogram_md5(), 
+        print(project_config.preprocess.spectrogram_md5(), 
               file=file)
 
-def read_indexing_md5(config: ProjectConfig) -> str:
-    filename = _md5_filename(config)
+def read_indexing_md5(project_config: ProjectConfig) -> str:
+    filename = _md5_filename(project_config)
     with open(filename, "r") as file:
         return file.read().strip()
