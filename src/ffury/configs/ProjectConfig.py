@@ -47,6 +47,9 @@ class ProjectConfig:
         self.preprocess = PreprocessConfig()
         self.train = TrainConfig()
 
+        # configs interne
+        self._ulimit_workaround = 2048
+
     def get_audio_filename(self, filename: str) -> str:
         """
         Commodite pour composer le chemin complet pour avoir un ficheir audio

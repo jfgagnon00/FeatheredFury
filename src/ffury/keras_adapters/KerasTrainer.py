@@ -1,36 +1,32 @@
 from pathlib import Path
 from typing import (
     Any,
-    Callable
+    Callable,
+    List
 )
 
 from ..configs import (
     PathsConfig,
     TrainParameters
 )
+from ..misc.ITrainable import ITrainable
+from ..misc.IMeasurable import IMeasurable
 from ..misc.logging import create_logger
 from ..misc.Profile import Profile
 from ..yaml.yaml_decorators import YamlDeserializable
 
 
 @YamlDeserializable
-class KerasTrainer:
+class KerasTrainer(ITrainable):
     """
-<<<<<<< HEAD
     Encapsule boucle d'entrainement avec Keras.
-
-    LIMITATION: Il est possible que python lance une erreur 'Too many file open'
-                Je ne sais pas encore quel est la source du probleme mais un workaround
-                est de hausser la limite avec 'ulimit -n 4096'.
-=======
-    Encapsule boucle d'entrainement avec Keras
->>>>>>> e1f6f1a (Stub metriques par epoque)
     """
     def __call__(self,
                  paths: PathsConfig,
                  parameters: TrainParameters,
-                 metrics: Callable,
+                 metrics: IMeasurable,
                  model: Any, 
+                 class_labels: List[str],
                  x_train: Any,
                  y_train: Any,
                  x_valdation: Any,
@@ -38,17 +34,17 @@ class KerasTrainer:
         # ces imports sont extremement lent - sortir de l'entete
         # https://github.com/keras-team/keras/issues/7408
         from tensorflow.config import list_physical_devices
-        from keras.callbacks import ModelCheckpoint
         from tqdm.keras import TqdmCallback
-        from .KerasMetricCallback import KerasMetricCallback
+
+        from .KerasCallback import KerasCallback
 
         logger = create_logger(file=__file__)
 
-        logger.info("Device disponible")
+        logger.info("Device(s) disponible")
         logger.info([f"{d.device_type}, {d.name}" for d in list_physical_devices()])
 
-        model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + "-{epoch:03d}.keras")
-        model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
+        # model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + "-{epoch:03d}.keras")
+        # model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
 
         with Profile() as profile:
             model.fit(x_train, y_train,
@@ -59,13 +55,8 @@ class KerasTrainer:
                       # simplifier logging
                       verbose=0,
                       callbacks=[TqdmCallback(),
-                                 KerasMetricCallback(x_train, y_train,
-                                                     x_valdation, y_valdation,
-                                                     metrics),
-                                #  ModelCheckpoint(str(model_checkpoint),
-                                #                  monitor="val_accuracy",
-                                #                  mode="max",
-                                #                  verbose=0,
-                                #                  save_freq="epoch",
-                                #                  save_best_only=False),
+                                 KerasCallback(class_labels,
+                                               x_train, y_train,
+                                               x_valdation, y_valdation,
+                                               metrics)
                                 ])

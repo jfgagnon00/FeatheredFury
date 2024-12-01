@@ -13,6 +13,10 @@ from ..yaml.yaml_decorators import YamlDeserializable
 
 @YamlDeserializable
 class KerasDummyModelFactory(IFactory):
+    """
+    Modele utlise pour tester le pipeline. Ne doit pas etre 
+    utliser autrement.
+    """
     def __init__(self):
         self.name = "KerasDummyModelFactory"
 

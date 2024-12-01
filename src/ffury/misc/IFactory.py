@@ -12,7 +12,7 @@ class IFactory(ABC):
     @abstractmethod
     def create_from_config(self, project_config: ProjectConfig) -> Any:
         """
-        Classe concrete doivent implementer cette methode pour creer leur
-        objet a partir des configuration du projet
+        Classes concretes doivent implementer cette methode pour creer 
+        leur objet a partir des configuration du projet
         """
         pass
