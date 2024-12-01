@@ -2,9 +2,9 @@
 
 model_factory: !ffury.keras_adapters.KerasDummyModelFactory {}
 
-metrics: !ffury.keras_adapters.KerasMetrics
+measurable: !ffury.keras_adapters.KerasMeasurable
   average: macro
 
-trainer: !ffury.keras_adapters.KerasTrainer {}
+trainable: !ffury.keras_adapters.KerasTrainable {}
 
 parameters: !include train_parameters.yaml

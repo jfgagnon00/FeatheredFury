@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import (
     Any,
-    Callable,
     List
 )
 
@@ -9,6 +8,7 @@ from ..configs import (
     PathsConfig,
     TrainParameters
 )
+from ..misc.IMeasurable import IMeasurable
 
 class ITrainable(ABC):
     """
@@ -17,9 +17,10 @@ class ITrainable(ABC):
 
     @abstractmethod
     def __call__(self,
+                 run, # NeptuneRun
                  paths: PathsConfig,
                  parameters: TrainParameters,
-                 metrics: Callable,
+                 measurable: IMeasurable,
                  model: Any, 
                  class_labels: List[str],
                  x_train: Any,

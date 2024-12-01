@@ -15,7 +15,7 @@ from .TrainParameters import TrainParameters
 # # a refactorer
 from ..keras_adapters import (
     KerasDummyModelFactory,
-    KerasTrainer
+    KerasTrainable
 )
 
 from ..yaml import load_yaml

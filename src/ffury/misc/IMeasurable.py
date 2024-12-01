@@ -14,7 +14,8 @@ class IMeasurable(ABC):
     def __call__(self,
                  class_labels: List[str],
                  y_true: Any,
-                 y_pred: Any) -> Any:
+                 y_pred: Any,
+                 measure_prefix: str = None) -> Any:
         """
         Classes concretes doivent implementer cette methode 
         pour calculer et retourner les metriques

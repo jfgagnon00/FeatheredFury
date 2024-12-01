@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import (
     Any,
-    Callable,
     List
 )
 
@@ -12,19 +11,20 @@ from ..configs import (
 from ..misc.ITrainable import ITrainable
 from ..misc.IMeasurable import IMeasurable
 from ..misc.logging import create_logger
-from ..misc.Profile import Profile
+from ..neptune import NeptuneRun
 from ..yaml.yaml_decorators import YamlDeserializable
 
 
 @YamlDeserializable
-class KerasTrainer(ITrainable):
+class KerasTrainable(ITrainable):
     """
     Encapsule boucle d'entrainement avec Keras.
     """
     def __call__(self,
+                 run: NeptuneRun,
                  paths: PathsConfig,
                  parameters: TrainParameters,
-                 metrics: IMeasurable,
+                 measurable: IMeasurable,
                  model: Any, 
                  class_labels: List[str],
                  x_train: Any,
@@ -38,25 +38,24 @@ class KerasTrainer(ITrainable):
 
         from .KerasCallback import KerasCallback
 
-        logger = create_logger(file=__file__)
+        run.log_model_infos(model.get_config())
 
+        logger = create_logger(file=__file__)
         logger.info("Device(s) disponible")
         logger.info([f"{d.device_type}, {d.name}" for d in list_physical_devices()])
 
         # model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + "-{epoch:03d}.keras")
         # model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
 
-        with Profile() as profile:
-            model.fit(x_train, y_train,
-                      epochs=parameters.epochs,
-                      batch_size=parameters.batch_size,
-                      validation_data=(x_valdation, y_valdation),
+        callback = KerasCallback(class_labels,
+                                 x_train, y_train,
+                                 x_valdation, y_valdation,
+                                 run,
+                                 measurable)
 
-                      # simplifier logging
-                      verbose=0,
-                      callbacks=[TqdmCallback(),
-                                 KerasCallback(class_labels,
-                                               x_train, y_train,
-                                               x_valdation, y_valdation,
-                                               metrics)
-                                ])
+        model.fit(x_train, y_train,
+                  epochs=parameters.epochs,
+                  batch_size=parameters.batch_size,
+                  validation_data=(x_valdation, y_valdation),
+                  verbose=0,
+                  callbacks=[TqdmCallback(), callback])

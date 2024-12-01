@@ -5,6 +5,8 @@ from pathlib import PurePath
 from pprint import pprint
 from typing import Optional
 
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 def logger_name_from_file(filename: str) -> str:
     """
     Utilitaire pour uniformiser le noms des loggers a partir d'un nom de fichier
@@ -22,7 +24,7 @@ def create_logger(name: str = None,
 
     if not name is None:
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        datefmt = "%Y-%m-%d %H:%M:%S"
+        datefmt = DATE_FORMAT
         formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)

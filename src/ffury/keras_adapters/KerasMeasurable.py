@@ -19,14 +19,15 @@ _RECALL_KEY = "recall"
 
 
 @YamlDeserializable
-class KerasMetrics(IMeasurable):
+class KerasMeasurable(IMeasurable):
     def __init__(self) -> None:
         self.average = "macro"
 
     def __call__(self, 
                  class_labels: List[str], 
                  y_true: Any, 
-                 y_pred: Any) -> Any:
+                 y_pred: Any,
+                 measure_prefix: str = None) -> Any:
         # calculer les metriques
         ap = average_precision_score(y_true, 
                                      y_pred, 
@@ -35,9 +36,11 @@ class KerasMetrics(IMeasurable):
                                        argmax(y_pred, axis=-1),
                                        target_names=class_labels,
                                        output_dict=True)
+        
+        measure_prefix = "" if measure_prefix is None else f"{measure_prefix}_"
 
         new_report = {}
-        new_report[f"{_AVERAGE_PRECISION_KEY}/{self._average_key()}"] = ap
+        new_report[f"{measure_prefix}{_AVERAGE_PRECISION_KEY}/{self._average_key()}"] = ap
 
         # report est liste par label
         # le transformer pour le lister par metrique
@@ -45,7 +48,7 @@ class KerasMetrics(IMeasurable):
             for metric, metric_name in ((_F1_SCORE_KEY, _F1_KEY),
                                         (_PRECISION_KEY, _PRECISION_KEY),
                                         (_RECALL_KEY, _RECALL_KEY)):
-                new_report[f"{metric_name}/{label}"] = report[label][metric]
+                new_report[f"{measure_prefix}{metric_name}/{label}"] = report[label][metric]
 
         return new_report
     
