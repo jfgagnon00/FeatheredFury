@@ -18,14 +18,25 @@ jobs:
       #     # mettre les configurations du projet en variable d'environment
       #     source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
+      - name: Init DVC
+        run: |
+          pip install dvc
+          pip install dvc-gdrive
+
+          pip list | grep SSL
+          pip list | grep ssl
+
+          pip install pyopenssl --upgrade
+
+          pip list | grep SSL
+          pip list | grep ssl
+
+
       - name: Obtenir les donnees
         env:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
-          pip install dvc
-          pip install dvc-gdrive
-
           # configurer DVC pour acceder Google Drive
           dvc remote add --default gdrive ${GDRIVE_URL}
 
