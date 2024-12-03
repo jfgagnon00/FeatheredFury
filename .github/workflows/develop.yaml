@@ -26,13 +26,14 @@ jobs:
       - name: Update pyopenssl
         run: |
           echo "1 ++++++++++++++++++"
-          pip list | grep SSL
+          pip3 list | grep SSL
 
           echo "3 ++++++++++++++++++"
-          pip install pyopenssl --upgrade
+          pip3 install pyopenssl --upgrade
+          pip3 install cryptography --upgrade
 
           echo "4 ++++++++++++++++++"
-          pip list | grep SSL
+          pip3 list | grep SSL
 
 
       - name: Obtenir les donnees
@@ -55,7 +56,7 @@ jobs:
           echo "C <------------"
 
           # obtenir le data
-          dvc pull
+          dvc status -c
 
       # - name: Train Model
       #   env:
