@@ -12,7 +12,10 @@ jobs:
 
       - name: Setup Environment
         run: |
+          # initialiser environment de build
           pip install -r .ci/requirements-build.txt
+
+          # mettre les configurations du projet en variable d'environment
           source .ci/yaml_to_variables.sh configs/paths_config.yaml
           
       - name: Train Model
@@ -21,4 +24,3 @@ jobs:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
         run: |
           dvc pull ${DATA_DIR}
-          ffury train
