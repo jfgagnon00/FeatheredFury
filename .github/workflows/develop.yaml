@@ -23,6 +23,9 @@ jobs:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
+          pip install dvc
+          pip install dvc-gdrive
+
           # configurer DVC pour acceder Google Drive
           dvc remote add --default gdrive ${GDRIVE_URL}
 
