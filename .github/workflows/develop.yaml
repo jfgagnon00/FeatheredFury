@@ -29,7 +29,7 @@ jobs:
           pip3 list | grep SSL
 
           echo "3 ++++++++++++++++++"
-          pip3 install pyopenssl==22.0.0
+          pip3 install pyopenssl==24.2.1
           # pip3 install cryptography --upgrade
 
           echo "4 ++++++++++++++++++"
