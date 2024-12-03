@@ -28,17 +28,11 @@ jobs:
           echo "1 ++++++++++++++++++"
           pip list | grep SSL
 
-          echo "2 ++++++++++++++++++"
-          pip list | grep ssl
-
           echo "3 ++++++++++++++++++"
           pip install pyopenssl --upgrade
 
           echo "4 ++++++++++++++++++"
           pip list | grep SSL
-
-          echo "5 ++++++++++++++++++"
-          pip list | grep ssl
 
 
       - name: Obtenir les donnees
