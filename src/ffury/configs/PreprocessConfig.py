@@ -88,3 +88,10 @@ class PreprocessConfig:
         """
         group_ms_length = (self.group_segment_count - 1) * self.segment_overlap_size_ms + self.segment_size_ms
         return group_ms_length, self.segment_size_ms, self.segment_overlap_size_ms
+    
+    def train_input_shape(self):
+        """
+        Retourne la shape a utiliser comme input a une reseau de neuronnes.
+        """
+        _, segment_frame_length, _ = self.group_frame_infos()
+        return self.group_segment_count, self.spectrogram_n_mels, segment_frame_length

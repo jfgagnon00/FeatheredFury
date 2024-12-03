@@ -1,8 +1,8 @@
 import click
 import zipfile
 
-from .dataset import dataset_group
 from . import ProjectConfigDecorator
+from .dataset import dataset_group
 from ..misc.logging import create_logger
 from pathlib import Path
 from tqdm import tqdm

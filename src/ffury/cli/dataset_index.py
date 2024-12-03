@@ -6,11 +6,11 @@ from tqdm import tqdm
 
 from . import ProjectConfigDecorator
 from .dataset import dataset_group
+
 from ..configs import (
     DatasetType,
     ProjectConfig
 )
-
 from ..transforms import (
     spectrogram_from_audio,
     waveform_apply_config,
@@ -35,6 +35,8 @@ def index(project_config: ProjectConfig) -> None:
     """
     logger = create_logger(file=__file__)
 
+    # prendre en note les fichiers utilises
+    # les spectrogrammes ne seront generes que pour ces fichiers
     filenames = set()
 
     for dataset_type in [DatasetType.TRAIN, DatasetType.TEST, DatasetType.VALIDATION]:
@@ -47,7 +49,7 @@ def index(project_config: ProjectConfig) -> None:
 
     logger.info(f"Creation spectrogrames")
 
-    # traiter en parallele les donnees
+    # generer en parallele les spectrogrames
     with create_dask_local_client() as client:
         writer_futures = []
 
@@ -70,10 +72,15 @@ def index(project_config: ProjectConfig) -> None:
 
             writer_futures.append(future)
 
+            # ne pas surgarger le systeme, attendre qu'un groupe de
+            # traitements termine avant d'en lancer un autre
+            # TODO: a refactorer - dask devrait s'en occuper
             if len(writer_futures) == (cpu_count() * 2):
                 wait(writer_futures)
                 writer_futures.clear()
         
+        # attendre la fin des calcul de spectrogrames 
+        # avant de les ecrires
         wait(writer_futures)
 
     # prendre en note une signature des parametres utilises pour l'indexation

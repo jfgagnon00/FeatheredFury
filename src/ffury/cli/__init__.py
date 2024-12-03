@@ -10,6 +10,7 @@ from ..configs import (
     DEFAULT_CONFIG_FILE
 )
 
+
 ProjectConfigDecorator = click.make_pass_decorator(ProjectConfig)
 
 @click.group()
@@ -33,5 +34,8 @@ def ffury():
     from .dataset_index import index
     from .dataset_preprocess import preprocess
     _cli.add_command(dataset_group)
+
+    from .train import train
+    _cli.add_command(train)
 
     _cli()

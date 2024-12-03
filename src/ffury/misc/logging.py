@@ -1,7 +1,11 @@
 import logging
 
+from io import StringIO
 from pathlib import PurePath
+from pprint import pprint
 from typing import Optional
+
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 def logger_name_from_file(filename: str) -> str:
     """
@@ -20,7 +24,7 @@ def create_logger(name: str = None,
 
     if not name is None:
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        datefmt = "%Y-%m-%d %H:%M:%S"
+        datefmt = DATE_FORMAT
         formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
@@ -30,3 +34,14 @@ def create_logger(name: str = None,
         return logger
 
     return None
+
+def pretty_format(object: object, *args, **kwargs) -> str:
+    """
+    Format objet a l'aide de pprint dans une string et la retourne
+    """
+    with StringIO() as stream:
+        pprint(object=object,
+               stream=stream,
+               *args,
+               **kwargs)
+        return stream.getvalue()

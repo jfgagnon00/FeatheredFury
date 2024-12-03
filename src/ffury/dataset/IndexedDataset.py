@@ -33,25 +33,41 @@ class IndexedDataset():
         afin de s'assurer de la consistence des donnees
         """
         # valider split/sample md5 est consistent avec la config demande
-        md5 = read_split_sampling_md5(project_config)
-        if md5 != project_config.preprocess.split_sampling_md5():
+        md5_preprocessed = read_split_sampling_md5(project_config)
+        if md5_preprocessed != project_config.preprocess.split_sampling_md5():
             # ces changements demande une nouvelle version des donnees
             raise ValueError("Parmetres de split/sampling ne semblent pas compatible avec configuration. " 
                              "Lancer le preprocess de nouveau")
 
         # valider spectrogram md5 est consistent avec la config demande
-        md5 = read_indexing_md5(project_config)
-        if md5 != project_config.preprocess.spectrogram_md5():
+        md5_indexed = read_indexing_md5(project_config)
+        if md5_indexed != project_config.preprocess.spectrogram_md5():
             # TODO: lancer indexation automatique
             raise ValueError("Parmetres de spectrogramme ne semblent pas compatible avec configuration. " 
                              "Lancer l'indexation de nouveau")
 
         # creation dataset indexe
-        return IndexedDataset(project_config, dataset_type)
+        return IndexedDataset(project_config, 
+                              dataset_type, 
+                              md5_preprocessed,
+                              md5_indexed)
 
-    def __init__(self, project_config: ProjectConfig, dataset_type: DatasetType):
+    def __init__(self, project_config: ProjectConfig, 
+                 dataset_type: DatasetType,
+                 md5_preprocessed: str,
+                 md5_indexed: str) -> None:
+        self._md5_preprocessed = md5_preprocessed
+        self._md5_indexed = md5_indexed
         self._init_species_label(project_config)
         self._init_dataset(project_config, dataset_type)
+
+    @property
+    def md5_preprocessed(self):
+        return self._md5_preprocessed
+
+    @property
+    def md5_indexed(self):
+        return self._md5_indexed
 
     @property
     def species_label(self):
@@ -77,9 +93,7 @@ class IndexedDataset():
     def _init_dataset(self, project_config: ProjectConfig, dataset_type: DatasetType):
         filename = project_config.get_hdf5_filename(dataset_type)
         self._hdf5_file = open_file(filename, "r")
-        self._y = DataFrame({
-                _SPECIE: self._hdf5_file[_SPECIE],
-            })
+        self._y = self._hdf5_file[_SPECIE]
         self._lat_long = DataFrame({
                 _LATITUDE: self._hdf5_file[_LATITUDE],
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]
