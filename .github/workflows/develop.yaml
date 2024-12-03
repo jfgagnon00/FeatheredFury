@@ -10,13 +10,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Environment
-        run: |
-          # initialiser environment de build
-          pip install -r .ci/requirements-build.txt
+      # - name: Setup Environment
+      #   run: |
+      #     # initialiser environment de build
+      #     pip install -r .ci/requirements-build.txt
 
-          # mettre les configurations du projet en variable d'environment
-          source .ci/yaml_to_variables.sh configs/paths_config.yaml
+      #     # mettre les configurations du projet en variable d'environment
+      #     source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
       - name: Obtenir les donnees
         env:
@@ -36,6 +36,8 @@ jobs:
           dvc remote modify gdrive gdrive_acknowledge_abuse true
 
           echo "C <------------"
+
+          dvc status -c
 
           # obtenir le data
           dvc pull
