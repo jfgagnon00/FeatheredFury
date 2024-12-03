@@ -10,31 +10,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Setup Environment
-      #   run: |
-      #     # initialiser environment de build
-      #     pip install -r .ci/requirements-build.txt
-
-      #     # mettre les configurations du projet en variable d'environment
-      #     source .ci/yaml_to_variables.sh configs/paths_config.yaml
-
-      - name: Init DVC Python
+      - name: Setup Environment
         run: |
-          pip install dvc
-          pip install dvc-gdrive
+          # initialiser environment de build
+          pip install -r .ci/requirements-build.txt
 
-      - name: Update pyopenssl
-        run: |
-          echo "1 ++++++++++++++++++"
-          pip3 list | grep SSL
-
-          echo "3 ++++++++++++++++++"
-          pip3 install pyopenssl==24.2.1
-          # pip3 install cryptography --upgrade
-
-          echo "4 ++++++++++++++++++"
-          pip3 list | grep SSL
-
+          # mettre les configurations du projet en variable d'environment
+          source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
       - name: Obtenir les donnees
         env:
@@ -44,19 +26,12 @@ jobs:
           # configurer DVC pour acceder Google Drive
           dvc remote add --default gdrive ${GDRIVE_URL}
 
-          echo "A <------------"
-
           # authentication via Service Account - 
           dvc remote modify gdrive gdrive_use_service_account true
-
-          echo "B <------------"
-
           dvc remote modify gdrive gdrive_acknowledge_abuse true
 
-          echo "C <------------"
-
           # obtenir le data
-          dvc status -c
+          dvc pull
 
       # - name: Train Model
       #   env:
