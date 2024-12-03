@@ -18,17 +18,26 @@ jobs:
       #     # mettre les configurations du projet en variable d'environment
       #     source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
-      - name: Init DVC
+      - name: Init DVC Python
         run: |
           pip install dvc
           pip install dvc-gdrive
 
+      - name: Update pyopenssl
+        run: |
+          echo "1 ++++++++++++++++++"
           pip list | grep SSL
+
+          echo "2 ++++++++++++++++++"
           pip list | grep ssl
 
+          echo "3 ++++++++++++++++++"
           pip install pyopenssl --upgrade
 
+          echo "4 ++++++++++++++++++"
           pip list | grep SSL
+
+          echo "5 ++++++++++++++++++"
           pip list | grep ssl
 
 
