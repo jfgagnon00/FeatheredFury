@@ -24,6 +24,14 @@ class ApiController:
         # logging.basicConfig(level=logging.DEBUG)
         pass
  
+    @staticmethod    
+    def index():
+        return {
+            "message": "Hello World!",
+            "status": "API is running",
+            "version": "1.0.0"
+        }
+
     def waveform(self):
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400

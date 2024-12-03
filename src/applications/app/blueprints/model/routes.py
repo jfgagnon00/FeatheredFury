@@ -36,8 +36,12 @@ def index():
                 return jsonify({'error': 'Nom de fichier vide !'}), 400
 
             if file:
-                #headers = {'Content-Type': 'application/octet-stream'}  
-                response = requests.post('http://127.0.0.1:8000/api/waveform', files={'file': (file.filename, file.stream, file.content_type)})
+                #headers = {'Content-Type': 'application/octet-stream'}   host="0.0.0.0"
+
+                #todo Pour qu'une application dans un conteneur soit accessible depuis l'extérieur, elle doit écouter sur 0.0.0.0 et non 127.0.0.1
+                #api : nom du conteneur
+                url_api='http://api:8080/api/waveform'
+                response = requests.post(url_api, files={'file': (file.filename, file.stream, file.content_type)})
                 result = response.json()
                 #logging.info(f"**************************** Fichier sauvegardé sous : {json.dumps(result, indent=4)}")
                 images = {
