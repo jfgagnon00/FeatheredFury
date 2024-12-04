@@ -17,6 +17,7 @@ runs:
       env:
         GDRIVE_URL: ${{ inputs.GDRIVE_URL }}
         GDRIVE_CREDENTIALS_DATA: ${{ inputs.GDRIVE_CREDENTIALS_DATA }}
+      shell: bash
       run: |
         # configurer DVC pour acceder Google Drive
         dvc remote add --default gdrive ${GDRIVE_URL}

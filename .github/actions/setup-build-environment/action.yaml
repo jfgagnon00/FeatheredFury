@@ -5,6 +5,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup Environment
+      shell: bash
       run: |
         # initialiser environment de build
         pip install -r .ci/requirements-build.txt
