@@ -1,48 +1,28 @@
-name: Development Workflow
+name: "Development Workflow"
+
 on:
   push:
     branches:
       - develop
+
 jobs:
   GenerateModel:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Environment
-        run: |
-          # initialiser environment de build
-          pip install -r .ci/requirements-build.txt
-
-          # mettre les configurations du projet en variable d'environment
-          source .ci/yaml_to_variables.sh configs/paths_config.yaml
+        uses: ./.github/actions/setup-build-environment
 
       - name: Synchroniser Donnees
-        env:
+        uses: ./.github/actions/dvc-sync
+        with:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
-        run: |
-          # configurer DVC pour acceder Google Drive
-          dvc remote add --default gdrive ${GDRIVE_URL}
-
-          # authentication via Service Account - 
-          dvc remote modify gdrive gdrive_use_service_account true
-
-          # settings generaux
-          dvc remote modify gdrive gdrive_acknowledge_abuse true
-          dvc config core.analytics false
-
-          # obtenir le data
-          echo "Pull data"
-          dvc pull
-
-      - name: Indexer Donnees
-        run: |
-          ffury dataset index
 
       - name: Entrainement
-        env:
+        uses: ./.github/actions/train
+        with:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-        run: |
-          ffury train
+          BUILD_MACHINE: ${{ vars.BUILD_MACHINE }}

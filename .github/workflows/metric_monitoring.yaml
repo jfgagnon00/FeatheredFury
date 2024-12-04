@@ -1,10 +1,13 @@
-name: Production Metric Monitoring
+name: "Production Metric Monitoring"
+
 on:
   push:
     branches:
       - main
+
   schedule:
     - cron: ${{vars.MONITORING_CRON_FREQEUNCY}}
+
 jobs:
   MetricMonitoring:
     runs-on: [ubuntu-latest]

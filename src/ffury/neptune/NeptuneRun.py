@@ -39,7 +39,7 @@ class NeptuneRun:
 
     def log_model_infos(self, 
                         model_infos: Dict) -> None:
-        self._run["model"] = dumps(model_infos, indent=4)
+        self._run["model_infos"] = dumps(model_infos, indent=4)
 
     def append_measures(self, 
                         epoch: int,

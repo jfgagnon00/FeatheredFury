@@ -1,0 +1,13 @@
+name: "Setup Build Environment"
+description: "Setup environment de build"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Environment
+      run: |
+        # initialiser environment de build
+        pip install -r .ci/requirements-build.txt
+
+        # mettre les configurations du projet en variable d'environment
+        source .ci/yaml_to_variables.sh configs/paths_config.yaml

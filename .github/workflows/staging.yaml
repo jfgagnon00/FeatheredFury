@@ -1,4 +1,4 @@
-name: Staging Workflow
+name: "Staging Workflow"
 on:
   push:
     branches:

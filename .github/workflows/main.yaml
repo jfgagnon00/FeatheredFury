@@ -1,8 +1,10 @@
-name: Production Workflow
+name: "Production Workflow"
+
 on:
   push:
     branches:
       - main
+
 jobs:
   Deployement:
     runs-on: [ubuntu-latest]
@@ -11,9 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Environment
-        run: |
-          pip install -r .ci/requirements-build.txt
-          source .ci/yaml_to_variables.sh configs/paths_config.yaml
+        uses: ./.github/actions/setup-build-environment
 
       - name: Deploy application + service
         env:

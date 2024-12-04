@@ -1,0 +1,33 @@
+name: "DVC Sync"
+description: "Synchronise les donnes via DVC"
+
+inputs:
+  GDRIVE_URL:
+    description: "Google Drive url"
+    required: true
+
+  GDRIVE_CREDENTIALS_DATA:
+    description: "Google Drive credential data"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Synchroniser Donnees
+      env:
+        GDRIVE_URL: ${{ inputs.GDRIVE_URL }}
+        GDRIVE_CREDENTIALS_DATA: ${{ inputs.GDRIVE_CREDENTIALS_DATA }}
+      run: |
+        # configurer DVC pour acceder Google Drive
+        dvc remote add --default gdrive ${GDRIVE_URL}
+
+        # authentication via Service Account - 
+        dvc remote modify gdrive gdrive_use_service_account true
+
+        # settings generaux
+        dvc remote modify gdrive gdrive_acknowledge_abuse true
+        dvc config core.analytics false
+
+        # obtenir le data
+        echo "Pull data"
+        dvc pull
