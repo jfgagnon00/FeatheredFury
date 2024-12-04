@@ -5,7 +5,10 @@ from pandas import (
 )
 from pandas.api.typing import DataFrameGroupBy
 from pathlib import Path
-from shutil import copyfile
+from shutil import (
+    copyfile, 
+    rmtree
+)
 
 from .properties import (
     _AUDIO,
@@ -100,12 +103,20 @@ def generate_specie_groups(specie_infos: DataFrame,
             if end_ms > group_begin_ms:
                 break
 
+        # validation
+        if duration_ms < group_ms_length:
+            raise ValueError(f"Duree audio {duration_ms} < duree du groupe {group_ms_length}. Revoir configs ou exploration.")
+
         group_begin_ms = group_begin_ms - begin_ms
         group_end_ms = group_begin_ms + group_ms_length
 
         # clamper avec les limites du fichier
         if group_end_ms > duration_ms:
             group_begin_ms = duration_ms - group_ms_length
+
+        # sanity checks
+        assert group_begin_ms >= 0
+        assert duration_ms > 0
 
         # sauvegarder information
         group_datas[_FILENAME].append(specie_infos.loc[index, _FILENAME])
@@ -116,6 +127,10 @@ def generate_specie_groups(specie_infos: DataFrame,
         group_datas[_GROUP_BEGIN_MS].append(group_begin_ms)
 
     return DataFrame(group_datas)
+
+def clean_specie_groups_data(config: ProjectConfig) -> None:
+    folder = Path.joinpath(config.paths.DATA_DIR, _AUDIO)
+    rmtree(folder, ignore_errors=True)
 
 def copy_specie_groups_data(specie_data: DataFrame,
                             config: ProjectConfig) -> None:

@@ -107,6 +107,10 @@ def write_hdf5_groups(hdf5_filename: str,
                 if log_debug_info:
                     print("    ", str(hdf5_source), g, s, (segment_frame_begin, segment_frame_end))
 
+                    print()
+                    print("log_debug_info:", log_debug_info, str(hdf5_source))
+                    print()
+
                 group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
                 segment_frame_begin += group_hop_frame_length
 

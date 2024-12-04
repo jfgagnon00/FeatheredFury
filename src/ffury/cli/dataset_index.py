@@ -1,3 +1,5 @@
+import click
+
 from dask.distributed import wait
 from os import cpu_count
 from pandas import read_csv
@@ -28,12 +30,17 @@ from ..misc.logging import create_logger
 
 
 @dataset_group.command()
+@click.option("--log-debug-info", "log_debug_info", is_flag=True, default=False, show_default=True, help="Log debug info")
 @ProjectConfigDecorator
-def index(project_config: ProjectConfig) -> None:
+def index(project_config: ProjectConfig,
+          log_debug_info) -> None:
     """
     Genere les spectrogrames et index les ensembles train/test/validation
     """
     logger = create_logger(file=__file__)
+
+    if log_debug_info:
+        logger.info(f"log_debug_info active")
 
     # prendre en note les fichiers utilises
     # les spectrogrammes ne seront generes que pour ces fichiers
@@ -45,7 +52,8 @@ def index(project_config: ProjectConfig) -> None:
         filenames.update( dataset_df[_FILENAME].unique() )
         write_hdf5_groups(project_config.get_hdf5_filename(dataset_type),
                           dataset_df, 
-                          project_config)
+                          project_config,
+                          log_debug_info=log_debug_info)
 
     logger.info(f"Creation spectrogrames")
 

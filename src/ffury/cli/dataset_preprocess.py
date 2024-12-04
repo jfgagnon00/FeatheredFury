@@ -11,6 +11,7 @@ from ..configs import (
 )
 from ..misc.logging import create_logger
 from ..transforms import (
+    clean_specie_groups_data,
     copy_specie_groups_data,
     generate_specie_groups,
     generate_species_groups,
@@ -26,6 +27,9 @@ def preprocess(project_config: ProjectConfig) -> None:
     Resample le dataset en groupes et les split en train/test/validation
     """
     logger = create_logger(file=__file__)
+
+    # cleaner etape precedente
+    clean_specie_groups_data(project_config)
 
     # charger data explore
     filename = project_config.get_csv_filename(DatasetType.EXPLORED)

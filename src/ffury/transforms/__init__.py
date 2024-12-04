@@ -5,6 +5,7 @@ from .indexing import (
     write_indexing_md5
 )
 from .sampling import (
+    clean_specie_groups_data,
     copy_specie_groups_data,
     generate_specie_groups,
     generate_species_groups,

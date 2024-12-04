@@ -3,7 +3,7 @@
 #
 !ffury.configs.ProjectConfig
 
-num_classes: 5
+num_classes: 1
 paths: !include configs/paths_config.yaml
 preprocess: !include configs/preprocess_config.yaml
 train: !include configs/train_config.yaml
