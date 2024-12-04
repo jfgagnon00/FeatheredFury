@@ -18,7 +18,7 @@ jobs:
           # mettre les configurations du projet en variable d'environment
           source .ci/yaml_to_variables.sh configs/paths_config.yaml
 
-      - name: Obtenir les donnees
+      - name: Synchroniser Donnees
         env:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
@@ -32,9 +32,13 @@ jobs:
 
           # obtenir le data
           echo "Pull data"
-          dvc pull
+          dvc pull --verbose
 
-      - name: Train Model
+      - name: Indexer Donnees
+        run: |
+          ffury index
+
+      - name: Entrainement
         env:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
         run: |
