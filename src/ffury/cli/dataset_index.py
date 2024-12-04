@@ -14,6 +14,7 @@ from ..configs import (
     ProjectConfig
 )
 from ..transforms import (
+    get_audio_path,
     spectrogram_from_audio,
     waveform_apply_config,
     waveform_from_file,
@@ -63,7 +64,8 @@ def index(project_config: ProjectConfig,
 
         for filename in tqdm(filenames):
             future = client.submit(waveform_from_file,
-                                   project_config.get_audio_filename(filename),
+                                   Path.joinpath(get_audio_path(project_config.paths), 
+                                                 filename),
                                    project_config.preprocess)
 
             future = client.submit(lambda future: waveform_apply_config(*future, project_config.preprocess),

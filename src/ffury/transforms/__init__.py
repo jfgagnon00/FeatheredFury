@@ -9,6 +9,7 @@ from .sampling import (
     copy_specie_groups_data,
     generate_specie_groups,
     generate_species_groups,
+    get_audio_path,
     read_split_sampling_md5,
     write_split_sampling_md5
 )

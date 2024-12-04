@@ -23,6 +23,7 @@ from .properties import (
 )
 
 from ..configs import (
+    PathsConfig,
     ProjectConfig,
     PreprocessConfig
 )
@@ -128,9 +129,11 @@ def generate_specie_groups(specie_infos: DataFrame,
 
     return DataFrame(group_datas)
 
+def get_audio_path(config: PathsConfig) -> str:
+    return Path.joinpath(config.DATA_DIR, _AUDIO)
+
 def clean_specie_groups_data(config: ProjectConfig) -> None:
-    folder = Path.joinpath(config.paths.DATA_DIR, _AUDIO)
-    rmtree(folder, ignore_errors=True)
+    rmtree(get_audio_path(config.paths), ignore_errors=True)
 
 def copy_specie_groups_data(specie_data: DataFrame,
                             config: ProjectConfig) -> None:
@@ -138,9 +141,10 @@ def copy_specie_groups_data(specie_data: DataFrame,
     Fait une copie des fichiers trouves dans specie_data pour fin
     de versionning.
     """
+    audio_path = get_audio_path(config.paths)
     for f in specie_data[_FILENAME].unique():
         src = config.get_audio_filename(f)
-        dst = Path.joinpath(config.paths.DATA_DIR, _AUDIO, f)
+        dst = Path.joinpath(audio_path, f)
         dst.parent.mkdir(exist_ok=True, parents=True)
         copyfile(src, dst)
 

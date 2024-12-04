@@ -35,7 +35,7 @@ jobs:
 
           # obtenir le data
           echo "Pull data"
-          dvc pull --verbose
+          dvc pull
 
       - name: Indexer Donnees
         run: |
