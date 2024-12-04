@@ -2,10 +2,7 @@ import neptune
 
 from datetime import datetime
 from json import dumps
-from os import (
-    environ,
-    getlogin
-)
+from os import environ
 from typing import (
     Dict,
     List,
@@ -74,7 +71,7 @@ class NeptuneRun:
 
     @staticmethod
     def _run_infos_create() -> Tuple[str, List[str]]:
-        name = getlogin()
+        name = NeptuneRun._username()
         date = datetime.now().strftime(DATE_FORMAT)
         tags = []
 
@@ -104,3 +101,13 @@ class NeptuneRun:
             capture_stdout=False,
             capture_stderr=False,
             capture_hardware_metrics=False,)
+    
+    @staticmethod
+    def _username():
+        if "USER" in environ:
+            return environ["USER"]
+
+        if "USERNAME" in environ:
+            return environ["USERNAME"]
+        
+        return "unknown-user"

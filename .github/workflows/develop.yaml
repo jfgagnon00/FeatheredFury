@@ -28,7 +28,10 @@ jobs:
 
           # authentication via Service Account - 
           dvc remote modify gdrive gdrive_use_service_account true
+
+          # settings generaux
           dvc remote modify gdrive gdrive_acknowledge_abuse true
+          dvc config core.analytics false
 
           # obtenir le data
           echo "Pull data"
@@ -36,7 +39,7 @@ jobs:
 
       - name: Indexer Donnees
         run: |
-          ffury index
+          ffury dataset index
 
       - name: Entrainement
         env:
