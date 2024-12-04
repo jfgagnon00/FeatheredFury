@@ -100,7 +100,7 @@ class NeptuneRun:
             git_ref=False,
             capture_stdout=False,
             capture_stderr=False,
-            capture_hardware_metrics=False,)
+            capture_hardware_metrics=True)
     
     @staticmethod
     def _username():
