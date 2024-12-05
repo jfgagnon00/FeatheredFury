@@ -4,6 +4,7 @@ from datetime import datetime
 from json import dumps
 from os import environ
 from typing import (
+    Any,
     Dict,
     List,
     Tuple
@@ -37,9 +38,18 @@ class NeptuneRun:
         self._run["data/validation/md5/preprocessed"] = validation.md5_preprocessed
         self._run["data/validation/md5/indexed"] = validation.md5_indexed
 
-    def log_model_infos(self, 
-                        model_infos: Dict) -> None:
-        self._run["model_infos"] = dumps(model_infos, indent=4)
+    def log_model_infos(self, model_infos: Dict) -> None:
+        self._run["model/infos"] = dumps(model_infos, indent=4)
+
+    def log_best_model(self, 
+                       model_checkpoint: str,
+                       epoch: int,
+                       measure_name: str,
+                       measure_value: float) -> None:
+        self._run["model/best_model"].upload(model_checkpoint)
+        self._run["model/best_epoch"] = epoch
+        self._run["model/best_metric_name"] = measure_name
+        self._run["model/best_metric_value"] = measure_value
 
     def append_measures(self, 
                         epoch: int,

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import (
     Any,
-    List
+    List,
+    Tuple
 )
 
 
@@ -19,5 +20,15 @@ class IMeasurable(ABC):
         """
         Classes concretes doivent implementer cette methode 
         pour calculer et retourner les metriques
+        """
+        pass
+
+    @abstractmethod
+    def check_point_measurable(self, 
+                               measure: Any,
+                               measure_prefix: str = None) -> Tuple[str, float]:
+        """
+        Classes concretes doivent implementer cette methode 
+        pour obtenir le nom de la metrique et sa valeur pour comparer les checkpoint
         """
         pass

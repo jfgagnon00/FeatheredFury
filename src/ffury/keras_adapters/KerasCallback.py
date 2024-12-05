@@ -1,10 +1,16 @@
+from copy import deepcopy
 from keras.callbacks import Callback
+from keras.models import (
+    clone_model, 
+    save_model
+)
 from typing import (
     Any,
     List
 )
 
 from ..misc.IMeasurable import IMeasurable
+from ..misc.logging import create_logger
 from ..neptune import NeptuneRun
 
 class KerasCallback(Callback):
@@ -18,7 +24,8 @@ class KerasCallback(Callback):
                  x_validation: Any, 
                  y_validation: Any,
                  run: NeptuneRun,
-                 measurable: IMeasurable):
+                 measurable: IMeasurable,
+                 model_checkpoint: str):
         self._class_labels = class_labels
         self._x_train = x_train
         self._y_train_true = y_train
@@ -26,7 +33,32 @@ class KerasCallback(Callback):
         self._y_validation_true = y_validation
         self._run = run
         self._measurable = measurable
+        self._model_checkpoint_pattern = model_checkpoint
+        self._best_model_checkpoint = None
+        self._best_measure_checkpoint = None
+        self._best_epoch = None
+        self._logger = create_logger(file=__file__)
 
+    @property
+    def best_model(self) -> Any:
+        return self._best_model
+
+    @property
+    def best_model_checkpoint(self) -> str:
+        return self._best_model_checkpoint
+
+    @property
+    def best_measure_name(self) -> str:
+        return self._best_measure_checkpoint[0]
+
+    @property
+    def best_measure_value(self) -> str:
+        return self._best_measure_checkpoint[1]
+
+    @property
+    def best_epoch(self) -> str:
+        return self._best_epoch
+    
     def on_epoch_end(self, epoch, logs=None):
         y_pred = self.model.predict(self._x_train, verbose=0)
         measure_train = self._measurable(self._class_labels,
@@ -45,3 +77,13 @@ class KerasCallback(Callback):
 
         self._run.append_measures(epoch, measure_train)
         self._run.append_measures(epoch, measure_validation)
+
+        measure_checkpoint = self._measurable.check_point_measurable(measure_validation,
+                                                                     "val")
+        if self._best_measure_checkpoint is None or \
+           measure_checkpoint[1] > self._best_measure_checkpoint[1]:
+            self._best_epoch = epoch
+            self._best_measure_checkpoint = deepcopy(measure_checkpoint)
+            self._best_model_checkpoint = self._model_checkpoint_pattern.format(epoch=epoch)
+            save_model(self.model, self._best_model_checkpoint)
+            self._logger.info(f"\nNouveau meilleur modele:\n  {self._best_model_checkpoint}, {measure_checkpoint}")

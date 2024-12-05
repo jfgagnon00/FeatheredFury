@@ -45,13 +45,15 @@ class KerasTrainable(ITrainable):
         logger.info([f"{d.device_type}, {d.name}" for d in list_physical_devices()])
 
         # model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + "-{epoch:03d}.keras")
-        # model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
+        model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + ".keras")
+        model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
 
         callback = KerasCallback(class_labels,
                                  x_train, y_train,
                                  x_valdation, y_valdation,
                                  run,
-                                 measurable)
+                                 measurable,
+                                 str(model_checkpoint))
 
         model.fit(x_train, y_train,
                   epochs=parameters.epochs,
@@ -59,3 +61,9 @@ class KerasTrainable(ITrainable):
                   validation_data=(x_valdation, y_valdation),
                   verbose=0,
                   callbacks=[TqdmCallback(), callback])
+
+        if not callback.best_model_checkpoint is None:
+            run.log_best_model(callback.best_model_checkpoint,
+                               callback.best_epoch,
+                               callback.best_measure_name,
+                               callback.best_measure_value)
