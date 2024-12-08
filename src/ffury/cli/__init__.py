@@ -38,4 +38,7 @@ def ffury():
     from .train import train
     _cli.add_command(train)
 
+    from .app import app
+    _cli.add_command(app)
+
     _cli()
