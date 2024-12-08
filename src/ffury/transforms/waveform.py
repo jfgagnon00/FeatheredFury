@@ -3,12 +3,13 @@ from librosa import (
     to_mono,
     resample,
 )
+from typing import Tuple
 from numpy.typing import NDArray
 
 from ..configs import PreprocessConfig
 
 def waveform_from_file(audio_filename: str,
-                       config: PreprocessConfig) ->  NDArray:
+                       config: PreprocessConfig) ->  Tuple[NDArray, int]:
     """
     Load fichier audio
     """
@@ -27,7 +28,7 @@ def waveform_from_file(audio_filename: str,
 
 def waveform_apply_config(audio: NDArray,
                           sampling_rate: int,
-                          config: PreprocessConfig) -> NDArray:
+                          config: PreprocessConfig) -> Tuple[NDArray, int]:
     """
     S'assure que audio est mono et a le sampling rate demander 
     dans la config de preprocessing
