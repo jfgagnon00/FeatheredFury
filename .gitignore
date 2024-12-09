@@ -104,3 +104,10 @@ playgrounds/
 
 # neptune.ai
 .neptune/
+
+# terraform
+.terraform
+.terraform.lock.hcl
+*.tfplan
+*.tfstate
+*.tfstate.backup
