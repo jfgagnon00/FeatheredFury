@@ -38,7 +38,10 @@ def ffury():
     from .train import train
     _cli.add_command(train)
 
+    # Application Web et service
     from .app import app
+    from .api import api
     _cli.add_command(app)
+    _cli.add_command(api)
 
     _cli()
