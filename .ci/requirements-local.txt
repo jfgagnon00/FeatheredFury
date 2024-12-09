@@ -1,6 +1,9 @@
 # environment local est aussi un environment de build
 -r requirements-build.txt
+
+# environment local est aussi un environment web
 -r requirements-app.txt
+-r requirements-api.txt
 
 # specifique developpement local
 ipykernel==6.29.5
