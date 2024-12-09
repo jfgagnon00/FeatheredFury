@@ -1,11 +1,11 @@
-output "resource_group_name" {
+output "resource-group" {
   value = azurerm_resource_group.ffury.name
 }
 
-output "container_registry_name" {
+output "acr-name" {
   value = azurerm_container_registry.ffury.name
 }
 
-output "container_registry_login_server" {
+output "acr-login_server" {
   value = azurerm_container_registry.ffury.login_server
 }
