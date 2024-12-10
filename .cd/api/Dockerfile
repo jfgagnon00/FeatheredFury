@@ -1,17 +1,27 @@
-FROM python:3.9-slim
+ARG PYTHON_VERSION=3.12-slim
+ARG PORT=8080
 
-WORKDIR /api  
- 
-COPY requirements_api.txt /api/requirements.txt 
- 
-RUN pip install --no-cache-dir -r requirements.txt
-  
-COPY /api /api/api
- 
-COPY run_api.py /api/run_api.py
+FROM python:${PYTHON_VERSION}
 
-EXPOSE 8080
+# TODO: ajouter un user non root
+WORKDIR /api
 
-#CMD ["python3", "run_api.py"]
-#CMD ["waitress-serve", "--listen", "0.0.0.0:8080", "run_api:api"]
-CMD ["waitress-serve", "--port=8080", "run_api:api"]
+COPY setup.py .
+COPY ffury.yaml .
+COPY .ci/ .ci/
+COPY configs/ configs/
+COPY src/ffury/ src/ffury/
+
+RUN pip install --no-cache-dir -r .ci/requirements-web.txt && \
+    rm -rf .ci/ && \
+    rm setup.py
+
+# TODO: a refactorer
+ENV DOCKER="1"
+
+EXPOSE ${PORT}
+
+# TODO: revoir le demarrage
+# CMD ["ffury", "api", "--port", ${PORT}]
+# CMD ["waitress-serve", "--port=8080", "run_api:api"]
+CMD ["bash"]

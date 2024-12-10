@@ -1,16 +1,26 @@
-FROM python:3.12-slim
+ARG PYTHON_VERSION=3.12-slim
+ARG PORT=5000
 
+FROM python:${PYTHON_VERSION}
+
+# TODO: ajouter un user non root
 WORKDIR /app
 
-COPY requirements_app.txt /app/requirements.txt
+COPY setup.py .
+COPY ffury.yaml .
+COPY .ci/ .ci/
+COPY configs/ configs/
+COPY src/ffury/ src/ffury/
 
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r .ci/requirements-web.txt && \
+    rm -rf .ci/ && \
+    rm setup.py
 
-COPY app/ /app/app
-# Copier le fichier run_app.py dans l'image
-COPY run_app.py /app/run_app.py
+# TODO: a refactorer
+ENV DOCKER="1"
 
-EXPOSE 5000
+EXPOSE ${PORT}
 
-#CMD ["waitress-serve", "--listen", "0.0.0.0:5000", "run_app:app"]
-CMD ["waitress-serve", "--port=5000", "run_app:app"]
+# TODO: revoir le demarrage
+# CMD ["ffury", "app", "--port", ${PORT}]
+CMD ["bash"]

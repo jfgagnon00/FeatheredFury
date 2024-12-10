@@ -1,21 +1,19 @@
-resource "azurerm_resource_group" "arg" {
-  name     = var.resource_group_name_prefix
-  location = var.resource_group_location
-}
+# Azure Service Principal et Azure Resource Group
+# sont assumes deja cree
 
 # Azure Container Registry - pour builder les images dockers
 resource "azurerm_container_registry" "acr" {
-  name                = "${azurerm_resource_group.arg.name}acr"
-  resource_group_name = azurerm_resource_group.arg.name
-  location            = azurerm_resource_group.arg.location
+  name                = "${var.resource_group_name}acr"
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
   sku                 = "Basic"
 }
 
-# # Azure Container Instances (ACI) pour exécuter les conteneurs
-# resource "azurerm_container_group" "aci" {
-#   name                = "${azurerm_resource_group.arg.name}aci"
-#   location            = azurerm_resource_group.arg.location
-#   resource_group_name = azurerm_resource_group.arg.name
+# # Azure Container Group (ACG) pour exécuter les conteneurs
+# resource "azurerm_container_group" "acg" {
+#   name                = "${var.resource_group_name}acg"
+#   location            = var.resource_group_location
+#   resource_group_name = var.resource_group_name
 #   os_type             = "Linux"
   
 #   container {

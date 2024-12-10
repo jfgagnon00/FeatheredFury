@@ -1,5 +1,11 @@
 # commun pour le developement
 -r requirements-common.txt
 
-# # specifique pour environment de build
-# python-terraform==0.10.1
+# specifique pour environment de build
+dask[distributed]==2024.7.1
+dvc-gdrive==3.0.1
+dvc==3.51.3
+h5py==3.11.0
+neptune==1.10.4
+pyopenssl==24.2.1 # fix probleme avec dvc & google drive
+tensorflow-metal==1.1.0; sys_platform == "darwin"
