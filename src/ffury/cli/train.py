@@ -1,5 +1,5 @@
 import click
-import resource
+import platform
 
 from . import ProjectConfigDecorator
     
@@ -27,8 +27,11 @@ def train(project_config: ProjectConfig) -> None:
     #             Je ne sais pas encore quel est la source du probleme mais un workaround
     #             est de hausser la limite avec 'ulimit -n 2048' ou utiliser le
     #             code python qui suit
-    _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (project_config._ulimit_workaround, hard))
+
+    if  platform.system() == "Darwin" :
+        import resource
+        _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        resource.setrlimit(resource.RLIMIT_NOFILE, (project_config._ulimit_workaround, hard))
 
     train_config = project_config.train
 

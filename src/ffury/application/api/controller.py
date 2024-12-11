@@ -1,20 +1,37 @@
 from io import BytesIO
 import logging
+
+from pathlib import Path
+import ffury
+from ffury.configs import DEFAULT_CONFIG_FILE, load_config
+from ffury.transforms.spectrogram import spectrogram_from_audio
+from ffury.transforms.waveform import waveform_apply_config
+
+# import ffury
+# from ffury.configs import (
+#     DatasetType,
+#     DEFAULT_CONFIG_FILE,
+#     load_config
+# )
+#from ffury.dataset import IndexedDataset
+
+
+
 from flask import Flask, current_app, request, jsonify
 import os
 import base64
 
 import librosa
 import matplotlib
-matplotlib.use('Agg')  # Ou 'Qt5Agg' ou 'WebAgg', selon ce que tu préfères
+matplotlib.use('Agg')  # Ou 'Qt5Agg' ou 'WebAgg'
 from matplotlib import pyplot as plt
 import numpy as np
 from werkzeug.utils import secure_filename
 
-
 app = Flask(__name__)
 UPLOAD_FOLDER = ".\\uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 class ApiController:
     def __init__(self):
         # self.upload_folder = './uploads'
@@ -48,6 +65,30 @@ class ApiController:
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
         if file:
+
+
+
+            # creation config - on sait que DEFAULT_CONFIG_FILE est dans le repertoire parent
+            config = Path(ffury.__file__).parents[2].joinpath(DEFAULT_CONFIG_FILE) 
+            config = load_config(config)
+
+            current_app.logger.info(f"***************config @@@@@@@@@@@@@@@@ : {config}")
+            #utiliser JF function
+            audio =  waveform_apply_config(file, config.preprocess.clip_sampling_rate_hz, config.preprocess) 
+            #convertir en base64
+            # shape du spectrogram est (n_mels, n_frames)
+            # n_frames represente le temps
+    
+            S_db =  spectrogram_from_audio(audio, config.preprocess.clip_sampling_rate_hz, config.preprocess)
+            #convertir en base64
+
+            
+            response_data = {"image_waveform": audio, 'image_spectogramme':S_db}
+ 
+            return jsonify(response_data)
+
+
+
             # Sécuriser le nom du fichier
             #original_filename = secure_filename(file.filename) # Sauvegarder le fichier
             save_path = os.path.join(UPLOAD_FOLDER, file.filename)

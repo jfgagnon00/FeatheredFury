@@ -1,8 +1,8 @@
 from flask import Flask
 import os
-from app.blueprints.home.routes import home
-from app.blueprints.auth.routes import auth
-from app.blueprints.model.routes import model
+from .blueprints.home.routes import home
+from .blueprints.auth.routes import auth
+from .blueprints.model.routes import model
 # from app.blueprints.predict.routes import predict
 
 def create_app():
