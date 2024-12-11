@@ -29,5 +29,8 @@ source activate.sh
 ```
 
 ### Management de projet
-1. Créer un compte sur [Trello](https://trello.com/home)
+1. Créer un compte sur [MS Planner](https://www.microsoft.com/en-us/microsoft-365/planner/microsoft-planner)
 1. Demander à être ajouté au projet FeatheredFury
+
+### Optionel - Management infrastructure sur Azure
+1. Installer [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
