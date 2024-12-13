@@ -1,11 +1,11 @@
-# ############ Docker
+############ Docker
 
 output "azure_container_registry_login_server" {
-  value       = azurerm_container_registry.acr.login_server
+  value       = azurerm_container_registry.container_registry.login_server
   description = "Azure Container Registry login server"
 }
 
-# ############ Service Principal
+############ Service Principal
 
 output "service_principal_app_id" {
   value       = azuread_application.ffury.object_id
