@@ -1,3 +1,11 @@
+############ Alias
+
+locals {
+  web_application_name   = "${var.resource_group_name}-${var.environment}"
+  application_image_name = "${var.resource_group_name}/application:latest"
+  registry_url           = "https://${azurerm_container_registry.container_registry.login_server}"
+}
+
 ############ Web application
 
 # App Service Plan - hosting de l'application
@@ -6,49 +14,32 @@ resource "azurerm_service_plan" "sp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = "F1" # plan gratuit
 
   tags = {
       environment = var.environment
   }
 }
 
-# # Define the Azure DNS Zone for your domain
-# resource "azurerm_dns_zone" "zone" {
-#   name                = "ffury.org"  # Your domain name
-#   resource_group_name = azurerm_resource_group.rg.name
-# }
+# Web Application
+resource "azurerm_linux_web_app" "ffury" {
+  name                = local.web_application_name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  service_plan_id     = azurerm_service_plan.sp.id
 
+  site_config {
+    always_on = false
+    application_stack {
+      docker_image_name        = local.application_image_name
+      docker_registry_url      = local.registry_url
+      docker_registry_username = azuread_application.ffury.client_id
+      docker_registry_password = azuread_service_principal_password.ffury.value
+    }
+  }
 
-# # Define the Web App (Flask app)
-# resource "azurerm_web_app" "app" {
-#   name                = "myflaskapp"
-#   location            = azurerm_resource_group.rg.location
-#   resource_group_name = azurerm_resource_group.rg.name
-#   app_service_plan_id = azurerm_app_service_plan.asp.id
-
-#   site_config {
-#     python_version = "3.9"
-#   }
-
-#   app_settings = {
-#     "FLASK_ENV" = "production"
-#   }
-
-#   # Enable SSL (Azure will automatically manage SSL for you)
-#   ssl_enforcement {
-#     enabled = true
-#   }
-# }
-
-# # Create a CNAME record to point to your Azure App Service
-# resource "azurerm_dns_cname_record" "cname" {
-#   name                = "www"  # Subdomain (www.ffury.org)
-#   zone_name           = azurerm_dns_zone.zone.name
-#   resource_group_name = azurerm_resource_group.rg.name
-#   ttl                 = 300
-#   records             = [azurerm_web_app.app.default_site_hostname]
-# }
+  https_only = true
+}
 
 # # Bind the custom domain to the App Service
 # resource "azurerm_app_service_custom_hostname_binding" "custom_domain" {

@@ -25,6 +25,10 @@ variable "subscription_id" {
   # mettre TF_VAR_subscription_id environment variable
 }
 
+variable "tenant_id" {
+  # mettre TF_VAR_tenant_id environment variable
+}
+
 variable "container_cpu_count" {
   type    = number
   default = 1

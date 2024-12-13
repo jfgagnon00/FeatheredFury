@@ -11,4 +11,3 @@ resource "azurerm_container_registry" "container_registry" {
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
 }
-

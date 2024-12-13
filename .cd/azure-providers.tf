@@ -1,5 +1,6 @@
 provider "azurerm" {
-  features {}
+  features {
+  }
 }
 
 provider "azuread" {
