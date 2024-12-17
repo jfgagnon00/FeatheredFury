@@ -106,8 +106,7 @@ playgrounds/
 .neptune/
 
 # terraform
-.terraform
-.terraform.lock.hcl
+.terraform*
 *.tfplan
 *.tfstate
 *.tfstate.backup

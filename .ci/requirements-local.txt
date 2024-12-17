@@ -1,9 +1,8 @@
 # environment local est aussi un environment de build
 -r requirements-build.txt
 
-# environment local est aussi un environment web
+# environment local est aussi un environment d'application
 -r requirements-app.txt
--r requirements-api.txt
 
 # specifique developpement local
 azure-cli==2.53.1
