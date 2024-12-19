@@ -45,8 +45,3 @@ variable "container_environment_variables" {
   type    = list(string)
   default = []
 }
-
-variable "container_tcp_port" {
-  type  = number
-  default = 80
-}

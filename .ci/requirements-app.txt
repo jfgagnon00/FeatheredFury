@@ -1,8 +1,5 @@
-# commun pour le developement
--r requirements-common.txt
-
 # packages specifiques pour l'application web
 flask==3.1.0
 flasgger==0.9.7.1
 waitress==3.0.2
-requests==2.32.3
+requests==2.0.0

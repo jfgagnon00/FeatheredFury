@@ -4,8 +4,6 @@ Module encapsulant le commande line.
 
 import click
 
-from os import environ
-
 from ..configs import (
     load_config, 
     ProjectConfig,
@@ -28,22 +26,22 @@ def _cli(ctx, config):
     ctx.obj = load_config(config)
 
 def ffury():
-    # TODO: a refactorer, workaround pour test docker
-    if not "DOCKER" in environ:
-        # commandes doivent etre loadee afin d'etre utilisable
-        # attention aux groupes de commndes; seulement le group
-        # doit etre ajoute
-        from .dataset import dataset_group
-        from .dataset_install import install
-        from .dataset_index import index
-        from .dataset_preprocess import preprocess
-        _cli.add_command(dataset_group)
+    # commandes doivent etre loadee afin d'etre utilisable
+    # attention aux groupes de commndes; seulement le group
+    # doit etre ajoute
+    from .dataset import dataset_group
+    from .dataset_install import install
+    from .dataset_index import index
+    from .dataset_preprocess import preprocess
+    _cli.add_command(dataset_group)
 
-        from .train import train
-        _cli.add_command(train)
+    from .train import train
+    _cli.add_command(train)
 
-    # Application Web
+    # Application Web et service
     from .app import app
+    from .api import api
     _cli.add_command(app)
+    _cli.add_command(api)
 
     _cli()

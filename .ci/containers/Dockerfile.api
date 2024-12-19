@@ -1,0 +1,14 @@
+ARG PYTHON_VERSION=3.9-alpine
+ARG PORT=5001
+ARG PLATFORM=linux/amd64
+
+FROM --platform=${PLATFORM} python:${PYTHON_VERSION}
+
+WORKDIR /api
+COPY ../requirements-common.txt .
+RUN pip install -r requirements-common.txt && \
+    rm requirements-common.txt
+
+EXPOSE ${PORT}
+
+CMD ["ffury", "service", "--port", ${PORT}, "start"]

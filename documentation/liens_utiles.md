@@ -10,7 +10,7 @@
 * [BirdCLEF 2023](https://www.kaggle.com/competitions/birdclef-2023)
 
 # Managment de projet
-* [MS Planner | FeatheredFury](https://planner.cloud.microsoft/webui/plan/z1bIl0m9M06Lb_yB34_4YWQAGLt1/view/board?tid=f9182dd7-4234-41fb-9e9c-dd20d493b548)
+* [Trello | FeatheredFury](https://trello.com/b/lm047mnt/featheredfury)
 
 # Misc
 ## Neptune.AI
@@ -20,6 +20,10 @@
 
 ## Info Cookie Cutter
 * https://drivendata.github.io/cookiecutter-data-science/
+
+## DVC et Azure
+* https://iterative.ai/blog/azure-remotes-in-dvc
+* https://dvc.org/doc/user-guide/data-management/remote-storage/azure-blob-storage
 
 ## Docker et Azure
 * https://docs.docker.com/cloud/aci-integration/
@@ -36,6 +40,3 @@
 
 ## Python Setup Tools
 * https://setuptools.pypa.io/en/latest/userguide/entry_point.html
-
-## Terraform Azure
-[Création Azure Container Regsitry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-terraform?tabs=azure-cli)

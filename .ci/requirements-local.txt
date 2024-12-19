@@ -1,11 +1,11 @@
 # environment local est aussi un environment de build
 -r requirements-build.txt
 
-# environment local est aussi un environment d'application
+# environment local est aussi un environment web
 -r requirements-app.txt
+-r requirements-api.txt
 
 # specifique developpement local
-azure-cli==2.53.1
 ipykernel==6.29.5
 ipywidgets==8.1.3
 jupyterlab==4.2.3
