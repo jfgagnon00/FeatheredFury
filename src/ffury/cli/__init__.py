@@ -35,14 +35,12 @@ def ffury():
     logger = create_logger(file=__file__)
 
     # application et service
-    from .application import app
-    from .service import api
+    from .application import application
+    from .service import service
     _cli.add_command(application)
     _cli.add_command(service)
 
     try:
-        logger.info("Module development installe.")
-
         from ..optional.development.cli.dataset import dataset_group
         from ..optional.development.cli.dataset_install import install
         from ..optional.development.cli.dataset_index import index

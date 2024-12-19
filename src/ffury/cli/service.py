@@ -8,7 +8,7 @@ from ..misc.logging import create_logger
 
 @click.command()
 @ProjectConfigDecorator
-def api(project_config: ProjectConfig) -> None:
+def service(project_config: ProjectConfig) -> None:
     """
     Encapsule le demarrage du service
     """

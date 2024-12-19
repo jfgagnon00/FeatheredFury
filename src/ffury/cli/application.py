@@ -8,7 +8,7 @@ from ..misc.logging import create_logger
 
 @click.command()
 @ProjectConfigDecorator
-def app(project_config: ProjectConfig) -> None:
+def application(project_config: ProjectConfig) -> None:
     """
     Encapsule le demarrage de l'application
     """
