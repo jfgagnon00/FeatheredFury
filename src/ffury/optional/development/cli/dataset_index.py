@@ -6,14 +6,14 @@ from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
 
-from . import ProjectConfigDecorator
+from ....cli import ProjectConfigDecorator
 from .dataset import dataset_group
 
-from ..configs import (
+from ....configs import (
     DatasetType,
     ProjectConfig
 )
-from ..transforms import (
+from ....transforms import (
     get_audio_path,
     spectrogram_from_audio,
     waveform_apply_config,
@@ -22,12 +22,12 @@ from ..transforms import (
     write_hdf5_groups,
     write_indexing_md5
 )
-from ..transforms.properties import (
+from ....transforms.properties import (
     _FILENAME,
     _SPECTROGRAM
 )
-from ..misc.concurrent import create_dask_local_client
-from ..misc.logging import create_logger
+from ....misc.concurrent import create_dask_local_client
+from ....misc.logging import create_logger
 
 
 @dataset_group.command()

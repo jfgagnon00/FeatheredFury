@@ -13,7 +13,7 @@ def api(project_config: ProjectConfig) -> None:
     Encapsule le demarrage du service
     """
     from waitress import serve
-    from ..application.api import create_api 
+    from ..application import create_api 
 
     api = create_api()
  

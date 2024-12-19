@@ -1,3 +1,0 @@
-# environment local est aussi un environment de build
--r requirements-build.txt
--r requirements-app.txt

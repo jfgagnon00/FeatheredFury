@@ -1,9 +1,9 @@
 import click
 import zipfile
 
-from . import ProjectConfigDecorator
+from ....cli import ProjectConfigDecorator
 from .dataset import dataset_group
-from ..misc.logging import create_logger
+from ....misc.logging import create_logger
 from pathlib import Path
 from tqdm import tqdm
 

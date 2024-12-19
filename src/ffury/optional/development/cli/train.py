@@ -1,19 +1,19 @@
 import click
 import platform
 
-from . import ProjectConfigDecorator
+from ....cli import ProjectConfigDecorator
     
-from ..configs import (
+from ....configs import (
     DatasetType,
     ProjectConfig
 )
-from ..dataset import IndexedDataset
-from ..misc.IFactory import IFactory
-from ..misc.IMeasurable import IMeasurable
-from ..misc.ITrainable import ITrainable
-from ..misc.logging import create_logger
-from ..misc.Profile import Profile
-from ..neptune.NeptuneRun import NeptuneRun
+from ....dataset import IndexedDataset
+from ....misc.IFactory import IFactory
+from ....misc.IMeasurable import IMeasurable
+from ....misc.ITrainable import ITrainable
+from ....misc.logging import create_logger
+from ....misc.Profile import Profile
+from ....neptune.NeptuneRun import NeptuneRun
 
 
 @click.command()

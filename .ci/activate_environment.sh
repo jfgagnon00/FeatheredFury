@@ -2,16 +2,7 @@
 
 # script pour gerer l'installation/activation de l'environnement virtuel
 
-SCRIPT="$0"
-
-# si le script est source BASH_SOURCE[0] devrait avoir la source
-# sauf sur Mac...
-if [[ "${BASH_SOURCE[0]}" != "" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    SCRIPT="${BASH_SOURCE[0]}"
-fi
-
 # resoudre symlinks and obtenir path absolue
-SCRIPT_DIR=$(dirname "$(readlink -f "$SCRIPT" 2>/dev/null || echo "$SCRIPT")")
 PYTHON_INTERPRETER=$1
 ENV_NAME=$2
 FORCE_INSTALLATION=$3
@@ -56,7 +47,7 @@ if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
 
     $PYTHON_INTERPRETER -m pip install --upgrade pip
-    $PYTHON_INTERPRETER -m pip install -r "${SCRIPT_DIR}/requirements-local.txt"
+    $PYTHON_INTERPRETER -m pip install --use-pep517 -e .\[all\]
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
     $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME

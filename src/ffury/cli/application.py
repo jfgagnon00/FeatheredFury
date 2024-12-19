@@ -13,7 +13,7 @@ def app(project_config: ProjectConfig) -> None:
     Encapsule le demarrage de l'application
     """
     from waitress import serve
-    from ..application.app import create_app
+    from ..application import create_app
 
     # Créer l'application Flask
     app = create_app()

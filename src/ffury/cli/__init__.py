@@ -10,6 +10,8 @@ from ..configs import (
     DEFAULT_CONFIG_FILE
 )
 
+from ..misc.logging import create_logger
+
 
 ProjectConfigDecorator = click.make_pass_decorator(ProjectConfig)
 
@@ -29,19 +31,27 @@ def ffury():
     # commandes doivent etre loadee afin d'etre utilisable
     # attention aux groupes de commndes; seulement le group
     # doit etre ajoute
-    from .dataset import dataset_group
-    from .dataset_install import install
-    from .dataset_index import index
-    from .dataset_preprocess import preprocess
-    _cli.add_command(dataset_group)
 
-    from .train import train
-    _cli.add_command(train)
+    logger = create_logger(file=__file__)
 
-    # Application Web et service
-    from .app import app
-    from .api import api
-    _cli.add_command(app)
-    _cli.add_command(api)
+    # application et service
+    from .application import app
+    from .service import api
+    _cli.add_command(application)
+    _cli.add_command(service)
+
+    try:
+        logger.info("Module development installe.")
+
+        from ..optional.development.cli.dataset import dataset_group
+        from ..optional.development.cli.dataset_install import install
+        from ..optional.development.cli.dataset_index import index
+        from ..optional.development.cli.dataset_preprocess import preprocess
+        _cli.add_command(dataset_group)
+
+        from ..optional.development.cli.train import train
+        _cli.add_command(train)
+    except ImportError:
+        logger.info("Module development non installe.")
 
     _cli()

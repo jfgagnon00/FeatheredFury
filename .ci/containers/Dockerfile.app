@@ -12,18 +12,10 @@ COPY .ci/ .ci/
 COPY configs/ configs/
 COPY src/ffury/ src/ffury/
 
-RUN pip install -r requirements-common.txt && \
-    rm requirements-common.txt
-
-EXPOSE ${PORT}
-
 RUN pip install --no-cache-dir -r .ci/requirements-app.txt && \
     rm -rf .ci/ && \
     rm setup.py
 
 EXPOSE ${PORT}
-
-# TODO: a refactorer
-ENV DOCKER="1"
 
 CMD ["ffury", "app", "--port", ${PORT}, "start"]
