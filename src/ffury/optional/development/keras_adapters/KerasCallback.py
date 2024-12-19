@@ -9,8 +9,9 @@ from typing import (
     List
 )
 
-from ..misc.IMeasurable import IMeasurable
-from ..misc.logging import create_logger
+from ffury.misc.IMeasurable import IMeasurable
+from ffury.misc.logging import create_logger
+
 from ..neptune import NeptuneRun
 
 class KerasCallback(Callback):

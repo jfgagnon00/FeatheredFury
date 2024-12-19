@@ -11,4 +11,4 @@ RUN pip install -r requirements-common.txt && \
 
 EXPOSE ${PORT}
 
-CMD ["ffury", "service", "--port", ${PORT}, "start"]
+CMD ["ffury", "service", "--port", ${PORT}]

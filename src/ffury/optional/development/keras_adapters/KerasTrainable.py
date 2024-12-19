@@ -4,15 +4,16 @@ from typing import (
     List
 )
 
-from ..configs import (
+from ffury.configs import (
     PathsConfig,
     TrainParameters
 )
-from ..misc.ITrainable import ITrainable
-from ..misc.IMeasurable import IMeasurable
-from ..misc.logging import create_logger
+from ffury.misc.ITrainable import ITrainable
+from ffury.misc.IMeasurable import IMeasurable
+from ffury.misc.logging import create_logger
+from ffury.yaml.yaml_decorators import YamlDeserializable
+
 from ..neptune import NeptuneRun
-from ..yaml.yaml_decorators import YamlDeserializable
 
 
 @YamlDeserializable

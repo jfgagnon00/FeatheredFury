@@ -10,6 +10,12 @@ from shutil import (
     rmtree
 )
 
+from ffury.configs import (
+    PathsConfig,
+    ProjectConfig,
+    PreprocessConfig
+)
+
 from .properties import (
     _AUDIO,
     _COMMON_NAME,
@@ -22,11 +28,6 @@ from .properties import (
     _SPECIE
 )
 
-from ..configs import (
-    PathsConfig,
-    ProjectConfig,
-    PreprocessConfig
-)
 from ..misc.halton import halton_sequence
 
 

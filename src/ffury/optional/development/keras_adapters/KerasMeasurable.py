@@ -9,8 +9,8 @@ from typing import (
     Tuple
 )
 
-from ..misc.IMeasurable import IMeasurable
-from ..yaml.yaml_decorators import YamlDeserializable
+from ffury.misc.IMeasurable import IMeasurable
+from ffury.yaml.yaml_decorators import YamlDeserializable
 
 _AVERAGE_PRECISION_KEY = "ap"
 _F1_KEY = "f1"

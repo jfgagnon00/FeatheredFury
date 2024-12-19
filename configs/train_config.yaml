@@ -1,10 +1,10 @@
 !ffury.configs.TrainConfig
 
-model_factory: !ffury.keras_adapters.KerasDummyModelFactory {}
+model_factory: !ffury.optional.development.keras_adapters.KerasDummyModelFactory {}
 
-measurable: !ffury.keras_adapters.KerasMeasurable
+measurable: !ffury.optional.development.keras_adapters.KerasMeasurable
   average: macro
 
-trainable: !ffury.keras_adapters.KerasTrainable {}
+trainable: !ffury.optional.development.keras_adapters.KerasTrainable {}
 
 parameters: !include train_parameters.yaml

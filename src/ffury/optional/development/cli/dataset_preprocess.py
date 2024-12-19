@@ -2,15 +2,16 @@ from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
 
-from ....cli import ProjectConfigDecorator
-from .dataset import dataset_group
-
-from ....configs import (
+from ffury.cli import ProjectConfigDecorator
+from ffury.configs import (
     DatasetType,
     ProjectConfig
 )
-from ....misc.logging import create_logger
-from ....transforms import (
+from ffury.misc.logging import create_logger
+
+from .dataset import dataset_group
+
+from ..transforms import (
     clean_specie_groups_data,
     copy_specie_groups_data,
     generate_specie_groups,

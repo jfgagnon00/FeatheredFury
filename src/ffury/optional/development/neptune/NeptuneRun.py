@@ -10,9 +10,10 @@ from typing import (
     Tuple
 )
 
-from ..configs import ProjectConfig
+from ffury.configs import ProjectConfig
+from ffury.misc.logging import DATE_FORMAT
+
 from ..dataset import IndexedDataset
-from ..misc.logging import DATE_FORMAT
 
 
 class NeptuneRun:

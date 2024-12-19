@@ -23,7 +23,7 @@ def load_config(filename : str = DEFAULT_CONFIG_FILE) -> ProjectConfig:
     # # TODO: decorateur yaml demande de connaitre tous les 
     # # types avant de loader un fichier qui peut les utiliser
     # # a refactorer
-    from ..keras_adapters import (
+    from ..optional.development.keras_adapters import (
         KerasDummyModelFactory,
         KerasTrainable
     )

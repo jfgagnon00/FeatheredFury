@@ -3,12 +3,12 @@ from typing import (
     Tuple
 )
 
+from ffury.configs import ProjectConfig
+from ffury.misc.IFactory import IFactory
+from ffury.yaml.yaml_decorators import YamlDeserializable
+
 from .KerasLoss import keras_loss
 from .KerasOptimizer import keras_optimizer
-
-from ..configs import ProjectConfig
-from ..misc.IFactory import IFactory
-from ..yaml.yaml_decorators import YamlDeserializable
 
 
 @YamlDeserializable

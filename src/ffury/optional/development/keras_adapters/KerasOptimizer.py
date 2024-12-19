@@ -1,6 +1,6 @@
 from typing import Any
 
-from ..configs import TrainParameters
+from ffury.configs import TrainParameters
 
 
 def keras_optimizer(parameters: TrainParameters) -> Any:

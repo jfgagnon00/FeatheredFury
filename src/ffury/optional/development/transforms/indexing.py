@@ -11,6 +11,8 @@ from numpy.typing import NDArray
 from pandas import DataFrame
 from pathlib import Path
 
+from ffury.configs import ProjectConfig
+
 from .properties import (
     _DURATION_MS,
     _FILENAME,
@@ -21,8 +23,6 @@ from .properties import (
     _SPECTROGRAM_GROUPS,
     _SPECTROGRAM,
 )
-
-from ..configs import ProjectConfig
 from ..misc.hdf5 import open_file
 
 

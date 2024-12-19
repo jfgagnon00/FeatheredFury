@@ -1,19 +1,19 @@
 import click
 import platform
 
-from ....cli import ProjectConfigDecorator
-    
-from ....configs import (
+from ffury.cli import ProjectConfigDecorator
+from ffury.configs import (
     DatasetType,
     ProjectConfig
 )
-from ....dataset import IndexedDataset
-from ....misc.IFactory import IFactory
-from ....misc.IMeasurable import IMeasurable
-from ....misc.ITrainable import ITrainable
-from ....misc.logging import create_logger
-from ....misc.Profile import Profile
-from ....neptune.NeptuneRun import NeptuneRun
+from ffury.misc.logging import create_logger
+from ffury.misc.Profile import Profile 
+from ffury.misc.IFactory import IFactory
+from ffury.misc.IMeasurable import IMeasurable
+from ffury.misc.ITrainable import ITrainable
+
+from ..dataset import IndexedDataset
+from ..neptune.NeptuneRun import NeptuneRun
 
 
 @click.command()

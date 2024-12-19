@@ -1,9 +1,10 @@
 import click
 import zipfile
 
-from ....cli import ProjectConfigDecorator
+from ffury.cli import ProjectConfigDecorator
+from ffury.misc.logging import create_logger
+
 from .dataset import dataset_group
-from ....misc.logging import create_logger
 from pathlib import Path
 from tqdm import tqdm
 

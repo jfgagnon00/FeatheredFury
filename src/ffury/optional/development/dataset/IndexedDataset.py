@@ -2,12 +2,12 @@ from pandas import (
     DataFrame,
     read_csv
 )
-from pathlib import Path
 
-from ..configs import (
+from ffury.configs import (
     DatasetType,
     ProjectConfig
 )
+
 from ..misc.hdf5 import open_file
 from ..transforms import (
     read_indexing_md5,

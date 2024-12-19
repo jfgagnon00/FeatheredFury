@@ -2,10 +2,10 @@ from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from typing import Tuple
 
-from .properties import _SPECIE
+from ffury.configs import PreprocessConfig
+from ffury.misc.logging import create_logger
 
-from ..configs import PreprocessConfig
-from ..misc.logging import create_logger
+from .properties import _SPECIE
 
 
 def split(data: DataFrame,

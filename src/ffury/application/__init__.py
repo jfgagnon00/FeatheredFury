@@ -1,33 +1,28 @@
 from flask import Flask
-import os
+from pathlib import Path
+
 from .blueprints.home.routes import home
 from .blueprints.auth.routes import auth
 from .blueprints.model.routes import model
 # from app.blueprints.predict.routes import predict
 
-def create_app():
+from ..configs import ProjectConfig
+
+def create_flask_app(project_config: ProjectConfig,
+                     secret: str) -> Flask:
+    upload = Path.joinpath(project_config.paths.BUILD_DIR, "upload")
+    upload.mkdir(parents=True, exist_ok=True)
+
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'votre_cle_secrete'
-    app.config['UPLOAD_FOLDER'] = 'uploads'
-
-    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app/uploads')
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-    # Taille maximale autorisée pour les fichiers (en octets)
-    MAX_CONTENT_LENGTH = 4 * 1024 * 1024  # 4 Mo
-
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-
-    # Extensions autorisées
-    app.config['ALLOWED_EXTENSIONS'] = {'wav', 'mp3', 'ogg'}
-
-
+    app.config["SECRET_KEY"] = secret
+    app.config["UPLOAD_FOLDER"] = upload
+    app.config["MAX_CONTENT_LENGTH"] = 4 * 1024 * 1024  # 4 Mo
+    app.config["ALLOWED_EXTENSIONS"] = {"wav", "mp3", "ogg"}
 
     # Enregistrer les Blueprints
-    app.register_blueprint(home, url_prefix='/')
-    app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(model, url_prefix='/model')
-    # app.register_blueprint(predict, url_prefix='/predict')
+    app.register_blueprint(home, url_prefix="/")
+    app.register_blueprint(auth, url_prefix="/auth")
+    app.register_blueprint(model, url_prefix="/model")
+    # app.register_blueprint(predict, url_prefix="/predict")
 
     return app

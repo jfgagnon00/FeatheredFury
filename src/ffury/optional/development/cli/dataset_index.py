@@ -6,32 +6,39 @@ from pandas import read_csv
 from pathlib import Path
 from tqdm import tqdm
 
-from ....cli import ProjectConfigDecorator
-from .dataset import dataset_group
-
-from ....configs import (
+from ffury.cli import ProjectConfigDecorator
+from ffury.configs import (
     DatasetType,
     ProjectConfig
 )
-from ....transforms import (
-    get_audio_path,
+from ffury.transforms import (
     spectrogram_from_audio,
     waveform_apply_config,
     waveform_from_file,
+)
+from ffury.misc.concurrent import create_dask_local_client
+from ffury.misc.logging import create_logger
+
+from .dataset import dataset_group
+from ..transforms.properties import (
+    _FILENAME,
+    _SPECTROGRAM
+)
+from ..transforms import (
+    get_audio_path,
     write_hdf5_dataset,
     write_hdf5_groups,
     write_indexing_md5
 )
-from ....transforms.properties import (
-    _FILENAME,
-    _SPECTROGRAM
-)
-from ....misc.concurrent import create_dask_local_client
-from ....misc.logging import create_logger
 
 
 @dataset_group.command()
-@click.option("--log-debug-info", "log_debug_info", is_flag=True, default=False, show_default=True, help="Log debug info")
+@click.option("--log-debug-info", 
+              "log_debug_info", 
+              is_flag=True, 
+              default=False, 
+              show_default=True, 
+              help="Log debug info")
 @ProjectConfigDecorator
 def index(project_config: ProjectConfig,
           log_debug_info) -> None:
