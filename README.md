@@ -30,12 +30,10 @@
    │   │                     numero avec 2 digits '-' initiale de l'auteur '-' description courte
    │   └── template_00-user_name-step.ipynb <- Template de notebook
    ├── documentation      <- Documentation.
-   │   ├── references     <- Publications d'intérêts.
-   │   └-─ reports        <- Rapports livrés à Bois-de-Boulogne
+   │   └── references     <- Publications d'intérêts.
    ├── setup.py           <- Makes project pip installable (pip install -e .) so src can
    |                         be imported
    ├── ffury.yaml         <- Point d'entré pour les configurations globales
    └── src                <- Code source utilise pour le projet
-       ├── ffury          <- Package specifique pour le projet.
-       └── applications   <- Client + API.
+       └── ffury          <- Package specifique pour le projet.
 ```
