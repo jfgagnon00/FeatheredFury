@@ -10,7 +10,7 @@
 * [BirdCLEF 2023](https://www.kaggle.com/competitions/birdclef-2023)
 
 # Managment de projet
-* [Trello | FeatheredFury](https://trello.com/b/lm047mnt/featheredfury)
+* [Microsoft Plannter | FeatheredFury](https://planner.cloud.microsoft/webui/plan/z1bIl0m9M06Lb_yB34_4YWQAGLt1/view/board?tid=f9182dd7-4234-41fb-9e9c-dd20d493b548)
 
 # Misc
 ## Neptune.AI

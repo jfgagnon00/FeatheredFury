@@ -1,8 +1,0 @@
-azure-container-registry-login-server = "ffuryacr.azurecr.io"
-
-docker login ffuryacr.azurecr.io --username $AZURE_SERVICE_PRINCIPAL_APP_ID --password $AZURE_SERVICE_PRINCIPAL_PASSWORD
-
-# faut tagger pour pusher
-docker build -t ffuryacr.azurecr.io/ffury/application:latest -f .cd/app/Dockerfile .
-
-docker push ffuryacr.azurecr.io/ffury/application:latest

@@ -29,5 +29,5 @@ source activate.sh
 ```
 
 ### Management de projet
-1. Créer un compte sur [Trello](https://trello.com/home)
+1. Créer un compte sur [Microsoft Planner](* [Microsoft Plannter | FeatheredFury](https://planner.cloud.microsoft)
 1. Demander à être ajouté au projet FeatheredFury

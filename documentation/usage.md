@@ -13,5 +13,7 @@ ffury [COMMAND] --help
 
 Les commandes les plus usuelles. Obtenir le dataset:
 ```
-ffury dataset
+ffury dataset install
+ffury dataset preprocess
+ffury dataset index
 ```
