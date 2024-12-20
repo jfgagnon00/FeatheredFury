@@ -6,14 +6,6 @@ from ..configs import ProjectConfig
 
 
 @click.command()
-@click.option("--port", 
-              type=int, 
-              default=5000,
-              help="Port de l'application")
-@click.option("--host", 
-              type=str, 
-              default="0.0.0.0",
-              help="Adresse pour host")
 @click.option("--secret", 
               type=str, 
               default="",
@@ -25,8 +17,6 @@ from ..configs import ProjectConfig
               help="Debug mode")
 @ProjectConfigDecorator
 def application(project_config: ProjectConfig,
-                port: int,
-                host: str,
                 secret: str,
                 debug: bool) -> None:
     """
@@ -35,6 +25,6 @@ def application(project_config: ProjectConfig,
     from ..application import create_flask_app
 
     flask_app = create_flask_app(project_config, secret)
-    flask_app.run(host=host, 
-                  port=port,
+    flask_app.run(host=project_config.application.host,
+                  port=project_config.application.port,
                   debug=debug)

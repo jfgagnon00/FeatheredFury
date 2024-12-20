@@ -6,9 +6,11 @@ from pathlib import Path
 
 from ..yaml import YamlDeserializable
 
-from .PathsConfig import PathsConfig
+from .ApplicationConfig import ApplicationConfig
 from .BirdClefConfig import BirdClefConfig
+from .PathsConfig import PathsConfig
 from .PreprocessConfig import PreprocessConfig
+from .ServiceConfig import ServiceConfig
 from .TrainConfig import TrainConfig
 
 
@@ -46,6 +48,8 @@ class ProjectConfig:
         self.dataset = BirdClefConfig()
         self.preprocess = PreprocessConfig()
         self.train = TrainConfig()
+        self.application = ApplicationConfig()
+        self.service = ServiceConfig()
 
         # configs interne
         self._ulimit_workaround = 2048

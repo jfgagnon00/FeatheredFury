@@ -1,5 +1,6 @@
 import ffury
 
+from .ApplicationConfig import ApplicationConfig
 from .BirdClefConfig import BirdClefConfig
 from .PathsConfig import PathsConfig
 from .PreprocessConfig import PreprocessConfig
@@ -7,6 +8,7 @@ from .ProjectConfig import (
     DatasetType,
     ProjectConfig
 )
+from .ServiceConfig import ServiceConfig
 from .TrainConfig import TrainConfig
 from .TrainParameters import TrainParameters
 
