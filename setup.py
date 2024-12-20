@@ -18,7 +18,7 @@ def _dependencies_core():
 
 def _dependencies_development():
     return [
-        "azure-cli==2.67.0",
+        "azure-cli==2.53.1",
         "dvc-gdrive==3.0.1",
         "dvc==3.51.3",
         "h5py==3.11.0",
