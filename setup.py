@@ -4,8 +4,6 @@ def _dependencies_core():
     return [
         "click==8.1.7",
         "dask[distributed]==2024.7.1",
-        "flasgger==0.9.7.1",
-        "flask==3.1.0",
         "keras==3.3.3",
         "librosa==0.10.2.post1",
         "matplotlib==3.9.0",
@@ -13,7 +11,6 @@ def _dependencies_core():
         "numpy<2", # limitation librosa
         "pyyaml==6.0.1",
         "tensorflow==2.16.1",
-        "requests==2.32.3",
     ]
 
 def _dependencies_development():
@@ -23,6 +20,19 @@ def _dependencies_development():
         "dvc==3.51.3",
         "h5py==3.11.0",
         "tqdm==4.66.4",
+    ]
+
+def _dependencies_application():
+    return [
+        "flask==3.1.0",
+        "requests==2.32.3",
+        "werkzeug==3.1.3",
+    ]
+
+def _dependencies_service():
+    return [
+        "flasgger==0.9.7.1",
+        "flask==3.1.0",
     ]
 
 def _dependencies_local():
@@ -48,6 +58,11 @@ setup(name="feathered-fury",
       install_requires=_dependencies_core(),
       extras_require={
         "development": _dependencies_development(),
+        "application": _dependencies_application(),
+        "service": _dependencies_service(),
         "local": _dependencies_local(),
-        "all": _dependencies_development() +  _dependencies_local()
+        "all": _dependencies_development() +  
+               _dependencies_application() +
+               _dependencies_service() +
+               _dependencies_local()
       })

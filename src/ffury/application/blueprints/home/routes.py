@@ -1,11 +1,11 @@
-from flask import (
-    Blueprint, 
-    render_template
-)
+from flask import Flask
 
-home = Blueprint('home', __name__)
+from . import home
+from .index import index
+from .politic import politic
+from .upload import upload
 
-@home.route('/', methods=['GET'])
-def index(): 
-    return render_template('home/index.html')
- 
+
+def register_blueprint(app: Flask,
+                       url_prefix: str) -> None:
+    app.register_blueprint(home, url_prefix=url_prefix)

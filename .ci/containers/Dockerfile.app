@@ -12,10 +12,10 @@ COPY .ci/ .ci/
 COPY configs/ configs/
 COPY src/ffury/ src/ffury/
 
-RUN pip install --no-cache-dir -r .ci/requirements-app.txt && \
+RUN pip install --no-cache-dir --use-pep517 -e .\[application\] && \
     rm -rf .ci/ && \
     rm setup.py
 
 EXPOSE ${PORT}
 
-CMD ["ffury", "app", "--port", ${PORT}, "start"]
+CMD ["ffury", "application", "--port", ${PORT}]

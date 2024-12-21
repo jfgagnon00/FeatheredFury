@@ -13,26 +13,16 @@
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="/" class="navbar-brand">{{ name }}</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/model/upload">Téléverser un fichier son</a></li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="/">Téléverser un fichier son</a>
+            <a class="navbar-brand" href="/politic">Politique de confidentialité</a>
         </div>
     </div>
     
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
-        <footer>
-            <h4>&copy; {{ year }} - <b>{{ name }}</b>, projet de fin d'études College bois de bologne</h4>
+        <footer class="text-center">
+            <h4>&copy; {{ year }} - <b>{{ name }}</bb>,Projet de fin d'études - College Bois de Boulogne</h4>
         </footer>
     </div>
 
