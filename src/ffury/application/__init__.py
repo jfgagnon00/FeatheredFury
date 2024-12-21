@@ -16,8 +16,8 @@ def create_flask_app(project_config: ProjectConfig,
     app.config["SERVICE_SECRET"] = secret
     app.config["SERVICE_CONFIG"] = project_config.service
     app.config["UPLOAD_FOLDER"] = upload
-    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
-    app.config["ALLOWED_EXTENSIONS"] = (".wav", ".mp3", ".ogg")
+    app.config["MAX_CONTENT_LENGTH"] = project_config.service.max_content_size
+    app.config["ALLOWED_EXTENSIONS"] = project_config.service.allowed_extensions
     app.config["LOGGER"] = create_logger(file=__file__)
 
     register_blueprint(app, url_prefix="/")
