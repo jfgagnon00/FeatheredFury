@@ -16,12 +16,12 @@ class ServiceConfig:
         self.protocol = "http"
         self.max_content_size = 4 * 1024 * 1024
         self.allowed_extensions = (".wav", ".mp3", ".ogg")
+        self.secret = ""
 
     @property
     def _base_url(self):
-        # api : nom du conteneur
         return f"{self.protocol}://{self.host}:{self.port}/api"
 
     @property
-    def waveform_url(self):
-        return f"{self._base_url}/waveform"
+    def predict_url(self):
+        return f"{self._base_url}/predict"

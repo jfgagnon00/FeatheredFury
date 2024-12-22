@@ -30,7 +30,7 @@ def waveform_apply_config(audio: NDArray,
                           sampling_rate: int,
                           config: PreprocessConfig) -> Tuple[NDArray, int]:
     """
-    S'assure que audio est mono et a le sampling rate demander 
+    S'assure que audio est mono et a le sampling rate demande
     dans la config de preprocessing
     """
     if audio.shape[0] > 1:

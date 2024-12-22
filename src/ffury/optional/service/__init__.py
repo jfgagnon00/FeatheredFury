@@ -1,7 +1,25 @@
 from flask import Flask
-from .routes import api_routes
+from flasgger import Swagger
+from ffury.configs import ProjectConfig
+from ffury.misc.logging import create_logger
+from pathlib import Path
 
-def create_api():
-    api = Flask(__name__)
-    api.register_blueprint(api_routes)
-    return api
+from .ApiController import ApiController
+from .blueprints.api.routes import register_blueprint
+
+
+def create_flask_app(project_config: ProjectConfig) -> Flask:
+    upload = Path.joinpath(project_config.paths.BUILD_DIR, "upload")
+    upload.mkdir(parents=True, exist_ok=True)
+
+    app = Flask(__name__)
+    app.config["PROJECT_CONFIG"] = project_config
+    app.config["UPLOAD_FOLDER"] = upload
+    app.config["API_CONTROLLER"] = ApiController(project_config)
+    app.config["LOGGER"] = create_logger(name=__name__)
+    app.config["SWAGGER"] = dict(title=project_config.paths.PROJECT_NAME,
+                                 version="0.0.1")
+
+    register_blueprint(app, url_prefix="/api")
+
+    return app, Swagger(app)

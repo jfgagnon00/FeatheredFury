@@ -5,7 +5,6 @@ from flask import (
 )
 from pathlib import Path
 from requests import post
-from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from . import home
@@ -27,11 +26,13 @@ def upload_file(file):
         return log_error(f"Type de fichier non autorisé : {file.filename}"), 400
 
     try:
-        filename = secure_filename(file.filename)
-        response = post(current_app.config["SERVICE_CONFIG"].waveform_url,
-                        files={"file": (filename, file.stream, file.content_type)})
-        result = response.json()
+        response = post(current_app.config["SERVICE_CONFIG"].predict_url,
+                        files={"file": (file.filename, file.stream, file.content_type)})
 
+        if response.status_code != 200:
+            return log_error(response.text), 400
+
+        result = response.json()
         images = {
             "image_waveform" : result["image_waveform"],
             "image_spectogramme" : result["image_spectogramme"],
