@@ -32,7 +32,7 @@ def _dependencies_security():
     return [
         "azure-identity==1.14.1",
         "azure-keyvault-secrets==4.7.0",
-        "jwt"
+        "pyjwt==2.10.1"
     ]
 
 def _dependencies_application():

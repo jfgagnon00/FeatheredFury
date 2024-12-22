@@ -1,3 +1,6 @@
-    #     token = jwt.encode({"exp": expiration},
-    #                    app.config["SECRET_KEY"],
-    #                    algorithm="HS256")
+import jwt
+
+def encode(secret: str, **kwargs) -> str:
+    return jwt.encode(dict(**kwargs),
+                      key=secret,
+                      algorithm="HS256")
