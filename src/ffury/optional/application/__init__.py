@@ -1,8 +1,8 @@
 from flask import Flask
 from pathlib import Path
 
-from ..configs import ProjectConfig
-from ..misc.logging import create_logger
+from ffury.configs import ProjectConfig
+from ffury.misc.logging import create_logger
 
 from .blueprints.home.routes import register_blueprint
 

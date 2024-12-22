@@ -34,11 +34,17 @@ def ffury():
 
     logger = create_logger(file=__file__)
 
-    # application et service
-    from .application import application
-    from .service import service
-    _cli.add_command(application)
-    _cli.add_command(service)
+    try:
+        from ..optional.application.cli.application import application
+        _cli.add_command(application)
+    except ImportError:
+        logger.info("Module application non installe.")
+
+    try:
+        from ..optional.service.cli.service import service
+        _cli.add_command(service)
+    except ImportError:
+        logger.info("Module service non installe.")
 
     try:
         from ..optional.development.cli.dataset import dataset_group

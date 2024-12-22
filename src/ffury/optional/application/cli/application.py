@@ -1,11 +1,16 @@
 import click
 
-from . import ProjectConfigDecorator
-    
-from ..configs import ProjectConfig
+from typing import Union
+
+from ffury.cli import ProjectConfigDecorator
+from ffury.configs import ProjectConfig
 
 
 @click.command()
+@click.option("--port", 
+              type=int, 
+              default=None,
+              help="Override le port utilise")
 @click.option("--secret", 
               type=str, 
               default="",
@@ -17,14 +22,17 @@ from ..configs import ProjectConfig
               help="Debug mode")
 @ProjectConfigDecorator
 def application(project_config: ProjectConfig,
+                port: Union[int, None],
                 secret: str,
                 debug: bool) -> None:
     """
     Encapsule le demarrage de l'application
     """
-    from ..application import create_flask_app
+    from .. import create_flask_app
+
+    port = project_config.application.port if port is None else port
 
     flask_app = create_flask_app(project_config, secret)
     flask_app.run(host=project_config.application.host,
-                  port=project_config.application.port,
+                  port=port,
                   debug=debug)

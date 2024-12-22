@@ -3,6 +3,11 @@ from setuptools import find_namespace_packages, setup
 def _dependencies_core():
     return [
         "click==8.1.7",
+        "pyyaml==6.0.1",
+    ]
+
+def _dependencies_ai():
+    return [
         "dask[distributed]==2024.7.1",
         "keras==3.3.3",
         "librosa==0.10.2.post1",
@@ -11,6 +16,7 @@ def _dependencies_core():
         "numpy<2", # limitation librosa
         "pyyaml==6.0.1",
         "tensorflow==2.16.1",
+
     ]
 
 def _dependencies_development():
@@ -24,6 +30,8 @@ def _dependencies_development():
 
 def _dependencies_application():
     return [
+        "azure-identity==1.14.1",
+        "azure-keyvault-secrets==4.7.0",
         "flask==3.1.0",
         "requests==2.32.3",
         "werkzeug==3.1.3",
@@ -31,6 +39,8 @@ def _dependencies_application():
 
 def _dependencies_service():
     return [
+        "azure-identity==1.14.1",
+        "azure-keyvault-secrets==4.7.0",
         "flasgger==0.9.7.1",
         "flask==3.1.0",
     ]
@@ -57,11 +67,11 @@ setup(name="feathered-fury",
         ]},
       install_requires=_dependencies_core(),
       extras_require={
-        "development": _dependencies_development(),
+        "development": _dependencies_development() + _dependencies_ai(),
         "application": _dependencies_application(),
-        "service": _dependencies_service(),
-        "local": _dependencies_local(),
-        "all": _dependencies_development() +  
+        "service": _dependencies_service() + _dependencies_ai(),
+        "all": _dependencies_ai() +
+               _dependencies_development() +  
                _dependencies_application() +
                _dependencies_service() +
                _dependencies_local()
