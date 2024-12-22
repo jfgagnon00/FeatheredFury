@@ -29,8 +29,11 @@ def _yaml_include_deserialize(loader, node):
     qui le contient.
     """
     filename = _resolve_relative_path(loader, node)
-    with open(filename, "r") as f:
-        return yaml.load(f, Loader=yaml.Loader)
+    try:
+        with open(filename, "r") as f:
+            return yaml.load(f, Loader=yaml.Loader)
+    except (ModuleNotFoundError, yaml.constructor.ConstructorError):
+        return filename
 
 @YamlTag("!relative_path")
 def _yaml_relative_path_deserialize(loader, node):

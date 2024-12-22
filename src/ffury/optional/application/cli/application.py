@@ -1,20 +1,14 @@
 import click
 
-from typing import Union
-
+from ffury.misc.azure_secrets import init_secrets
 from ffury.cli import ProjectConfigDecorator
 from ffury.configs import ProjectConfig
+from os import environ
+
+from .. import create_flask_app
 
 
 @click.command()
-@click.option("--port", 
-              type=int, 
-              default=None,
-              help="Override le port utilise")
-@click.option("--secret", 
-              type=str, 
-              default="",
-              help="Clef secrete")
 @click.option("--debug", 
               is_flag=True, 
               default=False, 
@@ -22,15 +16,20 @@ from ffury.configs import ProjectConfig
               help="Debug mode")
 @ProjectConfigDecorator
 def application(project_config: ProjectConfig,
-                port: Union[int, None],
-                secret: str,
                 debug: bool) -> None:
     """
     Encapsule le demarrage de l'application
     """
-    from .. import create_flask_app
+    init_secrets("FFURY_APPLICATION_PORT", "FFURY_SECRET")
 
-    port = project_config.application.port if port is None else port
+    port = project_config.application.port
+    secret = ""
+
+    if "FFURY_APPLICATION_PORT" in environ:
+        port = environ["FFURY_APPLICATION_PORT"]
+
+    if "FFURY_SECRET" in environ:
+        secret = environ["FFURY_SECRET"]
 
     flask_app = create_flask_app(project_config, secret)
     flask_app.run(host=project_config.application.host,

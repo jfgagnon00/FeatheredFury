@@ -22,14 +22,16 @@ def load_config(filename : str = DEFAULT_CONFIG_FILE) -> ProjectConfig:
     """
     Load une configuration a partir d'un fichier
     """
-    # TODO: 
-    # 1. decorateur yaml demande de connaitre tous les 
-    # types avant de loader un fichier qui peut les utiliser
-    # a refactorer
-    # 2. Avec package optionel, le reload des configs est a revoir
-    from ..optional.development.keras_adapters import (
-        KerasDummyModelFactory,
-        KerasTrainable
-    )
+    try:
+        # TODO: 
+        # decorateur yaml demande de connaitre tous les 
+        # types avant de loader un fichier qui peut les utiliser
+        # a refactorer
+        from ..optional.development.keras_adapters import (
+            KerasDummyModelFactory,
+            KerasTrainable
+        )
+    except ImportError:
+        pass
 
     return load_yaml(filename)

@@ -28,10 +28,15 @@ def _dependencies_development():
         "tqdm==4.66.4",
     ]
 
-def _dependencies_application():
+def _dependencies_security():
     return [
         "azure-identity==1.14.1",
         "azure-keyvault-secrets==4.7.0",
+        "jwt"
+    ]
+
+def _dependencies_application():
+    return [
         "flask==3.1.0",
         "requests==2.32.3",
         "werkzeug==3.1.3",
@@ -39,8 +44,6 @@ def _dependencies_application():
 
 def _dependencies_service():
     return [
-        "azure-identity==1.14.1",
-        "azure-keyvault-secrets==4.7.0",
         "flasgger==0.9.7.1",
         "flask==3.1.0",
     ]
@@ -68,9 +71,13 @@ setup(name="feathered-fury",
       install_requires=_dependencies_core(),
       extras_require={
         "development": _dependencies_development() + _dependencies_ai(),
-        "application": _dependencies_application(),
-        "service": _dependencies_service() + _dependencies_ai(),
+        "application": _dependencies_application() + 
+                       _dependencies_security(),
+        "service": _dependencies_service() + 
+                   _dependencies_security() + 
+                   _dependencies_ai(),
         "all": _dependencies_ai() +
+               _dependencies_security() +
                _dependencies_development() +  
                _dependencies_application() +
                _dependencies_service() +
