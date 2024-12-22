@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # hardcode pour le moment - suppose etre appeler a la racine du projet
-docker build -t application \
-             -f .ci/containers/docker-application \
-             --build-arg APPLICATION_PORT=5000 \
+docker build --build-arg APPLICATION_PORT=5000 \
              --build-arg SERVICE_PORT=5001 \
+             -t application \
+             -f .ci/containers/docker-application \
              .
 
-docker build -t service \
+docker build --build-arg SERVICE_PORT=5001 \
+             -t service \
              -f .ci/containers/docker-service \
-             --build-arg SERVICE_PORT=5001 \
              .
