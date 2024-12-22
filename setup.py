@@ -15,8 +15,7 @@ def _dependencies_ai():
         "neptune==1.10.4",
         "numpy<2", # limitation librosa
         "pyyaml==6.0.1",
-        "tensorflow==2.16.1",
-
+        "tensorflow",
     ]
 
 def _dependencies_development():

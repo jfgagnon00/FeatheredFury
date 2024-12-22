@@ -1,14 +1,25 @@
-ARG PYTHON_VERSION=3.9-alpine
-ARG PORT=5001
 ARG PLATFORM=linux/amd64
+ARG PYTHON_VERSION=3.9-slim
+ARG PORT=5001
 
 FROM --platform=${PLATFORM} python:${PYTHON_VERSION}
 
-WORKDIR /api
-COPY ../requirements-common.txt .
-RUN pip install -e .\[service\] && \
-    rm requirements-common.txt
+# https://tinyurl.com/ycyaahvj
+ARG PORT=${PORT}
+ENV FFURY_SERVICE_PORT=${PORT}
+
+WORKDIR /app
+
+COPY setup.py .
+COPY ffury.yaml .
+COPY .ci/ .ci/
+COPY configs/ configs/
+COPY src/ffury/ src/ffury/
+
+RUN pip install --no-cache-dir --use-pep517 -e .\[service\] && \
+    rm -rf .ci/ && \
+    rm setup.py
 
 EXPOSE ${PORT}
 
-CMD ["ffury", "service", "--port", ${PORT}]
+CMD ["ffury", "service"]
