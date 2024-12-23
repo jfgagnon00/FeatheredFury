@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import Tuple
 
 
-class ApiController:
+class ServiceController:
     def __init__(self, project_config: ProjectConfig):
         self._config = project_config.preprocess
         self._init_species_label(project_config)
@@ -42,6 +42,7 @@ class ApiController:
 
     def predict(self, filename: str) -> None:
         audio, sampling_rate, spectrogram = self._transform(filename)
+        duration = get_duration(y=audio, sr=sampling_rate)
 
         # transformer en groupe
 
@@ -49,8 +50,8 @@ class ApiController:
             # prediction
             pass
 
-        return self._render_waveform(audio, sampling_rate, figsize=(10, 2)), \
-               self._render_spectrogram(spectrogram, sampling_rate, figsize=(10, 3))
+        return self._render_waveform(audio, sampling_rate, duration, figsize=(10, 2)), \
+               self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(10, 3))
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 
@@ -69,6 +70,7 @@ class ApiController:
     def _render_waveform(self,
                          audio: NDArray, 
                          sr: int, 
+                         duration: float,
                          figsize: Tuple[int, int] =(10, 4),
                          format: str = "png") -> str:
         fig, ax = plt.subplots(figsize=figsize)
@@ -76,7 +78,7 @@ class ApiController:
                  sr=sr,
                  ax=ax,
                  color="black")
-        ax.set_xlim(left=0.0, right=get_duration(y=audio, sr=sr))
+        ax.set_xlim(left=0.0, right=duration)
         plt.xlabel("")
         plt.ylabel("Amplitude")
         plt.tight_layout()
@@ -89,6 +91,7 @@ class ApiController:
     def _render_spectrogram(self,
                             spectrogram: NDArray, 
                             sr: int, 
+                            duration: float,
                             figsize: Tuple[int, int] =(10, 4),
                             format: str = "png") -> str:
         fig, ax = plt.subplots(figsize=figsize)
@@ -100,6 +103,7 @@ class ApiController:
                  n_fft=self._config.spectrogram_n_ftt,
                  hop_length=self._config.spectrogram_hop_length,
                  cmap="gray_r")
+        ax.set_xlim(left=0.0, right=duration)
         plt.xlabel("")
         plt.ylabel("Hz")
         plt.tight_layout()

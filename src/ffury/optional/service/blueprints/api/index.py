@@ -15,4 +15,4 @@ def index():
       200:
         description: API is running
     """
-    return make_response( current_app.config["API_CONTROLLER"].status )
+    return make_response( current_app.config["CONTROLLER"].status )

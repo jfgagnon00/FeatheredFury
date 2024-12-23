@@ -5,7 +5,10 @@ from numpy import (
     min as np_min
 )
 from numpy.typing import NDArray
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import (
+    MinMaxScaler,
+    StandardScaler
+)
 
 from ..configs import PreprocessConfig
 from .waveform import waveform_apply_config
@@ -37,7 +40,10 @@ def spectrogram_from_audio(audio: NDArray,
     S_db = power_to_db(S, ref=np_max)
 
     # normalisation
-    S_db = MinMaxScaler().fit_transform(S_db)
+    # TODO: semble causer des problemes a la visualisation
+    # standard scaler - semble mieux representer le data d'origine, mais n'est pas top
+    # S_db = MinMaxScaler().fit_transform(S_db)
+    S_db = StandardScaler().fit_transform(S_db)
 
     # shape du spectrogram est (n_mels, n_frames)
     # n_frames represente le temps

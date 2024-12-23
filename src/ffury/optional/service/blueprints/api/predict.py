@@ -45,7 +45,7 @@ def predict():
     filename = Path.joinpath( current_app.config["UPLOAD_FOLDER"], filename)
     file.save(filename)
 
-    waveform_b64, spectrogram_b64 = current_app.config["API_CONTROLLER"].predict(filename)
+    waveform_b64, spectrogram_b64 = current_app.config["CONTROLLER"].predict(filename)
 
     response_data = dict(
         waveform_b64=waveform_b64,
