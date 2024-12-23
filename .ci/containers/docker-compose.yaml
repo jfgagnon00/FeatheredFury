@@ -1,0 +1,38 @@
+# Remarque : sans ports, les services ne sont accessibles que 
+# par d'autres services du reseau ffury_network.
+# L'access se fait par le nom du service. Ex)
+# http://ffury_service:5001
+services:
+  ffury_application:
+    build:
+      context: ../..
+      dockerfile: .ci/containers/docker-application
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+        PORT: ${FFURY_APPLICATION_PORT}
+    image: application_image
+    environment:
+      - FFURY_SERVICE_PORT=${FFURY_SERVICE_PORT}
+      - FFURY_SERVICE_HOST=${FFURY_SERVICE_HOST}
+    ports:
+      # accessible depuis browser
+      - "80:${FFURY_APPLICATION_PORT}"
+    depends_on:
+      - ffury_service
+    networks:
+      - ffury_network
+
+  ffury_service:
+    build:
+      context: ../..
+      dockerfile: .ci/containers/docker-service
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+        PORT: ${FFURY_SERVICE_PORT}
+    image: service_image
+    networks:
+      - ffury_network
+
+networks:
+  ffury_network:
+    driver: bridge

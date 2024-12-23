@@ -1,16 +1,8 @@
-ARG PLATFORM=linux/amd64
 ARG PYTHON_VERSION=3.9-slim
-ARG APPLICATION_PORT=5000
-ARG SERVICE_PORT=5001
 
-FROM --platform=${PLATFORM} python:${PYTHON_VERSION}
+FROM python:${PYTHON_VERSION}
 
-# https://tinyurl.com/ycyaahvj
-ARG APPLICATION_PORT=${APPLICATION_PORT}
-ARG SERVICE_PORT=${SERVICE_PORT}
-
-ENV FFURY_APPLICATION_PORT=${APPLICATION_PORT}
-ENV FFURY_SERVICE_PORT=${SERVICE_PORT}
+ARG PORT
 
 WORKDIR /app
 
@@ -24,6 +16,6 @@ RUN pip install --no-cache-dir --use-pep517 -e .\[application\] && \
     rm -rf .ci/ && \
     rm setup.py
 
-EXPOSE ${APPLICATION_PORT}
+EXPOSE ${PORT}
 
 CMD ["ffury", "application"]

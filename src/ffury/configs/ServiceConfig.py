@@ -9,14 +9,14 @@ class ServiceConfig:
     def __init__(self):
         self.port = 5001
 
-        # todo Pour qu"une application dans un conteneur soit accessible 
+        # pour qu'une application dans un conteneur soit accessible 
         # depuis l"extérieur, elle doit écouter sur 0.0.0.0 et non 127.0.0.1
         self.host = "0.0.0.0"
 
         self.protocol = "http"
+
         self.max_content_size = 4 * 1024 * 1024
         self.allowed_extensions = (".wav", ".mp3", ".ogg")
-        self.secret = ""
 
     @property
     def _base_url(self):

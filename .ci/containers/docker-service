@@ -1,13 +1,8 @@
-ARG PLATFORM=linux/amd64
 ARG PYTHON_VERSION=3.9-slim
-ARG SERVICE_PORT=5001
 
-FROM --platform=${PLATFORM} python:${PYTHON_VERSION}
+FROM python:${PYTHON_VERSION}
 
-# https://tinyurl.com/ycyaahvj
-ARG SERVICE_PORT=${SERVICE_PORT}
-
-ENV FFURY_SERVICE_PORT=${SERVICE_PORT}
+ARG PORT
 
 WORKDIR /app
 
@@ -17,10 +12,15 @@ COPY .ci/ .ci/
 COPY configs/ configs/
 COPY src/ffury/ src/ffury/
 
+# libsndfile1 pour librosa
+RUN apt-get update && \
+    apt-get install -y libsndfile1 && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir --use-pep517 -e .\[service\] && \
     rm -rf .ci/ && \
     rm setup.py
 
-EXPOSE ${SERVICE_PORT}
+EXPOSE ${PORT}
 
 CMD ["ffury", "service"]
