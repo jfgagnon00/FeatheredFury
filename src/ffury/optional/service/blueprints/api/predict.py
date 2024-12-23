@@ -45,11 +45,11 @@ def predict():
     filename = Path.joinpath( current_app.config["UPLOAD_FOLDER"], filename)
     file.save(filename)
 
-    audio_b64, spectrogram_b64 = current_app.config["API_CONTROLLER"].predict(filename)
+    waveform_b64, spectrogram_b64 = current_app.config["API_CONTROLLER"].predict(filename)
 
     response_data = dict(
-        image_waveform=audio_b64,
-        image_spectogramme=spectrogram_b64
+        waveform_b64=waveform_b64,
+        spectrogram_b64=spectrogram_b64
     )
 
     # effacer le fichier pour le momement

@@ -1,3 +1,4 @@
+from base64 import b64encode
 from flask import (
     current_app,
     render_template,
@@ -32,16 +33,16 @@ def upload_file(file):
         if response.status_code != 200:
             return log_error(response.text), 400
 
+        # necesaire pour obtenir le contenu audio
+        file.seek(0)
         result = response.json()
-        images = {
-            "image_waveform" : result["image_waveform"],
-            "image_spectogramme" : result["image_spectogramme"],
-            #"file_audio" : file.filename # base64.b64encode(file.read()).decode("utf-8")
-        }
 
         # Passer l'image base64 à la page HTML
         return render_template("service/waveformResponse.html",
-                                result=images)
+                               waveform_b64=result["waveform_b64"],
+                               spectrogram_b64=result["spectrogram_b64"],
+                               audio_content_b64=b64encode(file.read()).decode("utf-8"),
+                               audio_content_type=file.content_type)
     except Exception as e:
         return log_error(repr(e)), 400
 

@@ -17,6 +17,7 @@ from ffury.transforms import (
     spectrogram_from_audio
 )
 from io import BytesIO
+from librosa import get_duration
 from librosa.display import (
     specshow,
     waveshow
@@ -40,7 +41,7 @@ class ApiController:
                     labels=self._species_label.copy())
 
     def predict(self, filename: str) -> None:
-        audio, sampling_rate, spectrogram = self._tranform(filename)
+        audio, sampling_rate, spectrogram = self._transform(filename)
 
         # transformer en groupe
 
@@ -48,10 +49,10 @@ class ApiController:
             # prediction
             pass
 
-        return self._render_waveform(audio, sampling_rate), \
-               self._render_spectrogram(spectrogram, sampling_rate)
+        return self._render_waveform(audio, sampling_rate, figsize=(10, 2)), \
+               self._render_spectrogram(spectrogram, sampling_rate, figsize=(10, 3))
     
-    def _tranform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
+    def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 
                                                   self._config)
         
@@ -73,8 +74,12 @@ class ApiController:
         fig, ax = plt.subplots(figsize=figsize)
         waveshow(audio,
                  sr=sr,
-                 ax=ax)
+                 ax=ax,
+                 color="black")
+        ax.set_xlim(left=0.0, right=get_duration(y=audio, sr=sr))
         plt.xlabel("")
+        plt.ylabel("Amplitude")
+        plt.tight_layout()
 
         buffer_b64 = self._figure_to_b64(fig, format=format)
         plt.close(fig)
@@ -93,8 +98,11 @@ class ApiController:
                  sr=sr,
                  ax=ax,
                  n_fft=self._config.spectrogram_n_ftt,
-                 hop_length=self._config.spectrogram_hop_length)
+                 hop_length=self._config.spectrogram_hop_length,
+                 cmap="gray_r")
         plt.xlabel("")
+        plt.ylabel("Hz")
+        plt.tight_layout()
 
         buffer_b64 = self._figure_to_b64(fig, format=format)
         plt.close(fig)

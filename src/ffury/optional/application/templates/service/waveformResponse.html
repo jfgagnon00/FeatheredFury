@@ -3,12 +3,14 @@
 {% block content %}
 
 <div class="container">
-    <img src="data:image/png;base64,{{ result['image_waveform'] }}" alt="Waveform Image">
-    <img src="data:image/png;base64,{{ result['image_spectogramme'] }}" alt="Spectrogramme">
-    <!-- <audio id="audioPlayer" controls > 
-        <source id="audioSource" type="audio/ogg"  src=" {{result['file_audio'] }}"> 
-         <source src="{{ url_for('static', filename='audio/' ~ filename) }}" type="audio/mpeg"> Your browser does not support the audio element. </audio>
-    </audio> -->
+    <img src="data:image/png;base64,{{ waveform_b64 }}" alt="Waveform">
+    <img src="data:image/png;base64,{{ spectrogram_b64 }}" alt="Spectrogramme">
+    <div class="text-center">
+        <audio controls > 
+            <source src="data:{{ audio_content_type }};base64,{{ audio_content_b64 }}" type="{{ audio_content_type }}">
+            Votre navigateur ne supporte pas l'élément audio.
+        </audio>
+    </div>
 </div>
 
 {% endblock %}
