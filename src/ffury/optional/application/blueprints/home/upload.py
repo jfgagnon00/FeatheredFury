@@ -1,4 +1,5 @@
 from base64 import b64encode
+from ffury.misc.logging import pretty_format
 from flask import (
     current_app,
     render_template,
@@ -37,10 +38,16 @@ def upload_file(file):
         file.seek(0)
         result = response.json()
 
+        # formater nombres pour simplifier affichage
+        for p in result["predictions"]:
+            p["time"] = round(p["time"] / 1000, 1)
+            p["probabilities"] = [round(p, 4) for p in p["probabilities"]]
+
         # Passer l'image base64 à la page HTML
         return render_template("service/waveformResponse.html",
                                waveform_b64=result["waveform_b64"],
                                spectrogram_b64=result["spectrogram_b64"],
+                               predictions=result["predictions"],
                                audio_content_b64=b64encode(file.read()).decode("utf-8"),
                                audio_content_type=file.content_type)
     except Exception as e:

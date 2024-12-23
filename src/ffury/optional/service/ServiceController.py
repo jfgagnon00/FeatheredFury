@@ -63,8 +63,8 @@ class ServiceController:
         logger.info(f"Groupe info: {self._config.group_segment_count} {self._config.group_frame_infos()}")
         logger.info(f"Groupe batch shape: {group_batches.shape}")
 
-        return self._render_waveform(audio, sampling_rate, duration, figsize=(10, 2)), \
-               self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(10, 3)), \
+        return self._render_waveform(audio, sampling_rate, duration, figsize=(11, 1.5)), \
+               self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(11, 2.9)), \
                self._make_prediction(group_batches)
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
@@ -135,11 +135,13 @@ class ServiceController:
         for i in range(species_prob.shape[0]):
             if species_pred[i]:
                 specie_index = species_index[i]
+                name = self._species_label[specie_index]
+                label = self._species[specie_index]
                 prediction = dict(
-                    label=self._species_label[specie_index],
+                    name=f"{name} [{label}]",
                     time=time,
                     probabilities=species_prob[i].tolist(),
-                    info=f"https://ebird.org/species/{self._species[specie_index]}",
+                    info_url=f"https://ebird.org/species/{label}",
                 )
                 predictions.append(prediction)
 

@@ -2,14 +2,48 @@
 
 {% block content %}
 
+<style>
+    .table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #f8f9fa;
+    }
+</style>
+
 <div class="container">
-    <img src="data:image/png;base64,{{ waveform_b64 }}" alt="Waveform">
-    <img src="data:image/png;base64,{{ spectrogram_b64 }}" alt="Spectrogramme">
-    <div class="text-center">
-        <audio controls > 
-            <source src="data:{{ audio_content_type }};base64,{{ audio_content_b64 }}" type="{{ audio_content_type }}">
-            Votre navigateur ne supporte pas l'élément audio.
-        </audio>
+    <div class="row">
+        <img src="data:image/png;base64,{{ waveform_b64 }}" alt="Waveform">
+        <img src="data:image/png;base64,{{ spectrogram_b64 }}" alt="Spectrogramme">
+        <div class="text-center">
+            <audio controls > 
+                <source src="data:{{ audio_content_type }};base64,{{ audio_content_b64 }}" type="{{ audio_content_type }}">
+                Votre navigateur ne supporte pas l'élément audio.
+            </audio>
+        </div>
+    </div>
+
+    <br>
+
+    <div style="max-height: 250px; overflow-y: auto;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Espèce</th>
+                    <th>Temps (s)</th>
+                    <th>Probabilités</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in predictions %}
+                    <tr>
+                        <td><a href="{{ p.info_url }}" target="_blank">{{ p.name }}</a></td>
+                        <td>{{ p.time }}</td>
+                        <td>{{ p.probabilities }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
