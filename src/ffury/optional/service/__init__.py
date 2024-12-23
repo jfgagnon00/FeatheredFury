@@ -1,7 +1,10 @@
 from flask import Flask
 from flasgger import Swagger
 from ffury.configs import ProjectConfig
-from ffury.misc.logging import create_logger
+from ffury.misc.logging import (
+    pretty_format,
+    create_logger
+)
 from pathlib import Path
 
 from .ApiController import ApiController
@@ -21,5 +24,8 @@ def create_flask_app(project_config: ProjectConfig) -> Flask:
                                  version="0.0.1")
 
     register_blueprint(app, url_prefix="/api")
+
+    message = pretty_format(app.config["API_CONTROLLER"].status)
+    app.config["LOGGER"].info(message)
 
     return app, Swagger(app)

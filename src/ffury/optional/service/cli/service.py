@@ -23,9 +23,6 @@ def service(project_config: ProjectConfig,
         port = environ["FFURY_SERVICE_PORT"]
         if len(port) > 0:
             project_config.service.port = port
-    
-    # if "FFURY_SERVICE_HOST" in environ:
-    #     project_config.service.host = environ["FFURY_SERVICE_HOST"]
 
     flask_service, swagger_service = create_flask_app(project_config)
     flask_service.run(host=project_config.service.host,

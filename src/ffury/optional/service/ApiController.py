@@ -1,4 +1,7 @@
 import matplotlib
+
+# permet d'exporter les figure en png
+# sans etre sur le main thread
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -16,13 +19,27 @@ from librosa.display import (
     waveshow
 )
 from numpy.typing import NDArray
-from typing import Tuple
+from pathlib import Path
+from typing import (
+    Any,
+    Tuple
+)
 
 
 class ApiController:
     def __init__(self, project_config: ProjectConfig):
         self._config = project_config.preprocess
-        # aller chercher le modele
+        self._model  = None
+
+        filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
+        if Path.is_file(filename):
+            from keras.models import load_model
+            self._model = load_model(filename)
+
+    @property
+    def status(self):
+        return dict(controller="Created",
+                    model="Not loaded" if self._model is None else "Loaded")
 
     def predict(self, filename: str) -> None:
         audio, sampling_rate, spectrogram = self._tranform(filename)

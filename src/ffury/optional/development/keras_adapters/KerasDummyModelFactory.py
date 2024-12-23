@@ -18,7 +18,7 @@ class KerasDummyModelFactory(IFactory):
     utliser autrement.
     """
     def __init__(self):
-        self.model_name = "KerasModel"
+        self.model_name = "Model"
 
     def create_from_config(self, project_config: ProjectConfig) -> Any:
         input_shape = project_config.preprocess.train_input_shape()

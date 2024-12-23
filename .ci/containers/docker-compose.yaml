@@ -5,6 +5,7 @@
 services:
   ffury_application:
     build:
+      # se positionner a la racine du projet
       context: ../..
       dockerfile: .ci/containers/docker-application
       args:
@@ -24,12 +25,15 @@ services:
 
   ffury_service:
     build:
+      # se positionner a la racine du projet
       context: ../..
       dockerfile: .ci/containers/docker-service
       args:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
     image: service_image
+    volumes:
+      - ../../models:/app/models
     networks:
       - ffury_network
 

@@ -1,4 +1,7 @@
-from flask import make_response
+from flask import (
+    current_app,
+    make_response
+)
 
 from . import api
 
@@ -12,5 +15,4 @@ def index():
       200:
         description: API is running
     """
-    result = dict(status="API is running")
-    return make_response(result)
+    return make_response( current_app.config["API_CONTROLLER"].status )
