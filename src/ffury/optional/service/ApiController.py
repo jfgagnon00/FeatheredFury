@@ -1,51 +1,52 @@
 import matplotlib
 
-# permet d'exporter les figure en png
+# permet d'exporter les figures en png
 # sans etre sur le main thread
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 
 from base64 import b64encode
+from ffury.configs import (
+    DatasetType,
+    ProjectConfig
+)
 from ffury.transforms import (
     waveform_apply_config,
     waveform_from_file,
     spectrogram_from_audio
 )
-from ffury.configs.ProjectConfig import ProjectConfig
 from io import BytesIO
 from librosa.display import (
     specshow,
     waveshow
 )
 from numpy.typing import NDArray
+from pandas import read_csv
 from pathlib import Path
-from typing import (
-    Any,
-    Tuple
-)
+from typing import Tuple
 
 
 class ApiController:
     def __init__(self, project_config: ProjectConfig):
         self._config = project_config.preprocess
-        self._model  = None
-
-        filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
-        if Path.is_file(filename):
-            from keras.models import load_model
-            self._model = load_model(filename)
+        self._init_species_label(project_config)
+        self._load_model(project_config)
 
     @property
-    def status(self):
+    def status(self) -> dict:
         return dict(controller="Created",
-                    model="Not loaded" if self._model is None else "Loaded")
+                    model="Not loaded" if self._model is None else "Loaded",
+                    labels=self._species_label.copy())
 
     def predict(self, filename: str) -> None:
         audio, sampling_rate, spectrogram = self._tranform(filename)
 
         # transformer en groupe
-        # prediction
+
+        if not self._model is None:
+            # prediction
+            pass
 
         return self._render_waveform(audio, sampling_rate), \
                self._render_spectrogram(spectrogram, sampling_rate)
@@ -110,4 +111,14 @@ class ApiController:
 
         return buffer_b64
 
+    def _load_model(self, project_config: ProjectConfig) -> None:
+        self._model  = None
+        filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
+        if Path.is_file(filename):
+            from keras.models import load_model
+            self._model = load_model(filename)
 
+    def _init_species_label(self, project_config: ProjectConfig) -> None:
+        filename = project_config.get_csv_filename(DatasetType._SPECIES)
+        species_df = read_csv(filename)
+        self._species_label = species_df["common_name"].to_list()
