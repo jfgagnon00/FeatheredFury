@@ -5,8 +5,10 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from base64 import b64encode
+from flask import current_app
 from ffury.configs import (
     DatasetType,
     ProjectConfig
@@ -41,17 +43,29 @@ class ServiceController:
                     labels=self._species_label.copy())
 
     def predict(self, filename: str) -> None:
+        if self._model is None:
+            # ne peut pas faire d'inference sans modele
+            return None, None, None
+
         audio, sampling_rate, spectrogram = self._transform(filename)
+        group_batches = self._make_groups(spectrogram)
+
+        if group_batches is None:
+            # ne peut pas faire d'inference sans donnees
+            return None, None, None
+
         duration = get_duration(y=audio, sr=sampling_rate)
 
-        # transformer en groupe
-
-        if not self._model is None:
-            # prediction
-            pass
+        logger = current_app.config["LOGGER"]
+        logger.info(f"Duree audio: {round(duration * 1000, 1)} ms")
+        logger.info(f"Duree groupe: {self._config.group_ms_infos()[0]} ms")
+        logger.info(f"Spectrogramme shape: {spectrogram.shape}")
+        logger.info(f"Groupe info: {self._config.group_segment_count} {self._config.group_frame_infos()}")
+        logger.info(f"Groupe batch shape: {group_batches.shape}")
 
         return self._render_waveform(audio, sampling_rate, duration, figsize=(10, 2)), \
-               self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(10, 3))
+               self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(10, 3)), \
+               self._make_prediction(group_batches)
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 
@@ -66,6 +80,72 @@ class ServiceController:
                                              self._config)
         
         return audio, sampling_rate, spectrogram
+
+    def _make_groups(self, 
+                     spectrogram: NDArray) -> NDArray:
+        # information pour slicer le spectrogram
+        group_length, segment_length, group_hop_length = self._config.group_frame_infos()
+
+        groups = []
+        group_start = 0
+
+        # les groupe se slice dans l'axe du temps - width ou axe 1 pour numpy
+        group_count = spectrogram.shape[1] // group_length
+        for _ in range(group_count):
+            # slicer 1 groupe a la fois
+            segments = []
+            segment_start = group_start
+            for _ in range(self._config.group_segment_count):
+                segment = spectrogram[:, segment_start:segment_start + segment_length]
+                segments.append(segment)
+                segment_start += group_hop_length
+
+            # self._config.group_segment_count segments consecutifs
+            # pour keras, ca signifie channel last
+            group = np.dstack(segments)
+            groups.append(group)
+
+            # passer au groupe suivant
+            group_start += group_length
+
+        if len(groups) > 0:
+            # on concatene tous les groupes
+            return np.stack(groups)
+
+        # pas assez de donnee pour fair 1 groupe
+        return None
+
+    def _make_prediction(self,
+                         batches: NDArray) -> list:
+        species_prob = self._model.predict(batches, verbose=0)
+        species_index = np.argmax(species_prob, axis=1)
+        species_pred = species_prob[np.arange(species_prob.shape[0]), species_index] > 0.5
+
+        logger = current_app.config["LOGGER"]
+        logger.info(f"Prediction proba. shape: {species_prob.shape}")
+        logger.info(f"Prediction index shape: {species_index.shape}")
+        logger.info(f"Prediction shape: {species_pred.shape}")
+
+        # TODO: la prediction pourrait faire mieux comme les segments se chevauchent
+        #       pour le moment 1 prediction par groupe
+        group_length, _, group_hop_length = self._config.group_ms_infos()
+        predictions = []
+
+        time = group_length // 2
+        for i in range(species_prob.shape[0]):
+            if species_pred[i]:
+                specie_index = species_index[i]
+                prediction = dict(
+                    label=self._species_label[specie_index],
+                    time=time,
+                    probabilities=species_prob[i].tolist(),
+                    info=f"https://ebird.org/species/{self._species[specie_index]}",
+                )
+                predictions.append(prediction)
+
+            time += group_hop_length
+
+        return predictions
 
     def _render_waveform(self,
                          audio: NDArray, 
@@ -134,3 +214,4 @@ class ServiceController:
         filename = project_config.get_csv_filename(DatasetType._SPECIES)
         species_df = read_csv(filename)
         self._species_label = species_df["common_name"].to_list()
+        self._species = species_df["primary_label"].to_list()
