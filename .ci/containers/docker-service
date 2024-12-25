@@ -6,18 +6,19 @@ ARG PORT
 
 WORKDIR /app
 
-# installation fichiers necessaire
+# libsndfile1 pour librosa
+RUN apt-get update && \
+    apt-get install -y libsndfile1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# installation fichiers necessaire a ffury
 COPY setup.py .
 COPY ffury.yaml .
 COPY .ci/ .ci/
 COPY configs/ configs/
 COPY src/ffury/ src/ffury/
 COPY data/data__species.csv data/data__species.csv
-
-# libsndfile1 pour librosa
-RUN apt-get update && \
-    apt-get install -y libsndfile1 && \
-    rm -rf /var/lib/apt/lists/*
+COPY models/Model.keras models/Model.keras
 
 # installation ffury
 RUN pip install --no-cache-dir --use-pep517 -e .\[service\] && \
