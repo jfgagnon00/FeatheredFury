@@ -16,6 +16,5 @@ def validation():
       200:
         description: TODO
     """
-    print("AstieQ@#$!@#$!@#$")
     current_app.config["LOGGER"].info(request.get_json())
     return make_response( dict(status="OK") )
