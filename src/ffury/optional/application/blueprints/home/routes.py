@@ -4,6 +4,7 @@ from . import home
 from .index import index
 from .politic import politic
 from .upload import upload
+from .validation import validation
 
 
 def register_blueprint(app: Flask,

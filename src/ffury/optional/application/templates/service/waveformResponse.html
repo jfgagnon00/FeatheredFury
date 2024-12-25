@@ -63,7 +63,7 @@
                         <th>{{ s }}</th>
                     {% endfor %}
                     <th>
-                        <button class="application-button" onclick="sendValidation('{{ validation_url }}')">
+                        <button class="application-button" onclick="sendValidation('/validation')">
                             <img class="application-image" src="{{ url_for('static', filename='images/send.png' ) }}">
                         </button>
                     </th>
@@ -115,30 +115,31 @@
 
     async function sendValidation(url)
     {
+        // TODO: parser les infos dans la table
         const data = 
         {
             test: "TODO",
         };
 
-        // Send the selected choice to the server
         fetch(url, 
         {
             method: "POST",
             headers: 
-            {
+            { 
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => 
+        }).then( response => 
         {
-            console.log("Server Response:", data);
+            if (response.redirected) 
+            {
+                window.location = response.url
+            } 
+            else 
+            {
+                showLoginError()
+            }
         })
-        .catch(error => 
-        {
-            console.error("Erreur:", error);
-        });
     }
 </script>
     

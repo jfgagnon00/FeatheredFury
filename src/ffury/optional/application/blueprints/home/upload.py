@@ -1,5 +1,5 @@
 from base64 import b64encode
-from ffury.misc.logging import pretty_format
+from ffury.optional.application.misc.errors import log_error
 from flask import (
     current_app,
     render_template,
@@ -14,11 +14,6 @@ from . import home
 
 def allowed_file(filename: str) -> bool :
     return Path(filename).suffix.lower() in current_app.config["ALLOWED_EXTENSIONS"]
-
-def log_error(message: str):
-    current_app.config["LOGGER"].error(message)
-    return render_template("errors/oups.html",
-                           error_message=message)
 
 def upload_file(file):
     if file.filename == "":
@@ -49,8 +44,7 @@ def upload_file(file):
                                spectrogram_b64=result["spectrogram_b64"],
                                predictions=result["predictions"],
                                audio_content_b64=b64encode(file.read()).decode("utf-8"),
-                               audio_content_type=file.content_type,
-                               validation_url=current_app.config["SERVICE_CONFIG"].validation_url)
+                               audio_content_type=file.content_type)
     
     except Exception as e:
         return log_error(repr(e)), 400
@@ -66,6 +60,4 @@ def upload():
         return log_error("Taille maximale depasse"), 400
 
     # method GET
-    return render_template("home/index.html",
-                           allowed_extensions=", ".join(current_app.config["ALLOWED_EXTENSIONS"]),
-                           max_centent_length=current_app.config["MAX_CONTENT_LENGTH"] // 1024 // 1024)
+    return render_template("/")
