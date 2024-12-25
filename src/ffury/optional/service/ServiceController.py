@@ -145,7 +145,7 @@ class ServiceController:
                 )
                 predictions.append(prediction)
 
-            time += group_hop_length
+            time += group_length
 
         return predictions
 
