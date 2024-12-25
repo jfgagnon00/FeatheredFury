@@ -32,5 +32,4 @@ def create_flask_app(project_config: ProjectConfig) -> Flask:
     CORS(app)
     #CORS(app, resources={r"/*": {"origins": "https://yourfrontend.com"}})
 
-
     return app, Swagger(app)
