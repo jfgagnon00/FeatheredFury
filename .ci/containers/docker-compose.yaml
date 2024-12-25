@@ -32,6 +32,8 @@ services:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
     image: service_image
+    ports:
+      - "${FFURY_SERVICE_PORT}:${FFURY_SERVICE_PORT}"
     networks:
       - ffury_network
 

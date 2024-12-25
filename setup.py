@@ -32,7 +32,8 @@ def _dependencies_web_core():
         # TODO: a revoir
         # "azure-identity==1.14.1",
         # "azure-keyvault-secrets==4.7.0",
-        # "pyjwt==2.10.1"
+        # "pyjwt==2.10.1",
+        "pandas==2.2.3",
     ]
 
 def _dependencies_application():
