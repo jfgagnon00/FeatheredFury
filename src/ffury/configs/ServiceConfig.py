@@ -25,3 +25,7 @@ class ServiceConfig:
     @property
     def predict_url(self):
         return f"{self._base_url}/predict"
+
+    @property
+    def validation_url(self):
+        return f"{self._base_url}/validation"

@@ -3,6 +3,7 @@ from flask import Flask
 from . import api
 from .index import index
 from .predict import predict
+from .validation import validation
 
 
 def register_blueprint(app: Flask,

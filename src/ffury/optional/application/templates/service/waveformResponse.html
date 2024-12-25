@@ -3,11 +3,33 @@
 {% block content %}
 
 <style>
-    .table th {
+    .table thead {
         position: sticky;
         top: 0;
         z-index: 1;
         background-color: #f8f9fa;
+    }
+
+    .table th {
+        border: none !important;
+    }
+
+    .application-button {
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+    }
+
+    .application-image {
+      width: 24px;
+    }
+
+    .selected {
+      transform: scale(1.50);
+    }
+
+    .deselected {
+      transform: scale(0.50);
     }
 </style>
 
@@ -26,20 +48,43 @@
     <br>
 
     <div style="max-height: 250px; overflow-y: auto;">
-        <table class="table table-striped">
+        <table id="predictions" class="table table-striped">
             <thead>
                 <tr>
                     <th>Espèce</th>
                     <th>Temps (s)</th>
-                    <th>Probabilités</th>
+                    <th class="text-center" colspan="{{ num_species }}">Probabilités</th>
+                    <th>Validation</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    {% for s in species %}
+                        <th>{{ s }}</th>
+                    {% endfor %}
+                    <th>
+                        <button class="application-button" onclick="sendValidation('{{ validation_url }}')">
+                            <img class="application-image" src="{{ url_for('static', filename='images/send.png' ) }}">
+                        </button>
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                {% for p in predictions %}
+                {% for pred in predictions %}
                     <tr>
-                        <td><a href="{{ p.info_url }}" target="_blank">{{ p.name }}</a></td>
-                        <td>{{ p.time }}</td>
-                        <td>{{ p.probabilities }}</td>
+                        <td><a href="{{ pred.info_url }}" target="_blank">{{ pred.name }}</a></td>
+                        <td>{{ pred.time }}</td>
+                        {% for probability in pred.probabilities %}
+                            <td>{{ probability }}</td>
+                        {% endfor %}
+                        <td>
+                            <button id="thumb-up-{{ loop.index0 }}" class="application-button" onclick="validatePrediction('up', '{{ loop.index0 }}')">
+                                <img class="application-image" src="{{ url_for('static', filename='images/thumbs_up.png' ) }}">
+                            </button>
+                            <button id="thumb-dn-{{ loop.index0 }}" class="application-button" onclick="validatePrediction('dn', '{{ loop.index0 }}')">
+                                <img class="application-image" src="{{ url_for('static', filename='images/thumbs_dn.png' ) }}">
+                            </button>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -47,4 +92,54 @@
     </div>
 </div>
 
+<script>
+    function validatePrediction(choice, index)
+    {
+        const thumbUpButton = document.getElementById(`thumb-up-${index}`)
+        const thumbDnButton = document.getElementById(`thumb-dn-${index}`)
+
+        thumbUpButton.classList.remove("selected", "deselected");
+        thumbDnButton.classList.remove("selected", "deselected");
+
+        if (choice === "up") 
+        {
+            thumbUpButton.classList.add("selected");
+            thumbDnButton.classList.add("deselected");
+        } 
+        else 
+        {
+            thumbDnButton.classList.add("selected");
+            thumbUpButton.classList.add("deselected");
+        }
+    }
+
+    async function sendValidation(url)
+    {
+        const data = 
+        {
+            test: "TODO",
+        };
+
+        // Send the selected choice to the server
+        fetch(url, 
+        {
+            method: "POST",
+            headers: 
+            {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => 
+        {
+            console.log("Server Response:", data);
+        })
+        .catch(error => 
+        {
+            console.error("Erreur:", error);
+        });
+    }
+</script>
+    
 {% endblock %}

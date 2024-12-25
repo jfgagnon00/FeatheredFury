@@ -49,7 +49,9 @@ def upload_file(file):
                                spectrogram_b64=result["spectrogram_b64"],
                                predictions=result["predictions"],
                                audio_content_b64=b64encode(file.read()).decode("utf-8"),
-                               audio_content_type=file.content_type)
+                               audio_content_type=file.content_type,
+                               validation_url=current_app.config["SERVICE_CONFIG"].validation_url)
+    
     except Exception as e:
         return log_error(repr(e)), 400
 
