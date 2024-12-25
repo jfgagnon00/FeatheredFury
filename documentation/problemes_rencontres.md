@@ -23,3 +23,6 @@
 # Securtite et le droit des gens a faire confiance...
 - HTTPS
 - Azure (infrastructure)
+- CORS
+- Javascript
+
