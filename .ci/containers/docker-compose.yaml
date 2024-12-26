@@ -4,7 +4,7 @@
 # http://ffury_service:5001
 services:
   ffury_application:
-    platform: linux/amd64
+    platform: ${FFURY_PLATFORM}
     build:
       # se positionner a la racine du projet
       context: ../..
@@ -25,7 +25,7 @@ services:
       - ffury_network
 
   ffury_service:
-    platform: linux/amd64
+    platform: ${FFURY_PLATFORM}
     build:
       # se positionner a la racine du projet
       context: ../..
@@ -34,6 +34,8 @@ services:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
     image: ffury-web_service
+    ports:
+      - "${FFURY_SERVICE_PORT}:${FFURY_SERVICE_PORT}"
     networks:
       - ffury_network
 

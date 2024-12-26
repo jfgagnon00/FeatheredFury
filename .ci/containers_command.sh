@@ -7,7 +7,7 @@ shift
 
 if [[ "$ENVIRONMENT" == "--azure" ]]
 then
-    echo "docker-compose pour environment build"
+    echo "docker-compose pour environment azure"
     EnvironmentEnvFileOverrides=".env-azure"
 else
     echo "docker-compose pour environment local"
