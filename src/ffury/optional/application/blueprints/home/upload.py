@@ -38,6 +38,8 @@ def upload_file(file):
             p["time"] = round(p["time"] / 1000, 1)
             p["probabilities"] = [round(p, 4) for p in p["probabilities"]]
 
+        print( "Num predictions", len(result["predictions"]) )
+
         # Passer l'image base64 à la page HTML
         return render_template("service/waveformResponse.html",
                                waveform_b64=result["waveform_b64"],

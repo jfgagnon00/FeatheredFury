@@ -4,6 +4,7 @@
 # http://ffury_service:5001
 services:
   ffury_application:
+    platform: linux/amd64
     build:
       # se positionner a la racine du projet
       context: ../..
@@ -24,6 +25,7 @@ services:
       - ffury_network
 
   ffury_service:
+    platform: linux/amd64
     build:
       # se positionner a la racine du projet
       context: ../..

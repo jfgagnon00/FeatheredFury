@@ -55,6 +55,7 @@ class ServiceController:
             return None, None, None
 
         duration = get_duration(y=audio, sr=sampling_rate)
+        predictions = self._make_prediction(group_batches)
 
         logger = current_app.config["LOGGER"]
         logger.info(f"Duree audio: {round(duration * 1000, 1)} ms")
@@ -62,10 +63,11 @@ class ServiceController:
         logger.info(f"Spectrogramme shape: {spectrogram.shape}")
         logger.info(f"Groupe info: {self._config.group_segment_count} {self._config.group_frame_infos()}")
         logger.info(f"Groupe batch shape: {group_batches.shape}")
+        logger.info(f"Num predictions: {len(predictions)}")
 
         return self._render_waveform(audio, sampling_rate, duration, figsize=(11, 1.5)), \
                self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(11, 2.9)), \
-               self._make_prediction(group_batches)
+               predictions
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 

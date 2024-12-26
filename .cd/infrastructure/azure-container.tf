@@ -44,4 +44,8 @@ resource "azurerm_container_group" "acg" {
       protocol = "TCP"
     }
   }
+
+  depends_on = [
+    azurerm_container_registry.acr
+  ]
 }
