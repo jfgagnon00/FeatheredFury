@@ -46,7 +46,6 @@ def _dependencies_service():
     return [
         "flasgger==0.9.7.1",
         "flask==3.1.0",
-        "flask-cors==5.0.0",
         "werkzeug==3.1.3",
     ]
 

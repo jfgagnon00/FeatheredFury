@@ -7,7 +7,10 @@ locals {
   dns                     = "${var.resource_group_name}-${var.environment}"
 
   application_name        = "${var.resource_group_name}-${var.environment}-web-app"
-  image_name              = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_app:latest"
+  application_image       = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_app:latest"
+
+  service_name            = "${var.resource_group_name}-${var.environment}-web-service"
+  service_image          = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_service:latest"
 }
 
 # Azure Container Registry - pour builder les images dockers
@@ -36,7 +39,7 @@ resource "azurerm_container_group" "acg" {
 
   container {
     name   = local.application_name
-    image  = local.image_name
+    image  = local.application_image
     cpu    = "0.5"
     memory = "1.5"
 
@@ -44,6 +47,13 @@ resource "azurerm_container_group" "acg" {
       port     = 80
       protocol = "TCP"
     }
+  }
+
+  container {
+    name   = local.service_name
+    image  = local.service_image
+    cpu    = "2.0"
+    memory = "4.0"
   }
 
   depends_on = [

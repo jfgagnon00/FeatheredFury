@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_cors import CORS
 from flasgger import Swagger
 from ffury.configs import ProjectConfig
 from ffury.misc.logging import (
@@ -28,8 +27,5 @@ def create_flask_app(project_config: ProjectConfig) -> Flask:
 
     message = pretty_format(app.config["CONTROLLER"].status)
     app.config["LOGGER"].info(message)
-
-    CORS(app)
-    #CORS(app, resources={r"/*": {"origins": "https://yourfrontend.com"}})
 
     return app, Swagger(app)

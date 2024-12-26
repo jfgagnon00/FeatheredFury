@@ -8,4 +8,4 @@ class ApplicationConfig:
     """
     def __init__(self):
         self.host = "0.0.0.0"
-        self.port = 5000
+        self.port = 80

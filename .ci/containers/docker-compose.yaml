@@ -34,8 +34,6 @@ services:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
     image: ffury-web_service
-    ports:
-      - "${FFURY_SERVICE_PORT}:${FFURY_SERVICE_PORT}"
     networks:
       - ffury_network
 

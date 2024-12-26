@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker-compose --env-file .ci/containers/.env  -f .ci/containers/docker-compose.yaml up
+DIR=$(dirname "$0")
+
+${DIR}/containers_command.sh "$1" up
