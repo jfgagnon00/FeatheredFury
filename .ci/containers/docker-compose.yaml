@@ -12,7 +12,7 @@ services:
       args:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_APPLICATION_PORT}
-    image: application_image
+    image: ffury-web_app
     environment:
       - FFURY_SERVICE_PORT=${FFURY_SERVICE_PORT}
       - FFURY_SERVICE_HOST=${FFURY_SERVICE_HOST}
@@ -33,7 +33,7 @@ services:
       args:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
-    image: service_image
+    image: ffury-web_service
     ports:
       - "${FFURY_SERVICE_PORT}:${FFURY_SERVICE_PORT}"
     networks:
