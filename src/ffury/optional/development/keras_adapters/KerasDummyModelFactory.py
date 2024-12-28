@@ -21,6 +21,7 @@ class KerasDummyModelFactory(IFactory):
         self.model_name = "Model"
 
     def create_from_config(self, project_config: ProjectConfig) -> Any:
+        # (num_segments, n_mels, n_frames)
         input_shape = project_config.preprocess.train_input_shape()
 
         model = self._create_model(input_shape,
@@ -43,10 +44,27 @@ class KerasDummyModelFactory(IFactory):
         # ces imports sont extremement lent - sortir de l'entete
         # https://github.com/keras-team/keras/issues/7408
         from keras import Sequential
-        from keras.layers import Dense, Flatten, Input
+        from keras.layers import (
+            BatchNormalization,
+            Dense, 
+            Input, 
+            GlobalMaxPooling1D,
+            Reshape, 
+            TimeDistributed, 
+        )
+
+        target_shape = (input_shape[0], input_shape[1] * input_shape[2])
+
+        segment_net = Sequential([
+            BatchNormalization(),
+            Dense(units=512, activation="relu"),
+            Dense(units=128, activation="relu"),
+            Dense(units=num_classes, activation="sigmoid")
+        ])
 
         return Sequential([
             Input(shape=input_shape),
-            Flatten(),
-            Dense(num_classes, activation="sigmoid")
+            Reshape(target_shape=target_shape),
+            TimeDistributed(segment_net),
+            GlobalMaxPooling1D()
         ])
