@@ -10,7 +10,7 @@ locals {
   application_image       = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_app:latest"
 
   service_name            = "${var.resource_group_name}-${var.environment}-web-service"
-  service_image          = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_service:latest"
+  service_image           = "${azurerm_container_registry.acr.login_server}/${var.resource_group_name}-web_service:latest"
 }
 
 # Azure Container Registry - pour builder les images dockers
@@ -20,6 +20,22 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.rg.location
   admin_enabled       = true
   sku                 = "Basic"
+}
+
+# TODO: n'est pas la facon recommender, revoir
+resource  "null_resource" "docker_push" {
+  provisioner "local-exec" {
+    working_dir = "${path.module}/../.ci"
+    command = "./terrform_containers_push.sh"
+    environment = {
+      FFURY_REGISTRY_SERVER = azurerm_container_registry.acr.login_server
+      FFURY_REGISTRY_NAME = azurerm_container_registry.acr.name
+    }
+  }
+
+  depends_on = [
+    azurerm_container_registry.acr
+  ]
 }
 
 resource "azurerm_container_group" "acg" {
@@ -32,9 +48,9 @@ resource "azurerm_container_group" "acg" {
   sku                 = "Standard"
 
   image_registry_credential {
-      username = azurerm_container_registry.acr.admin_username
-      password = azurerm_container_registry.acr.admin_password
-      server   = azurerm_container_registry.acr.login_server
+    username = azurerm_container_registry.acr.admin_username
+    password = azurerm_container_registry.acr.admin_password
+    server   = azurerm_container_registry.acr.login_server
   }
 
   container {
@@ -57,6 +73,6 @@ resource "azurerm_container_group" "acg" {
   }
 
   depends_on = [
-    azurerm_container_registry.acr
+    null_resource.docker_push
   ]
 }
