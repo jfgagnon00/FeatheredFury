@@ -24,6 +24,7 @@ def _dependencies_development():
         "dvc-gdrive==3.0.1",
         "dvc==3.51.3",
         "h5py==3.11.0",
+        "pyOpenSSL==24.2.1",
         "tqdm==4.66.4",
     ]
 
