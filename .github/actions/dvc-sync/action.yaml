@@ -31,4 +31,4 @@ runs:
 
         # obtenir le data
         echo "Pull data"
-        dvc pull
+        dvc pull --verbose
