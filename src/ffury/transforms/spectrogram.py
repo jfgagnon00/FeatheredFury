@@ -1,12 +1,16 @@
+import numpy as np
+
 from librosa import power_to_db
 from librosa.feature import melspectrogram
 from librosa.util import normalize
-from numpy import (
-    max as np_max,
-    min as np_min,
-    mean as np_mean,
-    std as np_std
-)
+# from numpy import (
+#     max as np_max,
+#     min as np_min,
+#     mean as np_mean,
+#     std as np_std,
+#     abs as np_abs
+#     where
+# )
 from numpy.typing import NDArray
 from sklearn.preprocessing import (
     MinMaxScaler,
@@ -40,10 +44,17 @@ def spectrogram_from_audio(audio: NDArray,
                        fmin=config.spectrogram_fmin,
                        fmax=config.spectrogram_fmax)
 
-    S_db = power_to_db(S, ref=np_max)
+    S_db = power_to_db(S, ref=np.max)
 
     # normalisation
     S_db = normalize(S_db)
+
+    if False:
+        # masking
+        Z_SCALE = 0.25
+        threshold = np.mean(S_db, axis=1) - Z_SCALE * np.std(S_db, axis=1)
+
+        S_db[ S_db >= threshold[..., np.newaxis] ] = 1
 
     # shape du spectrogram est (n_mels, n_frames)
     # n_frames represente le temps

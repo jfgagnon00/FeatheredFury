@@ -109,6 +109,7 @@ def generate_specie_groups(specie_infos: DataFrame,
         if duration_ms < group_ms_length:
             raise ValueError(f"Duree audio {duration_ms} < duree du groupe {group_ms_length}. Revoir configs ou exploration.")
 
+        # convertir group_begin_ms en offset dans le fichier
         group_begin_ms = group_begin_ms - begin_ms
         group_end_ms = group_begin_ms + group_ms_length
 

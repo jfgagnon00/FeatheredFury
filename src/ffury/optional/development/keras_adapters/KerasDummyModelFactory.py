@@ -18,7 +18,7 @@ class KerasDummyModelFactory(IFactory):
     utliser autrement.
     """
     def __init__(self):
-        self.model_name = "Model"
+        self.model_name = "Model" # "KerasDummyModelFactory"
 
     def create_from_config(self, project_config: ProjectConfig) -> Any:
         # (num_segments, n_mels, n_frames)
@@ -47,6 +47,7 @@ class KerasDummyModelFactory(IFactory):
         from keras.layers import (
             BatchNormalization,
             Dense, 
+            Dropout,
             Input, 
             GlobalMaxPooling1D,
             Reshape, 
@@ -56,9 +57,10 @@ class KerasDummyModelFactory(IFactory):
         target_shape = (input_shape[0], input_shape[1] * input_shape[2])
 
         segment_net = Sequential([
-            BatchNormalization(),
             Dense(units=512, activation="relu"),
-            Dense(units=128, activation="relu"),
+            # BatchNormalization(),
+            # Dropout(rate=0.1),
+            # Dense(units=128, activation="relu"),
             Dense(units=num_classes, activation="sigmoid")
         ])
 

@@ -16,6 +16,7 @@ def _dependencies_ai():
         "numpy<2", # limitation librosa
         "pyyaml==6.0.1",
         "tensorflow",
+        "opencv-python==4.10.0.84",
     ]
 
 def _dependencies_development():

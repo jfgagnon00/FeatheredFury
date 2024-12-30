@@ -95,7 +95,7 @@ def index(project_config: ProjectConfig,
             if len(writer_futures) == (cpu_count() * 2):
                 wait(writer_futures)
                 writer_futures.clear()
-        
+
         # attendre la fin des calcul de spectrogrames 
         # avant de les ecrires
         wait(writer_futures)

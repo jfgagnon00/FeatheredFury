@@ -1,8 +1,8 @@
 !ffury.configs.TrainParameters
 
 learning_rate:  0.005
-epochs:  1
-batch_size:  128
+epochs:  20
+batch_size:  64
 optimizer: "adam"
 loss: "binary_crossentropy"
 

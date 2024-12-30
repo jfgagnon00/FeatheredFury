@@ -63,7 +63,7 @@ def write_hdf5_groups(hdf5_filename: str,
         hdf5_file.create_dataset(_SPECIE, 
                                  data=I[ data_df[_SPECIE] ])
 
-        _, \
+        group_length, \
             segment_frame_length, \
             group_hop_frame_length = project_config.preprocess.group_frame_infos()
 
@@ -72,6 +72,11 @@ def write_hdf5_groups(hdf5_filename: str,
                        project_config.preprocess.group_segment_count, 
                        project_config.preprocess.spectrogram_n_mels,
                        segment_frame_length)
+
+        if log_debug_info:
+            print(f"Groupe ms info: {project_config.preprocess.group_ms_infos()}")
+            print(f"Groupe length frames: {group_length}")
+            print(f"Groupe shape: {group_shape}")
         
         # les groupes sont des vues sur d'autres fichiers hdf5
         # d'ou VirtualLayout et create_virtual_dataset
@@ -96,20 +101,17 @@ def write_hdf5_groups(hdf5_filename: str,
             segment_frame_begin = int(segment_frame_begin)
 
             if log_debug_info:
-                print(hdf5_filename)
+                print(f"Src: {hdf5_source}, {r[_GROUP_BEGIN_MS]}, {r[_DURATION_MS]}, {(project_config.preprocess.spectrogram_n_mels, spectrogram_frame_length)}")
+                print(f"Dst: {hdf5_filename}")
 
             for s in range(project_config.preprocess.group_segment_count):
                 segment_frame_end = segment_frame_begin + segment_frame_length
 
                 # validation non debordement
-                assert segment_frame_end <= spectrogram_frame_length
+                assert segment_frame_end <= spectrogram_frame_length, f"Debordement: {(segment_frame_begin,segment_frame_end)}"
 
                 if log_debug_info:
-                    print("    ", str(hdf5_source), g, s, (segment_frame_begin, segment_frame_end))
-
-                    print()
-                    print("log_debug_info:", log_debug_info, str(hdf5_source))
-                    print()
+                    print(f"    {str(hdf5_source)}, {g}, {s}, {(segment_frame_begin, segment_frame_end)}")
 
                 group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
                 segment_frame_begin += group_hop_frame_length

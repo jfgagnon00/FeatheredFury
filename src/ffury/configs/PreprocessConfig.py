@@ -84,10 +84,14 @@ class PreprocessConfig:
     def group_ms_infos(self):
         """
         Retourne tuple avec la quantite de ms necessaire 
-        pour avoir (groupe_length, segment_length, groupe_hop_length)
+        pour avoir (groupe_length, segment_length, groupe_hop_ms_length)
         """
-        group_ms_length = (self.group_segment_count - 1) * self.segment_overlap_size_ms + self.segment_size_ms
-        return group_ms_length, self.segment_size_ms, self.segment_overlap_size_ms
+        assert self.segment_overlap_size_ms < self.segment_size_ms
+
+        group_hop_ms_length = self.segment_size_ms - self.segment_overlap_size_ms
+        group_ms_length = (self.group_segment_count - 1) * group_hop_ms_length + self.segment_size_ms
+
+        return group_ms_length, self.segment_size_ms, group_hop_ms_length
     
     def train_input_shape(self):
         """
