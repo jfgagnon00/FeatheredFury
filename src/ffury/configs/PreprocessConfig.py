@@ -10,11 +10,16 @@ class PreprocessConfig:
     Encapsule les proprietes pour le preprocessing
     """
     def __init__(self):
-        # parametres segment
+        # parametres segment/groupe audio
         self.segment_size_ms = 0
         self.segment_overlap_size_ms = 0
         self.group_segment_count = 0
         self.group_count = 0
+
+        # parametres segmentation (automatique bird activity estimation)
+        self.segmentation_size_ms = 0
+        self.segmentation_sigma_scale = 0
+        self.segmentation_content_ratio_threshold = 0
 
         # parametres mel-spectrogram
         self.clip_sampling_rate_hz = 0
@@ -51,7 +56,10 @@ class PreprocessConfig:
             self.segment_size_ms,
             self.segment_overlap_size_ms,
             self.group_segment_count,
-            self.group_count])
+            self.group_count,
+            self.segmentation_size_ms,
+            self.segmentation_sigma_scale,
+            self.segmentation_content_ratio_threshold])
 
     def spectrogram_md5(self):
         """
