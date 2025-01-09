@@ -56,14 +56,11 @@ class PreprocessConfig:
             self.segment_size_ms,
             self.segment_overlap_size_ms,
             self.group_segment_count,
-            self.group_count,
-            self.segmentation_size_ms,
-            self.segmentation_sigma_scale,
-            self.segmentation_content_ratio_threshold])
+            self.group_count])
 
     def spectrogram_md5(self):
         """
-        Utilitaire pour avoir une signature sur les parametres de spectrogram
+        Utilitaire pour avoir une signature sur les parametres de spectrogram/segmentation
         """
         return md5_from_iterable([
             self.clip_sampling_rate_hz,
@@ -71,7 +68,10 @@ class PreprocessConfig:
             self.spectrogram_stft_frame_size_ms,
             self.spectrogram_fmin,
             self.spectrogram_fmax,
-            self.spectrogram_n_mels])
+            self.spectrogram_n_mels,
+            self.segmentation_size_ms,
+            self.segmentation_sigma_scale,
+            self.segmentation_content_ratio_threshold])
 
     def group_frame_infos(self):
         """
