@@ -15,6 +15,8 @@ group_count: 2500
 segmentation_size_ms: 5000
 segmentation_sigma_scale: 0.4
 segmentation_content_ratio_threshold: 0.5
+segmentation_erosion_shape: [3, 3]
+segmentation_dilation_shape: [3, 3]
 
 # spectrogramme
 clip_sampling_rate_hz: 22050 # implitement mono

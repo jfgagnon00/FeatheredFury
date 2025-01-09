@@ -20,6 +20,8 @@ class PreprocessConfig:
         self.segmentation_size_ms = 0
         self.segmentation_sigma_scale = 0
         self.segmentation_content_ratio_threshold = 0
+        self.segmentation_erosion_shape = (3, 3)
+        self.segmentation_dilation_shape = (3, 3)
 
         # parametres mel-spectrogram
         self.clip_sampling_rate_hz = 0
@@ -71,7 +73,9 @@ class PreprocessConfig:
             self.spectrogram_n_mels,
             self.segmentation_size_ms,
             self.segmentation_sigma_scale,
-            self.segmentation_content_ratio_threshold])
+            self.segmentation_content_ratio_threshold,
+            self.segmentation_erosion_shape[0], self.segmentation_erosion_shape[1],
+            self.segmentation_dilation_shape[0], self.segmentation_dilation_shape[1]])
 
     def group_frame_infos(self):
         """

@@ -13,5 +13,5 @@ from .sampling import (
     read_split_sampling_md5,
     write_split_sampling_md5
 )
-
+from .segmentation import mask_from_spectrogram
 from .split import split
