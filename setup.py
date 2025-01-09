@@ -15,8 +15,8 @@ def _dependencies_ai():
         "neptune==1.10.4",
         "numpy<2", # limitation librosa
         "pyyaml==6.0.1",
-        "tensorflow",
-        "opencv-python==4.10.0.84",
+        "tensorflow==2.17.1",
+        "scipy==1.13.1",
     ]
 
 def _dependencies_development():

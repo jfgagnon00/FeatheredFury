@@ -23,7 +23,6 @@ class PreprocessConfig:
         self.spectrogram_fmin = 0
         self.spectrogram_fmax = 0
         self.spectrogram_n_mels = 0
-        self.spectrogram_power = 2
 
         # train/test/validation split
         self.split_train_size = 0
@@ -64,8 +63,7 @@ class PreprocessConfig:
             self.spectrogram_stft_frame_size_ms,
             self.spectrogram_fmin,
             self.spectrogram_fmax,
-            self.spectrogram_n_mels,
-            self.spectrogram_power])
+            self.spectrogram_n_mels])
 
     def group_frame_infos(self):
         """
