@@ -10,6 +10,7 @@ from numpy import eye
 from numpy.typing import NDArray
 from pandas import DataFrame
 from pathlib import Path
+from typing import Dict
 
 from ffury.configs import ProjectConfig
 
@@ -22,19 +23,20 @@ from .properties import (
     _SPECIE,
     _SPECTROGRAM_GROUPS,
     _SPECTROGRAM,
+    _SPECTROGRAM_MASK,
 )
 from ..misc.hdf5 import open_file
 
 
 def write_hdf5_dataset(hdf5_filename: str,
-                       dataset: str,
-                       data: NDArray) -> None:
+                       datasets: Dict[str, NDArray]) -> None:
     filename = Path(hdf5_filename)
     filename.parent.mkdir(exist_ok=True, parents=True)
 
     with open_file(filename, "w") as hdf5_file:
-        hdf5_file.create_dataset(dataset, 
-                                 data=data)
+        for name, data in datasets.items():
+            hdf5_file.create_dataset(name=name,
+                                     data=data)
         hdf5_file.flush()
 
 def write_hdf5_groups(hdf5_filename: str,

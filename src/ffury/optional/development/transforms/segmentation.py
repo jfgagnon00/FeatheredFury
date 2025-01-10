@@ -27,6 +27,9 @@ def mask_from_spectrogram(spectrogram: NDArray,
     if config.segmentation_sigma_scale <= 0:
         raise ValueError(f"segmentation_sigma_scale {config.segmentation_sigma_scale} doit etre > 0")
 
+    # TODO: mettre spectrogram en valeur positive
+    spectrogram = spectrogram + 1
+
     spec_min = np.min(spectrogram)
     spec_max = np.max(spectrogram)
     if spec_min < 0 or spec_max > 1:

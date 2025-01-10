@@ -2,7 +2,7 @@
 
 learning_rate:  0.005
 epochs:  20
-batch_size:  64
+batch_size:  128
 optimizer: "adam"
 loss: "binary_crossentropy"
 

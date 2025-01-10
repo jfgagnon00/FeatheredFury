@@ -22,10 +22,12 @@ from ffury.misc.logging import create_logger
 from .dataset import dataset_group
 from ..transforms.properties import (
     _FILENAME,
-    _SPECTROGRAM
+    _SPECTROGRAM,
+    _SPECTROGRAM_MASK
 )
 from ..transforms import (
     get_audio_path,
+    mask_from_spectrogram,
     write_hdf5_dataset,
     write_hdf5_groups,
     write_indexing_md5
@@ -78,14 +80,18 @@ def index(project_config: ProjectConfig,
             future = client.submit(lambda future: waveform_apply_config(*future, project_config.preprocess),
                                    future)
 
-            future = client.submit(lambda future: spectrogram_from_audio(*future, project_config.preprocess),
-                                   future)
+            future_spectrogram = client.submit(lambda future: spectrogram_from_audio(*future, project_config.preprocess),
+                                               future)
+
+            future_spectrogram_mask = client.submit(lambda spec: mask_from_spectrogram(spec, project_config.preprocess),
+                                                    future_spectrogram)
 
             hdf5_filename = Path.joinpath(project_config.paths.BUILD_DIR,
                                           _SPECTROGRAM,
                                           filename).with_suffix(".hdf5")
-            future = client.submit(lambda future: write_hdf5_dataset(hdf5_filename, _SPECTROGRAM, future),
-                                   future)
+            future = client.submit(lambda spec, mask: write_hdf5_dataset(hdf5_filename, {_SPECTROGRAM:spec, _SPECTROGRAM_MASK: mask}),
+                                   future_spectrogram,
+                                   future_spectrogram_mask)
 
             writer_futures.append(future)
 
