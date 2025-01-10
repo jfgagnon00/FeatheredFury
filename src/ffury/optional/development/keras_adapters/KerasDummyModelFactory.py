@@ -58,9 +58,9 @@ class KerasDummyModelFactory(IFactory):
 
         segment_net = Sequential([
             Dense(units=512, activation="relu"),
-            # BatchNormalization(),
-            # Dropout(rate=0.1),
-            # Dense(units=128, activation="relu"),
+            BatchNormalization(),
+            Dropout(rate=0.1),
+            Dense(units=128, activation="relu"),
             Dense(units=num_classes, activation="sigmoid")
         ])
 

@@ -1,6 +1,7 @@
 import numpy as np
 
 from ffury.configs import PreprocessConfig
+from librosa import mel_frequencies
 from librosa.util import frame as rosa_frame
 from numpy.typing import NDArray
 from scipy.ndimage import (
@@ -30,6 +31,14 @@ def mask_from_spectrogram(spectrogram: NDArray,
     spec_max = np.max(spectrogram)
     if spec_min < 0 or spec_max > 1:
         raise ValueError(f"spectrogram min et max ne semble pas dans l'interval [0, 1] - {spec_min}, {spec_max}")
+
+    # recuperer la partie du spectrogram qui correspond aux frequences d'interet
+    freqs = mel_frequencies(n_mels=config.spectrogram_n_mels,
+                            fmin=config.spectrogram_fmin,
+                            fmax=config.spectrogram_fmax)
+    freqs_low_index = np.argwhere(freqs >= config.segmentation_fmin)[0][0]
+    freqs_high_index = np.argwhere(freqs <= config.segmentation_fmax)[-1][0]
+    spectrogram = spectrogram[ freqs_low_index:freqs_high_index, :]
 
     # decouper spectrogram en segments
     num_frames = int(config.segmentation_size_ms / config.spectrogram_stft_frame_size_ms)
