@@ -65,7 +65,7 @@ def index(project_config: ProjectConfig,
                           project_config,
                           log_debug_info=log_debug_info)
 
-    logger.info(f"Creation spectrogrames")
+    logger.info(f"Creation spectrogrames + masques")
 
     # generer en parallele les spectrogrames
     with create_dask_local_client() as client:
@@ -105,6 +105,9 @@ def index(project_config: ProjectConfig,
         # attendre la fin des calcul de spectrogrames 
         # avant de les ecrires
         wait(writer_futures)
+
+    # generer les vues sur les spectrogrammes + masques
+
 
     # prendre en note une signature des parametres utilises pour l'indexation
     logger.info(f"Ecriture signature md5")

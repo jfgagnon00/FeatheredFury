@@ -31,7 +31,10 @@ def mask_from_spectrogram(spectrogram: NDArray,
     spectrogram = spectrogram + 1
 
     spec_min = np.min(spectrogram)
+    spec_min = np.round(spec_min, 2)
+
     spec_max = np.max(spectrogram)
+    spec_max = np.round(spec_max, 2)
     if spec_min < 0 or spec_max > 1:
         raise ValueError(f"spectrogram min et max ne semble pas dans l'interval [0, 1] - {spec_min}, {spec_max}")
 

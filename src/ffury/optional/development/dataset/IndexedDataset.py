@@ -17,7 +17,8 @@ from ..transforms.properties import (
     _LATITUDE,
     _LONGITUDE,
     _SPECIE,
-    _SPECTROGRAM_GROUPS
+    _SPECTROGRAM_GROUPS,
+    _SPECTROGRAM_MASK_GROUPS
 )
 
 
@@ -84,6 +85,10 @@ class IndexedDataset():
     @property
     def spectrogram_groups(self):
         return self._spectrogram_groups
+    
+    @property
+    def spectrogram_mask_groups(self):
+        return self._spectrogram_mask_groups
 
     def _init_species_label(self, project_config: ProjectConfig):
         filename = project_config.get_csv_filename(DatasetType._SPECIES)
@@ -99,3 +104,4 @@ class IndexedDataset():
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]
             })
         self._spectrogram_groups = self._hdf5_file[_SPECTROGRAM_GROUPS]
+        self._spectrogram_mask_groups = self._hdf5_file[_SPECTROGRAM_MASK_GROUPS]

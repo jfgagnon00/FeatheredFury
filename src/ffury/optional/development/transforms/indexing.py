@@ -4,7 +4,8 @@ from h5py import (
 )
 from numpy import (
     int16,
-    float32
+    float32,
+    uint8,
 )
 from numpy import eye
 from numpy.typing import NDArray
@@ -21,9 +22,10 @@ from .properties import (
     _LATITUDE,
     _LONGITUDE,
     _SPECIE,
-    _SPECTROGRAM_GROUPS,
     _SPECTROGRAM,
     _SPECTROGRAM_MASK,
+    _SPECTROGRAM_GROUPS,
+    _SPECTROGRAM_MASK_GROUPS,
 )
 from ..misc.hdf5 import open_file
 
@@ -75,15 +77,22 @@ def write_hdf5_groups(hdf5_filename: str,
                        project_config.preprocess.spectrogram_n_mels,
                        segment_frame_length)
 
+        mask_group_shape = (data_df.shape[0],
+                            project_config.preprocess.group_segment_count, 
+                            segment_frame_length)
+
         if log_debug_info:
             print(f"Groupe ms info: {project_config.preprocess.group_ms_infos()}")
             print(f"Groupe length frames: {group_length}")
             print(f"Groupe shape: {group_shape}")
+            print(f"Groupe mask shape: {group_shape}")
         
         # les groupes sont des vues sur d'autres fichiers hdf5
         # d'ou VirtualLayout et create_virtual_dataset
-        group_layout = VirtualLayout(shape=group_shape,
-                                     dtype=float32)
+        spectrogram_group_layout = VirtualLayout(shape=group_shape,
+                                                 dtype=float32)
+        spectrogram_mask_group_layout = VirtualLayout(shape=mask_group_shape,
+                                                      dtype=uint8)
         
         for g in range(0, data_df.shape[0]):
             r = data_df.iloc[g]
@@ -94,10 +103,15 @@ def write_hdf5_groups(hdf5_filename: str,
             spectrogram_frame_length = r[_DURATION_MS] / project_config.preprocess.spectrogram_stft_frame_size_ms
             spectrogram_frame_length = int(spectrogram_frame_length + 0.5) + 1
 
-            source = VirtualSource(hdf5_source,
-                                   _SPECTROGRAM,
-                                   (project_config.preprocess.spectrogram_n_mels, spectrogram_frame_length),
-                                   dtype=float32)
+            spectrogram_source = VirtualSource(hdf5_source,
+                                               _SPECTROGRAM,
+                                               (project_config.preprocess.spectrogram_n_mels, spectrogram_frame_length),
+                                               dtype=float32)
+
+            spectrogram_mask_source = VirtualSource(hdf5_source,
+                                                    _SPECTROGRAM_MASK,
+                                                    spectrogram_frame_length,
+                                                    dtype=uint8)
 
             segment_frame_begin = r[_GROUP_BEGIN_MS] / project_config.preprocess.spectrogram_stft_frame_size_ms
             segment_frame_begin = int(segment_frame_begin)
@@ -115,10 +129,13 @@ def write_hdf5_groups(hdf5_filename: str,
                 if log_debug_info:
                     print(f"    {str(hdf5_source)}, {g}, {s}, {(segment_frame_begin, segment_frame_end)}")
 
-                group_layout[g, s, ...] = source[..., segment_frame_begin:segment_frame_end]
+                spectrogram_group_layout[g, s, ...] = spectrogram_source[..., segment_frame_begin:segment_frame_end]
+                spectrogram_mask_group_layout[g, s, ...] = spectrogram_mask_source[segment_frame_begin:segment_frame_end]
+
                 segment_frame_begin += group_hop_frame_length
 
-        hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, group_layout)
+        hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, spectrogram_group_layout)
+        hdf5_file.create_virtual_dataset(_SPECTROGRAM_MASK_GROUPS, spectrogram_mask_group_layout)
         hdf5_file.flush()
 
 def _md5_filename(project_config: ProjectConfig) -> str:
