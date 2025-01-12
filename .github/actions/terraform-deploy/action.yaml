@@ -15,6 +15,7 @@ runs:
       - name: Deploy ${{ inputs.AZURE_ENVIRONMENT }}
         env:
           AZURE_ENVIRONMENT: ${{ inputs.AZURE_ENVIRONMENT }}
+        shell: bash
         run: |
           cd .cd
           terraform init
