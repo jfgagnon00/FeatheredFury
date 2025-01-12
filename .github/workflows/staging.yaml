@@ -25,10 +25,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Deploy Staging
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        run: |
-          cd .cd
-          terraform init
-          terraform plan -var="environment=staging" -auto-approve
-          # terraform apply -var="environment=staging" -auto-approve
+        uses: ./.github/actions/terraform-deploy
+        with:
+          AZURE_ENVIRONMENT: staging
