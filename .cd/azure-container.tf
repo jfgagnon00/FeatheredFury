@@ -76,3 +76,8 @@ resource "azurerm_container_group" "acg" {
     null_resource.docker_push
   ]
 }
+
+# import {
+#   to = azurerm_container_group.acg
+#   id = "${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}/providers/Microsoft.ContainerInstance/containerGroups/${local.container_instance_name}"
+# }
