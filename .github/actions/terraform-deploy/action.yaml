@@ -33,5 +33,4 @@ runs:
         run: |
           cd .cd 
           terraform init
-          terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
-          terraform apply -auto-approve
+          terraform apply -var="environment=${TERRAFORM_ENVIRONMENT}" -auto-approve
