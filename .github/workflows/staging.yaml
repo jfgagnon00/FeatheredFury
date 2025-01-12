@@ -22,7 +22,9 @@ jobs:
         shell: bash
         run: |
           pwd
-          ls -la ./.github/actions/neptune-sync-model
+          cd ./.github/actions/neptune-sync-model
+          pwd
+          ls -la .
 
       - name: "Synchroniser Modele"
         uses: ./.github/actions/neptune-sync-model
