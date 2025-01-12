@@ -6,18 +6,34 @@ inputs:
     description: "Environment sur lequel deployer"
     required: true
 
+  AZURE_CREDENTIALS:
+    required: true
+
 runs:
   using: "composite"
   steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ inputs.AZURE_CREDENTIALS }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }}
-        env:
-          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Init
         shell: bash
         run: |
           cd .cd
           terraform init
+
+      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Plan
+        env:
+          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+        shell: bash
+        run: |
           terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
+
+      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Apply
+        shell: bash
+        run: |
           terraform apply -auto-approve
