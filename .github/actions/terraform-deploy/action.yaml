@@ -34,6 +34,7 @@ runs:
           cd .cd 
           terraform init
 
+          terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
           terraform refresh -var="environment=${TERRAFORM_ENVIRONMENT}"
           terraform destroy -var="environment=${TERRAFORM_ENVIRONMENT}" -auto-approve
           
