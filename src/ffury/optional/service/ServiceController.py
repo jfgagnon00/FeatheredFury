@@ -13,6 +13,7 @@ from ffury.configs import (
     DatasetType,
     ProjectConfig
 )
+from ffury.misc.logging import pretty_format
 from ffury.transforms import (
     waveform_apply_config,
     waveform_from_file,
@@ -34,6 +35,7 @@ class ServiceController:
     def __init__(self, project_config: ProjectConfig):
         self._config = project_config.preprocess
         self._init_species_label(project_config)
+        self._init_thresholds(project_config)
         self._load_model(project_config)
 
     @property
@@ -121,11 +123,20 @@ class ServiceController:
                          batches: NDArray) -> list:
         species_prob = self._model.predict(batches, verbose=0)
         species_index = np.argmax(species_prob, axis=1)
-        species_pred = species_prob[np.arange(species_prob.shape[0]), species_index] > 0.25
+        species_pred = species_prob[np.arange(species_prob.shape[0]), species_index] > self._thresholds[species_index]
 
         logger = current_app.config["LOGGER"]
+
         logger.info(f"Prediction proba. shape: {species_prob.shape}")
+        logger.info(f"Prediction proba.:")
+        logger.info(np.round(species_prob, 4))
+        logger.info(f"Prediction proba. sum:")
+        logger.info(np.round(np.sum(species_prob, axis=1), 4) )
+
         logger.info(f"Prediction index shape: {species_index.shape}")
+        logger.info("Prediction index:")
+        logger.info(species_index)
+
         logger.info(f"Prediction shape: {species_pred.shape}")
 
         # TODO: la prediction pourrait faire mieux comme les segments se chevauchent
@@ -219,3 +230,17 @@ class ServiceController:
         species_df = read_csv(filename)
         self._species_label = species_df["common_name"].to_list()
         self._species = species_df["primary_label"].to_list()
+
+    def _init_thresholds(self, project_config: ProjectConfig) -> None:
+        thresholds = project_config.service.predict_thresholds
+
+        # si on utilise 1 float pour le thresholds, le repliquer pout toute les classes
+        if not isinstance(thresholds, list):
+            thresholds = [thresholds] * project_config.num_classes
+
+        if len(thresholds) != project_config.num_classes:
+            raise ValueError(f"Taille liste thresholds ne correspond pas aux nombre de classes: {len(self._thresholds)} vs {project_config.num_classes}")
+
+        self._thresholds = np.array(thresholds)
+
+        

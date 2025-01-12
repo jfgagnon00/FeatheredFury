@@ -67,10 +67,9 @@ def write_hdf5_groups(hdf5_filename: str,
                                  data=data_df[_LONGITUDE].astype(float32))
 
         # one hot encode _SPECIE_ORIGINAL
-        # 1. Une classe de plus que ce qui est indique dans la config => classe Unknown
-        # 2. Les masques ne sont pas encore calcule a cette etape. On garde les donnees
-        #    d'origine ; permet validation a posteriori 
-        I = eye(project_config.num_classes + 1, dtype=int16)
+        # Les masques ne sont pas encore calcule a cette etape. On garde les donnees
+        # d'origine ; permet validation a posteriori 
+        I = eye(project_config.num_classes, dtype=int16)
         hdf5_file.create_dataset(_SPECIE_ORIGINAL, 
                                  data=I[ data_df[_SPECIE] ])
 
@@ -171,11 +170,12 @@ def update_hdf5_groups_labels(hdf5_filename: str,
 
         # sanity check
         assert y.shape[0] == spectrogram_mask.shape[0]
-        assert y.shape[1] == project_config.num_classes + 1
+        assert y.shape[1] == project_config.num_classes
 
-    # classe unknown one hot enocded
-    unknown_ohe = [0] * (project_config.num_classes + 1)
-    unknown_ohe[-1] = 1
+    # classe unknown
+    # repliquer des 0 partout, pas besoin d'une classe supplementaire
+    # TODO: a valider
+    unknown_ohe = [0] * project_config.num_classes
 
     with open_file(hdf5_filename, "r+") as hdf5_file:
         y[group_audio_unavailable] = unknown_ohe

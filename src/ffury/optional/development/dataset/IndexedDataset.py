@@ -78,16 +78,14 @@ class IndexedDataset():
     @property
     def y(self):
         """
-        y tient compte du masque calcule a partir des spectrogrammes. On peut donc
-        avoir la classe 'Unknown'
+        y tient compte du masque calcule a partir des spectrogrammes
         """
         return self._y
 
     @property
     def y_original(self):
         """
-        y NE TIENT PAS COMPTE du masque calcule a partir des spectrogrammes. 
-        On ne peut pas avoir la classe 'Unknown'
+        y_original NE TIENT PAS COMPTE du masque calcule a partir des spectrogrammes
         """
         return self._y_original
 
@@ -110,8 +108,6 @@ class IndexedDataset():
 
         assert project_config.num_classes == len(self._species_label)
 
-        # ajout de la classe 'Unknown'
-        self._species_label.append("Unknown")
 
     def _init_dataset(self, project_config: ProjectConfig, dataset_type: DatasetType):
         filename = project_config.get_hdf5_filename(dataset_type)

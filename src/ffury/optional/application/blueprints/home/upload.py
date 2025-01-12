@@ -42,6 +42,7 @@ def upload_file(file):
 
         # Passer l'image base64 à la page HTML
         return render_template("service/waveformResponse.html",
+                               filename=file.filename,
                                waveform_b64=result["waveform_b64"],
                                spectrogram_b64=result["spectrogram_b64"],
                                predictions=result["predictions"],

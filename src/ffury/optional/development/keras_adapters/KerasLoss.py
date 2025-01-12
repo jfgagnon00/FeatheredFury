@@ -8,8 +8,11 @@ def keras_loss(parameters: TrainParameters) -> Any:
     """
     # ces imports sont extremement lent - sortir de l'entete
     # https://github.com/keras-team/keras/issues/7408
-    from keras.losses import SparseCategoricalCrossentropy
-    from keras.losses import BinaryCrossentropy
+    from keras.losses import (
+        SparseCategoricalCrossentropy,
+        BinaryCrossentropy,
+        CategoricalCrossentropy
+    )
 
     loss = parameters.loss.lower()
 
@@ -18,5 +21,8 @@ def keras_loss(parameters: TrainParameters) -> Any:
 
     if loss == "binary_crossentropy":
         return BinaryCrossentropy(from_logits=False)
+    
+    if loss == "categorical_crossentropy":
+        return CategoricalCrossentropy(from_logits=False)
 
     raise ValueError(f"Loss {parameters.loss} non reconnu")

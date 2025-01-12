@@ -18,6 +18,8 @@ class ServiceConfig:
         self.max_content_size = 4 * 1024 * 1024
         self.allowed_extensions = (".wav", ".mp3", ".ogg")
 
+        self.predict_thresholds = 0
+
     @property
     def _base_url(self):
         return f"{self.protocol}://{self.host}:{self.port}/api"
