@@ -10,5 +10,5 @@ runs:
         # initialiser environment de developpement
         pip install -e .\[development\]
 
-        # mettre les configurations du projet en variable d'environment
-        source .ci/yaml_to_variables.sh configs/paths_config.yaml
+        # # mettre les configurations du projet en variable d'environment
+        # source .ci/yaml_to_variables.sh configs/paths_config.yaml
