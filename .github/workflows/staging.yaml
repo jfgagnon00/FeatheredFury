@@ -12,14 +12,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Environment
-        uses: ./.github/actions/setup-build-environment
+      # - name: Setup Environment
+      #   uses: ./.github/actions/setup-build-environment
 
-      - name: Synchroniser Modele
-        uses: ./.github/actions/neptune-sync-model
-        with:
-          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+      # - name: Synchroniser Modele
+      #   uses: ./.github/actions/neptune-sync-model
+      #   with:
+      #     NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+      #     NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
 
       - name: Deploy Staging
         uses: ./.github/actions/terraform-deploy
