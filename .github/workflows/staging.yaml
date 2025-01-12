@@ -4,7 +4,7 @@ on:
     branches:
       - staging
 jobs:
-  Setup:
+  Deployment:
     runs-on: [ubuntu-latest]
     steps:
       - name: Checkout
@@ -13,10 +13,6 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup-build-environment
 
-  Deployment:
-    needs: [Setup]
-    runs-on: [ubuntu-latest]
-    steps:
       - name: Synchroniser Modele
         uses: ./.github/actions/neptune-sync-model@staging
         with:
