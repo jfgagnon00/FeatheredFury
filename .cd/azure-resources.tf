@@ -13,5 +13,5 @@ resource "azurerm_resource_group" "rg" {
 
 import {
   to = azurerm_resource_group.rg
-  id = "/subscriptions/${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}"
+  id = "${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}"
 }
