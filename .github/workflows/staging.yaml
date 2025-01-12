@@ -27,6 +27,7 @@ jobs:
         shell: bash
         run: |
           ls -la ./models
+          echo "Ici"
 
 
       # - name: Deploy Staging
