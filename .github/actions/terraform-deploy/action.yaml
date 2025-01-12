@@ -1,22 +1,23 @@
-name: "Neptune Sync Model"
-description: "Obtient le modele a partir de Neptune AI"
+name: "Terraform Deploy"
+description: "Deploie application + service sur azure"
 
 inputs:
-  NEPTUNE_API_TOKEN:
-    description: "Token API Neptune"
-    required: true
-
-  NEPTUNE_TAG:
-    description: "Tag idientifiant le model a obtenir"
+  AZURE_ENVIRONMENT:
+    description: "Environment sur lequel deployer"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Sync Model
-      env:
-        NEPTUNE_API_TOKEN: ${{ inputs.NEPTUNE_API_TOKEN }}
-        NEPTUNE_TAG: ${{ inputs.NEPTUNE_TAG }}
-      shell: bash
-      run: |
-        ffury neptune sync-model ${NEPTUNE_TAG}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Deploy ${{ input.AZURE_ENVIRONMENT }}
+        env:
+          AZURE_ENVIRONMENT: ${{ inputs.AZURE_ENVIRONMENT }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: |
+          cd .cd
+          terraform init
+          terraform plan -var="environment=${AZURE_ENVIRONMENT}"
+          # terraform apply -auto-approve
