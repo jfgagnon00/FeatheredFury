@@ -1,5 +1,4 @@
 import click
-import platform
 
 from ffury.cli import ProjectConfigDecorator
 from ffury.configs import (
@@ -14,6 +13,7 @@ from ffury.misc.ITrainable import ITrainable
 
 from ..dataset import IndexedDataset
 from ..neptune.NeptuneRun import NeptuneRun
+from ..misc.ulimit import ulimit_workaround
 
 
 @click.command()
@@ -23,15 +23,7 @@ def train(project_config: ProjectConfig) -> None:
     Encapsule l'entrainement
     """
     # TODO: a enlever
-    # LIMITATION: Il est possible que python lance une erreur 'Too many file open'
-    #             Je ne sais pas encore quel est la source du probleme mais un workaround
-    #             est de hausser la limite avec 'ulimit -n 2048' ou utiliser le
-    #             code python qui suit
-
-    if  platform.system() == "Darwin" :
-        import resource
-        _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-        resource.setrlimit(resource.RLIMIT_NOFILE, (project_config._ulimit_workaround, hard))
+    ulimit_workaround(project_config)
 
     train_config = project_config.train
 

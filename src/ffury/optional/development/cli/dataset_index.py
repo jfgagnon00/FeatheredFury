@@ -20,6 +20,7 @@ from ffury.misc.concurrent import create_dask_local_client
 from ffury.misc.logging import create_logger
 
 from .dataset import dataset_group
+from ..misc.ulimit import ulimit_workaround
 from ..transforms.properties import (
     _FILENAME,
     _SPECTROGRAM,
@@ -28,6 +29,7 @@ from ..transforms.properties import (
 from ..transforms import (
     get_audio_path,
     mask_from_spectrogram,
+    update_hdf5_groups_labels,
     write_hdf5_dataset,
     write_hdf5_groups,
     write_indexing_md5
@@ -47,6 +49,9 @@ def index(project_config: ProjectConfig,
     """
     Genere les spectrogrames et index les ensembles train/test/validation
     """
+    # TODO: a enlever
+    ulimit_workaround(project_config)
+
     logger = create_logger(file=__file__)
 
     if log_debug_info:
@@ -106,8 +111,12 @@ def index(project_config: ProjectConfig,
         # avant de les ecrires
         wait(writer_futures)
 
-    # generer les vues sur les spectrogrammes + masques
-
+    # mettre a jour les labels des groupes maintenant 
+    # que les spectrogrammes et masques sont dispibles
+    for dataset_type in [DatasetType.TRAIN, DatasetType.TEST, DatasetType.VALIDATION]:
+        logger.info(f"Appliquer le masque du spectrogram sur labels '{dataset_type.name}'")
+        update_hdf5_groups_labels(project_config.get_hdf5_filename(dataset_type),
+                                  project_config)
 
     # prendre en note une signature des parametres utilises pour l'indexation
     logger.info(f"Ecriture signature md5")

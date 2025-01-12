@@ -17,6 +17,7 @@ from ..transforms.properties import (
     _LATITUDE,
     _LONGITUDE,
     _SPECIE,
+    _SPECIE_ORIGINAL,
     _SPECTROGRAM_GROUPS,
     _SPECTROGRAM_MASK_GROUPS
 )
@@ -76,7 +77,19 @@ class IndexedDataset():
     
     @property
     def y(self):
+        """
+        y tient compte du masque calcule a partir des spectrogrammes. On peut donc
+        avoir la classe 'Unknown'
+        """
         return self._y
+
+    @property
+    def y_original(self):
+        """
+        y NE TIENT PAS COMPTE du masque calcule a partir des spectrogrammes. 
+        On ne peut pas avoir la classe 'Unknown'
+        """
+        return self._y_original
 
     @property
     def lat_long(self):
@@ -95,10 +108,16 @@ class IndexedDataset():
         species_df = read_csv(filename)
         self._species_label = species_df["common_name"].to_list()
 
+        assert project_config.num_classes == len(self._species_label)
+
+        # ajout de la classe 'Unknown'
+        self._species_label.append("Unknown")
+
     def _init_dataset(self, project_config: ProjectConfig, dataset_type: DatasetType):
         filename = project_config.get_hdf5_filename(dataset_type)
         self._hdf5_file = open_file(filename, "r")
         self._y = self._hdf5_file[_SPECIE]
+        self._y_original = self._hdf5_file[_SPECIE_ORIGINAL]
         self._lat_long = DataFrame({
                 _LATITUDE: self._hdf5_file[_LATITUDE],
                 _LONGITUDE: self._hdf5_file[_LONGITUDE]

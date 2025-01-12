@@ -3,9 +3,12 @@ from h5py import (
     VirtualSource
 )
 from numpy import (
-    int16,
     float32,
+    int16,
     uint8,
+    copy,
+    max,
+    mean,
 )
 from numpy import eye
 from numpy.typing import NDArray
@@ -22,6 +25,7 @@ from .properties import (
     _LATITUDE,
     _LONGITUDE,
     _SPECIE,
+    _SPECIE_ORIGINAL,
     _SPECTROGRAM,
     _SPECTROGRAM_MASK,
     _SPECTROGRAM_GROUPS,
@@ -62,9 +66,12 @@ def write_hdf5_groups(hdf5_filename: str,
         hdf5_file.create_dataset(_LONGITUDE,
                                  data=data_df[_LONGITUDE].astype(float32))
 
-        # one hot encode _SPECIE
-        I = eye(project_config.num_classes, dtype=int16)
-        hdf5_file.create_dataset(_SPECIE, 
+        # one hot encode _SPECIE_ORIGINAL
+        # 1. Une classe de plus que ce qui est indique dans la config => classe Unknown
+        # 2. Les masques ne sont pas encore calcule a cette etape. On garde les donnees
+        #    d'origine ; permet validation a posteriori 
+        I = eye(project_config.num_classes + 1, dtype=int16)
+        hdf5_file.create_dataset(_SPECIE_ORIGINAL, 
                                  data=I[ data_df[_SPECIE] ])
 
         group_length, \
@@ -134,8 +141,46 @@ def write_hdf5_groups(hdf5_filename: str,
 
                 segment_frame_begin += group_hop_frame_length
 
+            if log_debug_info:
+                # ligne vide entre groupes, facilite lecture des logs
+                print()
+
         hdf5_file.create_virtual_dataset(_SPECTROGRAM_GROUPS, spectrogram_group_layout)
         hdf5_file.create_virtual_dataset(_SPECTROGRAM_MASK_GROUPS, spectrogram_mask_group_layout)
+        hdf5_file.flush()
+
+def update_hdf5_groups_labels(hdf5_filename: str,
+                              project_config: ProjectConfig) -> None:
+    # ouvrir hdf5_filename en mode update
+    # on doit lire les masques et les labels pour mettre a jour ces derniers
+    with open_file(hdf5_filename, "r") as hdf5_file:
+        spectrogram_mask = hdf5_file[_SPECTROGRAM_MASK_GROUPS]
+
+        # pourcentage de frames contenant chant d'oiseaum par segment
+        segments_mask_ratio = mean(spectrogram_mask, axis=-1)
+
+        # pourcentage de frames contenant chant d'oiseaum par groupe (le meilleur segment)
+        groups_ratio = max(segments_mask_ratio, axis=-1)
+
+        # si le meilleur segment d'un groupe est en dessous d'un seuil
+        # forcer le label unknown
+        group_audio_unavailable = groups_ratio < project_config.preprocess.segmentation_content_ratio_threshold
+
+        # copy labels
+        y = hdf5_file[_SPECIE_ORIGINAL][:]
+
+        # sanity check
+        assert y.shape[0] == spectrogram_mask.shape[0]
+        assert y.shape[1] == project_config.num_classes + 1
+
+    # classe unknown one hot enocded
+    unknown_ohe = [0] * (project_config.num_classes + 1)
+    unknown_ohe[-1] = 1
+
+    with open_file(hdf5_filename, "r+") as hdf5_file:
+        y[group_audio_unavailable] = unknown_ohe
+        hdf5_file.create_dataset(_SPECIE,
+                                 data=y)
         hdf5_file.flush()
 
 def _md5_filename(project_config: ProjectConfig) -> str:

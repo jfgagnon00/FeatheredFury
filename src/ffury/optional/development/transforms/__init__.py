@@ -1,5 +1,6 @@
 from .indexing import (
     read_indexing_md5,
+    update_hdf5_groups_labels,
     write_hdf5_dataset,
     write_hdf5_groups,
     write_indexing_md5
