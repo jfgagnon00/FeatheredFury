@@ -15,16 +15,16 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # - name: Setup Environment
-      #   uses: ./.github/actions/setup-build-environment
+      - name: Setup Environment
+        uses: ./.github/actions/setup-build-environment
 
-      - name: Check folders
-        shell: bash
-        run: |
-          pwd
-          cd ./.github/actions/neptune-sync-model
-          pwd
-          ls -la .
+      # - name: Check folders
+      #   shell: bash
+      #   run: |
+      #     pwd
+      #     cd ./.github/actions/neptune-sync-model
+      #     pwd
+      #     ls -la .
 
       - name: "Synchroniser Modele"
         uses: ./.github/actions/neptune-sync-model
