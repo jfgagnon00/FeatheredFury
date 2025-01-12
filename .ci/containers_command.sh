@@ -17,7 +17,12 @@ fi
 # echo "'$ENVIRONMENT'"
 # echo "'$@'"
 
+
+echo "docker-compose --env-file ${DIR}/containers/.env --env-file ${DIR}/containers/${EnvironmentEnvFileOverrides} -f ${DIR}/containers/docker-compose.yaml $@"
+
 docker-compose \
     --env-file ${DIR}/containers/.env \
     --env-file ${DIR}/containers/${EnvironmentEnvFileOverrides} \
     -f ${DIR}/containers/docker-compose.yaml $@
+
+docker images

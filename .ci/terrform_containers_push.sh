@@ -2,8 +2,8 @@
 
 DIR=$(dirname "$0")
 
-echo ${FFURY_REGISTRY_SERVER}
-echo ${FFURY_REGISTRY_NAME}
+# echo ${FFURY_REGISTRY_SERVER}
+# echo ${FFURY_REGISTRY_NAME}
 
 ${DIR}/containers_command.sh --azure build
 
