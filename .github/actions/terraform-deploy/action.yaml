@@ -31,6 +31,7 @@ runs:
           TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
         shell: bash
         run: |
+          ls -la
           terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
 
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Apply
