@@ -12,30 +12,25 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          creds: ${{ inputs.AZURE_CREDENTIALS }}
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
 
-      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Init
-        shell: bash
-        run: |
-          cd .cd
-          ls -la
-          terraform init
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2' # the full version of `docker-compose` command
 
-      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Plan
-        env:
-          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ inputs.AZURE_CREDENTIALS }}
+
+      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Init/Plan
         shell: bash
         run: |
           cd .cd
-          ls -la
+          terraform init
           terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
 
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Apply
