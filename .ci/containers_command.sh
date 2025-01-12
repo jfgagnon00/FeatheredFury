@@ -14,7 +14,7 @@ else
     EnvironmentEnvFileOverrides=".env-local"
 fi
 
-# echo "'$ENVIRONMENT'"
+echo "'$ENVIRONMENT'"
 # echo "'$@'"
 
 env | grep FFURY
