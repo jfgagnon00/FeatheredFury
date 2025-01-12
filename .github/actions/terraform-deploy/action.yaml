@@ -2,8 +2,14 @@ name: "Terraform Deploy"
 description: "Deploie application + service sur azure"
 
 inputs:
-  AZURE_ENVIRONMENT:
+  TERRAFORM_ENVIRONMENT:
     description: "Environment sur lequel deployer"
+    required: true
+
+  AZURE_TENANT_ID:
+    required: true
+
+  AZURE_SUBSCRIPTION_ID:
     required: true
 
 runs:
@@ -12,12 +18,14 @@ runs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Deploy ${{ inputs.AZURE_ENVIRONMENT }}
+      - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }}
         env:
-          AZURE_ENVIRONMENT: ${{ inputs.AZURE_ENVIRONMENT }}
+          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+          AZURE_TENANT_ID: ${{ inputs.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
         shell: bash
         run: |
           cd .cd
           terraform init
-          terraform plan -var="environment=${AZURE_ENVIRONMENT}"
+          terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
           # terraform apply -auto-approve
