@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Environment
+      - name: "Setup Environment"
         uses: ./.github/actions/setup-build-environment
 
-      - name: Synchroniser Donnees
+      - name: "Synchroniser Donnees"
         uses: ./.github/actions/dvc-sync
         with:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}

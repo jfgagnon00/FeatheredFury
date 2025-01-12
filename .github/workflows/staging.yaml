@@ -3,10 +3,10 @@ name: "Staging Workflow"
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
-  Deployment:
+  StagingDeployment:
     runs-on: [ubuntu-latest]
     steps:
       - name: Checkout
@@ -18,32 +18,17 @@ jobs:
       - name: "Setup Environment"
         uses: ./.github/actions/setup-build-environment
 
-      # - name: Check folders
-      #   shell: bash
-      #   run: |
-      #     pwd
-      #     cd ./.github/actions/neptune-sync-model
-      #     pwd
-      #     ls -la .
-
       - name: "Synchroniser Modele"
-        uses: ./.github/actions/neptune-sync-model
+        uses: ./.github/actions/neptune-sync-model@staging
         with:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
           NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
 
-      - name: Test Sync
-        shell: bash
+      - name: Deploy Staging
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
-          ls -la ./models
-          echo "Ici"
-
-
-      # - name: Deploy Staging
-      #   env:
-      #     AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-      #   run: |
-      #     # fetcher le modele de neptune ai
-      #     cd .cd
-      #     terraform init
-      #     terraform apply -var="environment=staging" -auto-approve
+          # fetcher le modele de neptune ai
+          cd .cd
+          terraform init
+          terraform apply -var="environment=staging" -auto-approve
