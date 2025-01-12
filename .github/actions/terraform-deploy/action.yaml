@@ -6,11 +6,11 @@ inputs:
     description: "Environment sur lequel deployer"
     required: true
 
-  AZURE_TENANT_ID:
-    required: true
+  # AZURE_TENANT_ID:
+  #   required: true
 
-  AZURE_SUBSCRIPTION_ID:
-    required: true
+  # AZURE_SUBSCRIPTION_ID:
+  #   required: true
 
 runs:
   using: "composite"
@@ -21,8 +21,8 @@ runs:
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }}
         env:
           TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
-          AZURE_TENANT_ID: ${{ inputs.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+          # AZURE_TENANT_ID: ${{ inputs.AZURE_TENANT_ID }}
+          # AZURE_SUBSCRIPTION_ID: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
         shell: bash
         run: |
           cd .cd

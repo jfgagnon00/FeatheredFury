@@ -18,3 +18,19 @@ variable "environment" {
     error_message = "Valeurs possible: dev, staging ou production."
   }
 }
+
+variable "subscription_id" {
+  # mettre TF_VAR_subscription_id environment variable
+}
+
+variable "tenant_id" {
+  # mettre TF_VAR_tenant_id environment variable
+}
+
+variable "client_id" {
+  # mettre TF_VAR_client_id environment variable
+}
+
+variable "secret" {
+  # mettre TF_VAR_client environment variable
+}
