@@ -55,6 +55,10 @@ def ffury():
 
         from ..optional.development.cli.train import train
         _cli.add_command(train)
+
+        from ..optional.development.cli.neptune import neptune_group 
+        from ..optional.development.cli.neptune_sync_model import sync_model
+        _cli.add_command(neptune_group)
     except ImportError:
         logger.info("Module development non installe.")
 

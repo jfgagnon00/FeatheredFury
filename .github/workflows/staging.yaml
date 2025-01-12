@@ -11,24 +11,29 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Environment
-        run: |
-          pip install -r .ci/requirements-build.txt
-          source .ci/yaml_to_variables.sh configs/paths_config.yaml
+        uses: ./.github/actions/setup-build-environment
+
   Deployment:
     needs: [Setup]
     runs-on: [ubuntu-latest]
-    strategy:
-      matrix:
-        deployment_kind: [app, service]
     steps:
-      - name: Deploy ${{matric.deployment_kind}}
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-          NEPTUNE_PROJECT: ${{ secrets.NEPTUNE_PROJECT }}
-          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+      - name: Synchroniser Modele
+        uses: ./.github/actions/neptune-sync-model
+        with:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+
+      - name: Test Sync
+        shell: bash
         run: |
-          cd .ci/${{matric.deployment_kind}}
-          terraform init
-          terraform plan
-          terraform apply
+          ls -la ./models
+
+
+      # - name: Deploy Staging
+      #   env:
+      #     AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+      #   run: |
+      #     # fetcher le modele de neptune ai
+      #     cd .cd
+      #     terraform init
+      #     terraform apply -var="environment=staging" -auto-approve
