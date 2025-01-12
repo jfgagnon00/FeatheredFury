@@ -14,19 +14,21 @@ else
     EnvironmentEnvFileOverrides=".env-local"
 fi
 
-echo "'$ENVIRONMENT'"
+# echo "'$ENVIRONMENT'"
 # echo "'$@'"
 
-env | grep FFURY
+echo '${DIR}'
 
-ls -la
+pwd
 
-cd ../ci/containers
 echo "docker-compose --env-file ${DIR}/containers/.env --env-file ${DIR}/containers/${EnvironmentEnvFileOverrides} -f ${DIR}/containers/docker-compose.yaml $@"
 
+cd containers
+
+docker-compose --version
 docker-compose \
-    --env-file ./containers/.env \
-    --env-file ./containers/${EnvironmentEnvFileOverrides} \
-    -f ${DIR}/containers/docker-compose.yaml $@
+    --env-file ./.env \
+    --env-file ./${EnvironmentEnvFileOverrides} \
+    -f ./docker-compose.yaml $@
 
 docker images
