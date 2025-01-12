@@ -19,4 +19,4 @@ runs:
         NEPTUNE_TAG: ${{ inputs.NEPTUNE_TAG }}
       shell: bash
       run: |
-        ffury neptune sync-model '${NEPTUNE_TAG}'
+        ffury neptune sync-model ${NEPTUNE_TAG}

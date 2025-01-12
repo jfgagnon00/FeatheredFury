@@ -26,8 +26,8 @@ jobs:
       #     pwd
       #     ls -la .
 
-      - name: "Synchroniser Modele"
-        uses: ./.github/actions/neptune-sync-model
+      - name: Synchroniser Modele
+        uses: ./.github/actions/neptune-sync-model/action.yaml
         with:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
           NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
