@@ -1,8 +1,10 @@
 name: "Staging Workflow"
+
 on:
   push:
     branches:
       - staging
+
 jobs:
   Deployment:
     runs-on: [ubuntu-latest]
@@ -10,19 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # - name: Setup Environment
+      #   uses: ./.github/actions/setup-build-environment
+
       - name: Check folders
         shell: bash
         run: |
           pwd
-          ls -la
-          ls -la ./.github/actions/
           ls -la ./.github/actions/neptune-sync-model
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup-build-environment
 
       - name: Synchroniser Modele
         uses: ./.github/actions/neptune-sync-model@staging
