@@ -27,6 +27,8 @@ runs:
           creds: ${{ inputs.AZURE_CREDENTIALS }}
 
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Init/Plan
+        env:
+          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
         shell: bash
         run: |
           cd .cd
