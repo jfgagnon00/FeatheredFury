@@ -19,6 +19,8 @@ runs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }} - Init
         shell: bash
