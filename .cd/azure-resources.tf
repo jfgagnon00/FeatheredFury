@@ -10,8 +10,3 @@ resource "azurerm_resource_group" "rg" {
   location = var.resource_group_location
   name     = local.resource_group_name
 }
-
-# import {
-#   to = azurerm_resource_group.rg
-#   id = "${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}"
-# }

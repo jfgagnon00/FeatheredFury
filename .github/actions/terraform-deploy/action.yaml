@@ -17,9 +17,10 @@ runs:
         with:
           terraform_wrapper: false
 
-      - uses: KengoTODA/actions-setup-docker-compose@v1
+      - name: Setup docker-compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          version: '2.14.2' # the full version of `docker-compose` command
+          version: '2.14.2'
 
       - name: Azure login
         uses: azure/login@v2
@@ -35,7 +36,7 @@ runs:
           terraform init
 
           terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
-          
+
           # terraform refresh -var="environment=${TERRAFORM_ENVIRONMENT}"
           # terraform destroy -var="environment=${TERRAFORM_ENVIRONMENT}" -auto-approve
           # terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"

@@ -10,6 +10,10 @@ inputs:
     description: "Google Drive credential data"
     required: true
 
+  MINIMAL_SYNC:
+    default: ""
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -17,6 +21,7 @@ runs:
       env:
         GDRIVE_URL: ${{ inputs.GDRIVE_URL }}
         GDRIVE_CREDENTIALS_DATA: ${{ inputs.GDRIVE_CREDENTIALS_DATA }}
+        MINIMAL_SYNC: ${{ inputs.MINIMAL_SYNC }}
       shell: bash
       run: |
         # configurer DVC pour acceder Google Drive
@@ -30,5 +35,10 @@ runs:
         dvc config core.analytics false
 
         # obtenir le data
-        echo "Pull data"
-        dvc pull
+        if [[ -z "${MINIMAL_SYNC}" ]]; then
+          echo "Pull all data"
+          dvc pull
+        else
+          echo "Pull minimal data"
+          dvc pull data/data__species.csv
+        fi
