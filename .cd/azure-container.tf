@@ -26,7 +26,7 @@ resource "azurerm_container_registry" "acr" {
 resource  "null_resource" "docker_push" {
   provisioner "local-exec" {
     working_dir = "${path.module}/../.ci"
-    command = "./terrform_containers_push.sh"
+    command = "./terraform_containers_push.sh"
     environment = {
       FFURY_REGISTRY_SERVER = azurerm_container_registry.acr.login_server
       FFURY_REGISTRY_NAME = azurerm_container_registry.acr.name
