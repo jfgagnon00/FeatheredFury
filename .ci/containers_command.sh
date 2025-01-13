@@ -26,6 +26,6 @@ fi
 
 pwd
 
-docker-compose f ${DIR}/containers/docker-compose.yaml $@
+docker-compose -f ${DIR}/containers/docker-compose.yaml $@
 
 docker images
