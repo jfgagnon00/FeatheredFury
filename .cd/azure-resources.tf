@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "rg" {
   name     = local.resource_group_name
 }
 
-import {
-  to = azurerm_resource_group.rg
-  id = "${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}"
-}
+# import {
+#   to = azurerm_resource_group.rg
+#   id = "${data.azurerm_subscription.current.id}/resourceGroups/${local.resource_group_name}"
+# }
