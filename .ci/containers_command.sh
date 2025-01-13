@@ -5,32 +5,27 @@ ENVIRONMENT=$1
 
 shift
 
+# TODO: workaround github action probleme avec .env file
+export PYTHON_VERSION="3.9-slim"
+export FFURY_APPLICATION_PORT=80
+export FFURY_SERVICE_PORT=5001
+
 if [[ "$ENVIRONMENT" == "--azure" ]]
 then
     echo "docker-compose pour environment azure"
-    EnvironmentEnvFileOverrides=".env-azure"
+    export FFURY_PLATFORM="linux/amd64"
+    export FFURY_SERVICE_HOST="localhost"
 else
     echo "docker-compose pour environment local"
-    EnvironmentEnvFileOverrides=".env-local"
+    export FFURY_PLATFORM=""
+    export FFURY_SERVICE_HOST="ffury_service" # doit matcher docker-compose.yaml
 fi
 
 # echo "'$ENVIRONMENT'"
 # echo "'$@'"
 
-echo '${DIR}'
-
 pwd
 
-echo "docker-compose --env-file ${DIR}/containers/.env --env-file ${DIR}/containers/${EnvironmentEnvFileOverrides} -f ${DIR}/containers/docker-compose.yaml $@"
-
-cd containers
-
-export PYTHON_VERSION="3.9-slim" 
-
-docker-compose --version
-docker-compose \
-    --env-file ./.env \
-    --env-file ./${EnvironmentEnvFileOverrides} \
-    -f ./docker-compose.yaml $@
+docker-compose f ${DIR}/containers/docker-compose.yaml $@
 
 docker images
