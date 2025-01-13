@@ -48,6 +48,11 @@ runs:
           cd .cd 
           terraform init
           terraform plan
+
+          terraform apply -auto-approve -refresh-only
+          export SUBSCRIPTION = $(terraform output -json subscription)
+          destroy_previous ${SUBSCRIPTION} ${TF_VAR_environment}
+
           terraform apply -auto-approve
 
       - name: Get URL ${{ inputs.TERRAFORM_ENVIRONMENT }}

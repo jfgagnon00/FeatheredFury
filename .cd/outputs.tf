@@ -24,3 +24,11 @@ output "web_app_url" {
   sensitive   = true
   description = "URL pour l'application"
 }
+
+output "subscription" {
+    value = data.azurerm_subscription.current.id
+}
+
+output "environment" {
+    value = "${var.environment}"
+}
