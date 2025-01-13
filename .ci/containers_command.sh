@@ -25,6 +25,8 @@ echo "docker-compose --env-file ${DIR}/containers/.env --env-file ${DIR}/contain
 
 cd containers
 
+export PYTHON_VERSION="3.9-slim"
+
 docker-compose --version
 docker-compose \
     --env-file ./.env \
