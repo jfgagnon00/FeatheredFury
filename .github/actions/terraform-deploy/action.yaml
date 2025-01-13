@@ -12,6 +12,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+      - name: Synchroniser Modele
+        uses: ./.github/actions/neptune-sync-model
+        with:
+          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+
+      - name: "Synchroniser Donnees Minimales"
+        uses: ./.github/actions/dvc-sync
+        with:
+          GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+          MINIMAL_SYNC: "1" 
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -29,16 +42,18 @@ runs:
 
       - name: Deploy ${{ inputs.TERRAFORM_ENVIRONMENT }}
         env:
-          TERRAFORM_ENVIRONMENT: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+          TF_VAR_environment: ${{ inputs.TERRAFORM_ENVIRONMENT }}
         shell: bash
         run: |
           cd .cd 
           terraform init
+          terraform plan
+          terraform apply -auto-approve
 
-          terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
-
-          # terraform refresh -var="environment=${TERRAFORM_ENVIRONMENT}"
-          # terraform destroy -var="environment=${TERRAFORM_ENVIRONMENT}" -auto-approve
-          # terraform plan -var="environment=${TERRAFORM_ENVIRONMENT}"
-          
-          terraform apply -var="environment=${TERRAFORM_ENVIRONMENT}" -auto-approve
+      - name: Get URL ${{ inputs.TERRAFORM_ENVIRONMENT }}
+        env:
+          TF_VAR_environment: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+        shell: bash
+        run: |
+          cd .cd 
+          terraform output -json web_app_url

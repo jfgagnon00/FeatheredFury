@@ -3,25 +3,20 @@ name: "Production Workflow"
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
-  ProductionDeployement:
+  ProductionDeployment:
     runs-on: [ubuntu-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: "Setup Environment"
+      - name: Setup Environment
         uses: ./.github/actions/setup-build-environment
 
-      - name: "Deploy Production"
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
-          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-        run: |
-          cd .cd
-          terraform init
-          terraform plan
-          terraform apply
+      - name: Deploy Production
+        uses: ./.github/actions/terraform-deploy
+        with:
+          TERRAFORM_ENVIRONMENT: production
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
