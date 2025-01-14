@@ -41,4 +41,4 @@ runs:
         shell: bash
         run: |
           cd .cd 
-          terraform output -json web_app_url
+          terraform output -json web_app_url 
