@@ -6,6 +6,9 @@ inputs:
     description: "Environment sur lequel deployer"
     required: true
 
+  AZURE_CREDENTIALS:
+    required: true
+
 runs:
   using: "composite"
   steps:
