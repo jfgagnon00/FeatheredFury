@@ -6,25 +6,9 @@ inputs:
     description: "Environment sur lequel deployer"
     required: true
 
-  AZURE_CREDENTIALS:
-    required: true
-
 runs:
   using: "composite"
   steps:
-      - name: Synchroniser Modele
-        uses: ./.github/actions/neptune-sync-model
-        with:
-          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
-
-      - name: "Synchroniser Donnees Minimales"
-        uses: ./.github/actions/dvc-sync
-        with:
-          GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
-          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
-          MINIMAL_SYNC: "1" 
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
