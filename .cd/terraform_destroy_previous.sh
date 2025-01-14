@@ -2,8 +2,8 @@
 
 terraform apply -auto-approve -refresh-only
 
-export SUBSCRIPTION = $(terraform output -json subscription)
-export ENVIRONMENT = $(terraform output -json environment)
+SUBSCRIPTION=$(terraform output -json subscription)
+ENVIRONMENT=$(terraform output -json environment)
 
 terraform import azurerm_resource_group.rg  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg"
 if [ $? -ne 0 ]; then
