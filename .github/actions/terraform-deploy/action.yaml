@@ -35,11 +35,7 @@ runs:
           cd .cd 
           terraform init
           terraform plan
-          
-          echo "terraform_destroy_previous"
           ./terraform_destroy_previous.sh
-          echo "terraform_destroy_previous done"
-
           terraform apply -auto-approve
 
       - name: Get URL ${{ inputs.TERRAFORM_ENVIRONMENT }}
