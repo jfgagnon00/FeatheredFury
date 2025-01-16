@@ -3,9 +3,6 @@
 * Robust features for audio
 * Tout ce qui a mot clef pour robust features
 
-# ML Monitoring
-* https://github.com/sohiniroych/ML-Monitoring-with-Grafana.git
-
 # Machine Learning Sound Event Detection
 * [Audio Classification with Machine Learning (EuroPython 2019)](https://www.youtube.com/watch?v=uCGROOUO_wY)
 * [jonnor/ESC-CNN-microcontroller - Environmental Sound Classification on Microcontrollers using Convolutional Neural Networks](https://github.com/jonnor/ESC-CNN-microcontroller?tab=readme-ov-file)
