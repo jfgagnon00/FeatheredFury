@@ -31,10 +31,6 @@ def _dependencies_development():
 
 def _dependencies_web_core():
     return [
-        # TODO: a revoir
-        # "azure-identity==1.14.1",
-        # "azure-keyvault-secrets==4.7.0",
-        # "pyjwt==2.10.1",
         "pandas==2.2.3",
     ]
 
@@ -49,6 +45,12 @@ def _dependencies_service():
         "flasgger==0.9.7.1",
         "flask==3.1.0",
         "werkzeug==3.1.3",
+    ]
+
+def _dependencies_monitoring():
+    return [
+        "azure-storage-blob==12.24.0",
+        "azure-identity==1.14.1"
     ]
 
 def _dependencies_local():
@@ -67,23 +69,27 @@ setup(name="feathered-fury",
       version="0.0.1",
       description="Détection espèce d'oiseau à partir d'une capture audio.",
       author="Jean-Francois Gagnon",
-      include_package_data=True,
       entry_points={
         "console_scripts": [
             "ffury = ffury.cli:ffury",
         ]},
+      include_package_data=True,
       install_requires=_dependencies_core(),
       extras_require={
-        "development": _dependencies_development() + _dependencies_ai(),
+        "development": _dependencies_development() + 
+                       _dependencies_monitoring() +
+                       _dependencies_ai(),
         "application": _dependencies_application() + 
                        _dependencies_web_core(),
         "service": _dependencies_service() + 
                    _dependencies_web_core() + 
+                   _dependencies_monitoring() +
                    _dependencies_ai(),
         "all": _dependencies_ai() +
                _dependencies_web_core() +
                _dependencies_development() +  
                _dependencies_application() +
                _dependencies_service() +
-               _dependencies_local()
+               _dependencies_local() + 
+               _dependencies_monitoring()
       })

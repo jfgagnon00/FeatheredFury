@@ -53,9 +53,9 @@ if False:
     # pas tout a fait ce que ke veux
     project.add_snapshot()
 
-if False:
+if True:
     # ca log un rapport tout seul qui ne semble pas lier a aucune donnee (autre que celle du rapport)
-    # pas tout a fait ce qu'on cherche
+    # pas tout a fait ce correcte mais on peut faire avec
     data_report = Report(
         metrics=[
             DataDriftPreset(stattest="psi", stattest_threshold="0.3"),

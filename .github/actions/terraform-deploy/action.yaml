@@ -38,10 +38,11 @@ runs:
           ./terraform_destroy_previous.sh
           terraform apply -auto-approve
 
-      - name: Get URL ${{ inputs.TERRAFORM_ENVIRONMENT }}
+      - name: Get ${{ inputs.TERRAFORM_ENVIRONMENT }} infos
         env:
           TF_VAR_environment: ${{ inputs.TERRAFORM_ENVIRONMENT }}
         shell: bash
         run: |
           cd .cd 
-          terraform output -json web_app_url 
+          terraform output -json web_app_url
+          terraform output -json storage_connection_string

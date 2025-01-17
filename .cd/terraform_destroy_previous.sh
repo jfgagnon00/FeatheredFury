@@ -10,6 +10,7 @@ ENVIRONMENT=$(terraform output -json environment | tr -d '"')
 terraform import azurerm_resource_group.rg  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg"
 terraform import azurerm_container_registry.acr "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg/providers/Microsoft.ContainerRegistry/registries/ffury${ENVIRONMENT}acr"
 terraform import azurerm_container_group.acg  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg/providers/Microsoft.ContainerInstance/containerGroups/ffury-${ENVIRONMENT}-instance"
+terraform import azurerm_storage_account.asa  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg/providers/Microsoft.Storage/storageAccounts/ffury${ENVIRONMENT}asa"
 
 # destruction - pas important si ca existe ou non, ca va etre detruit si ca existe
 terraform destroy -auto-approve
