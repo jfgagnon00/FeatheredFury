@@ -34,6 +34,7 @@ class KerasDummyModelFactory(IFactory):
         model.compile(optimizer=keras_optimizer(train_parameters), 
                       loss=keras_loss(train_parameters))
 
+        model.get_layer(name="time_distributed").layer.summary()
         model.summary()
 
         return model
@@ -57,10 +58,14 @@ class KerasDummyModelFactory(IFactory):
         target_shape = (input_shape[0], input_shape[1] * input_shape[2])
 
         segment_net = Sequential([
-            Dense(units=512, activation="relu"),
             BatchNormalization(),
-            Dropout(rate=0.1),
-            Dense(units=128, activation="relu"),
+            Dropout(rate=0.2),
+            Dense(units=512, activation="relu"),
+
+            BatchNormalization(),
+            Dropout(rate=0.2),
+            Dense(units=2048, activation="relu"),
+
             Dense(units=num_classes, activation="sigmoid")
         ])
 
