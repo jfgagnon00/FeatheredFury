@@ -62,9 +62,9 @@ class KerasDummyModelFactory(IFactory):
 
         segment_features = input_shape[1] * input_shape[2]
 
-        from ffury.optional.keras_adapters.KerasSegmentFeatures import KerasSegmentFeatures
-        segment_model = KerasSegmentFeatures(shape=(segment_features,),
-                                             name="SegmentFeatures")
+        from ffury.optional.keras_adapters._KerasSegmentFeatures import _KerasSegmentFeatures
+        segment_model = _KerasSegmentFeatures(shape=(segment_features,),
+                                              name="SegmentFeatures")
 
         group_inputs        = Input(shape=input_shape)
         group_features      = Reshape(target_shape=(input_shape[0], segment_features))(group_inputs)

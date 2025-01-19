@@ -31,6 +31,9 @@ from pathlib import Path
 from typing import Tuple
 
 
+from ..keras_adapters import _load_model
+
+
 class ServiceController:
     def __init__(self, project_config: ProjectConfig):
         self._config = project_config.preprocess
@@ -219,14 +222,7 @@ class ServiceController:
         return buffer_b64
 
     def _load_model(self, project_config: ProjectConfig) -> None:
-        self._model  = None
-        filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
-        if Path.is_file(filename):
-            # ces imports sont extremement lent - sortir de l'entete
-            # https://github.com/keras-team/keras/issues/7408
-            from keras.models import load_model
-            from ..keras_adapters.KerasSegmentFeatures import KerasSegmentFeatures
-            self._model = load_model(filename)
+        self._model  = _load_model(project_config)
 
     def _init_species_label(self, project_config: ProjectConfig) -> None:
         filename = project_config.get_csv_filename(DatasetType._SPECIES)

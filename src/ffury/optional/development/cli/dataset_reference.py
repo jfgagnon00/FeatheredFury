@@ -1,17 +1,19 @@
 import click
+import numpy as np
 
+from pandas import DataFrame
 from pathlib import Path
-from tqdm import tqdm
 
 from ffury.cli import ProjectConfigDecorator
 from ffury.configs import (
     DatasetType,
+    PathsConfig,
     ProjectConfig
 )
 
 from ffury.misc.logging import create_logger
+from ffury.optional.keras_adapters import _load_model
 
-from typing import Any
 
 from .dataset import dataset_group
 from ..dataset.IndexedDataset import IndexedDataset
@@ -32,15 +34,16 @@ def reference(project_config: ProjectConfig) -> None:
     model = _load_model(project_config)
     dataset = IndexedDataset.create(project_config, DatasetType.TRAIN)
 
-    for i in tqdm( range(dataset.spectrogram_groups.shape[0]) ):
-        pass
+    logger.info("Extraction features")
+    _, group_features = model.predict(dataset.spectrogram_groups)
 
-def _load_model(project_config: ProjectConfig) -> Any:
-    filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
-    if Path.is_file(filename):
-        # ces imports sont extremement lent - sortir de l'entete
-        # https://github.com/keras-team/keras/issues/7408
-        from keras.models import load_model
-        return load_model(filename)
-    else:
-        raise ValueError(f"{filename} n'existe pas")
+    print(group_features.shape)
+    group_features = np.mean(group_features, axis=1)
+    print(group_features.shape)
+
+    logger.info("Sauvegarde features")
+    features_df = DataFrame(data=group_features,
+                            columns=[f"feat_{i}" for i in range(group_features.shape[-1])])
+
+    filename = Path.joinpath(project_config.paths.BUILD_DIR, "monitoring_features.csv")
+    features_df.to_csv(filename, index=False)
