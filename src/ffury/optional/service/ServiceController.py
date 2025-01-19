@@ -105,8 +105,7 @@ class ServiceController:
                 segment_start += group_hop_length
 
             # self._config.group_segment_count segments consecutifs
-            # pour keras, ca signifie channel last
-            group = np.dstack(segments)
+            group = np.stack(segments, axis=0)
             groups.append(group)
 
             # passer au groupe suivant
@@ -121,12 +120,13 @@ class ServiceController:
 
     def _make_prediction(self,
                          batches: NDArray) -> list:
-        species_prob = self._model.predict(batches, verbose=0)
+        species_prob, species_features = self._model.predict(batches, verbose=0)
         species_index = np.argmax(species_prob, axis=1)
         species_pred = species_prob[np.arange(species_prob.shape[0]), species_index] > self._thresholds[species_index]
 
         logger = current_app.config["LOGGER"]
 
+        logger.info(f"Features. shape: {species_features.shape}")
         logger.info(f"Prediction proba. shape: {species_prob.shape}")
         logger.info(f"Prediction proba.:")
         logger.info(np.round(species_prob, 4))
@@ -222,7 +222,10 @@ class ServiceController:
         self._model  = None
         filename = Path.joinpath(project_config.paths.MODELS_DIR, "Model.keras")
         if Path.is_file(filename):
+            # ces imports sont extremement lent - sortir de l'entete
+            # https://github.com/keras-team/keras/issues/7408
             from keras.models import load_model
+            from ..keras_adapters.KerasSegmentFeatures import KerasSegmentFeatures
             self._model = load_model(filename)
 
     def _init_species_label(self, project_config: ProjectConfig) -> None:
@@ -242,5 +245,3 @@ class ServiceController:
             raise ValueError(f"Taille liste thresholds ne correspond pas aux nombre de classes: {len(self._thresholds)} vs {project_config.num_classes}")
 
         self._thresholds = np.array(thresholds)
-
-        

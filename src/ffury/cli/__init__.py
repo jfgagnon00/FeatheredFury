@@ -51,6 +51,7 @@ def ffury():
         from ..optional.development.cli.dataset_install import install
         from ..optional.development.cli.dataset_index import index
         from ..optional.development.cli.dataset_preprocess import preprocess
+        from ..optional.development.cli.dataset_reference import reference
         _cli.add_command(dataset_group)
 
         from ..optional.development.cli.train import train
@@ -61,5 +62,11 @@ def ffury():
         _cli.add_command(neptune_group)
     except ImportError:
         logger.info("Module development non installe.")
+
+    try:
+        from ..optional.monitoring.cli.monitoring import monitoring_group
+        _cli.add_command(monitoring_group)
+    except ImportError:
+        logger.info("Module monitoring non installe.")
 
     _cli()

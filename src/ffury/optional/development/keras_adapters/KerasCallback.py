@@ -61,12 +61,13 @@ class KerasCallback(Callback):
         return self._best_epoch
     
     def on_epoch_end(self, epoch, logs=None):
-        y_pred = self.model.predict(self._x_train, verbose=0)
+        # le modele a 2 outputs :  prediction + features (pour le monitoring)
+        y_pred, _ = self.model.predict(self._x_train, verbose=0)
         measure_train = self._measurable(self._class_labels,
                                          self._y_train_true,
                                          y_pred)
 
-        y_pred = self.model.predict(self._x_validation, verbose=0)
+        y_pred, _ = self.model.predict(self._x_validation, verbose=0)
         measure_validation = self._measurable(self._class_labels,
                                               self._y_validation_true,
                                               y_pred,
