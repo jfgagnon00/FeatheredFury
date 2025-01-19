@@ -50,7 +50,8 @@ def _dependencies_service():
 def _dependencies_monitoring():
     return [
         "azure-storage-blob==12.24.0",
-        "azure-identity==1.14.1"
+        "azure-identity==1.14.1",
+        "evidently==0.5.1",
     ]
 
 def _dependencies_local():
