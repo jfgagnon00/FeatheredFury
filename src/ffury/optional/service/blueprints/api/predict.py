@@ -45,7 +45,7 @@ def predict():
     filename = Path.joinpath( current_app.config["UPLOAD_FOLDER"], filename)
     file.save(filename)
 
-    waveform_b64, spectrogram_b64, predictions = current_app.config["CONTROLLER"].predict(filename)
+    waveform_b64, spectrogram_b64, predictions, id = current_app.config["CONTROLLER"].predict(filename)
 
     # effacer le fichier pour le moment
     filename.unlink()
@@ -58,7 +58,8 @@ def predict():
     response_data = dict(
         waveform_b64=waveform_b64,
         spectrogram_b64=spectrogram_b64,
-        predictions=predictions
+        predictions=predictions,
+        id=id
     )
 
     return jsonify(response_data)

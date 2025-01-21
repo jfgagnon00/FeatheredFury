@@ -1,8 +1,7 @@
 import os
 
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
 from datetime import datetime, timezone
-from pprint import pprint
 
 
 def get_timestamp():
@@ -39,5 +38,7 @@ blob_client.set_blob_metadata(meta)
 container_client = client_service.get_container_client(container="reference")
 for b in container_client.list_blobs():
     blob_client = container_client.get_blob_client(b.name)
+    data = blob_client.download_blob(encoding="UTF-8").readall()
     meta = blob_client.get_blob_properties().metadata
     convert_timestamp(meta["timestamp"])
+    print(data)

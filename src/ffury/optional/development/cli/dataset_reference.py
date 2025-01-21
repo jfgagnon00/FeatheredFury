@@ -7,7 +7,6 @@ from pathlib import Path
 from ffury.cli import ProjectConfigDecorator
 from ffury.configs import (
     DatasetType,
-    PathsConfig,
     ProjectConfig
 )
 

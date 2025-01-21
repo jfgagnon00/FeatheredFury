@@ -14,6 +14,11 @@ from ffury.configs import (
     ProjectConfig
 )
 from ffury.misc.logging import pretty_format
+from ffury.optional.monitoring.misc.timestamp import timestamp_now
+from ffury.optional.monitoring.azure_blob_storage import (
+    PREDICTIONS_CONTAINER,
+    upload
+)
 from ffury.transforms import (
     waveform_apply_config,
     waveform_from_file,
@@ -28,7 +33,11 @@ from librosa.display import (
 from numpy.typing import NDArray
 from pandas import read_csv
 from pathlib import Path
-from typing import Tuple
+from typing import (
+    Dict,
+    List,
+    Tuple
+)
 
 
 from ..keras_adapters import _load_model
@@ -60,7 +69,8 @@ class ServiceController:
             return None, None, None
 
         duration = get_duration(y=audio, sr=sampling_rate)
-        predictions = self._make_prediction(group_batches)
+        predictions, features = self._make_prediction(group_batches)
+        id = self._monitor(features)
 
         logger = current_app.config["LOGGER"]
         logger.info(f"Duree audio: {round(duration * 1000, 1)} ms")
@@ -72,7 +82,8 @@ class ServiceController:
 
         return self._render_waveform(audio, sampling_rate, duration, figsize=(11, 1.5)), \
                self._render_spectrogram(spectrogram, sampling_rate, duration, figsize=(11, 2.9)), \
-               predictions
+               predictions, \
+               id
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 
@@ -155,6 +166,7 @@ class ServiceController:
                 label = self._species[specie_index]
                 prediction = dict(
                     name=f"{name} [{label}]",
+                    label=specie_index,
                     time=time,
                     probabilities=species_prob[i].tolist(),
                     info_url=f"https://ebird.org/species/{label}",
@@ -163,7 +175,7 @@ class ServiceController:
 
             time += group_length
 
-        return predictions
+        return predictions, species_features
 
     def _render_waveform(self,
                          audio: NDArray, 
@@ -241,3 +253,16 @@ class ServiceController:
             raise ValueError(f"Taille liste thresholds ne correspond pas aux nombre de classes: {len(self._thresholds)} vs {project_config.num_classes}")
 
         self._thresholds = np.array(thresholds)
+
+    def _monitor(self, features: NDArray) -> str:
+        ts = timestamp_now()
+        id = str(ts)
+
+        if False:
+            # TODO: transformer features en CSV puis uploader
+            upload(id,
+                "features",
+                None,
+                ts)
+
+        return id
