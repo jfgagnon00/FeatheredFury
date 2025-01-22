@@ -18,7 +18,9 @@ from ffury.misc.logging import pretty_format
 from ffury.optional.monitoring.misc.timestamp import timestamp_now
 from ffury.optional.monitoring.azure_blob_storage import (
     upload,
-    upload_file
+    upload_file,
+    FEATURES_BLOB,
+    PREDICTIONS_BLOB
 )
 from ffury.transforms import (
     waveform_apply_config,
@@ -286,11 +288,11 @@ class ServiceController:
             filename = Path.joinpath(self._paths_config.BUILD_DIR, "prediction_features.csv")
             filename.parent.mkdir(parents=True, exist_ok=True)
             features_df.to_csv(filename, index=False)
-            upload_file(str(filename), id, "features", ts)
+            upload_file(str(filename), id, FEATURES_BLOB, ts)
             filename.unlink()
 
             predictions = json.dumps(predictions)
-            upload(id, "predictions", predictions.encode(encoding="UTF-8"), ts)
+            upload(id, PREDICTIONS_BLOB, predictions.encode(encoding="UTF-8"), ts)
 
             return id
         except Exception as e:

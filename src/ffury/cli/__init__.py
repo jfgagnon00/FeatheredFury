@@ -65,10 +65,11 @@ def ffury():
 
     try:
         from ..optional.monitoring.cli.monitoring import monitoring_group
-        from ..optional.monitoring.cli.monitoring_reference  import (
+        from ..optional.monitoring.cli.monitoring_reference import (
             upload_reference, 
             download_reference
         )
+        from ..optional.monitoring.cli.monitoring_drift_test import drift_test
         _cli.add_command(monitoring_group)
     except ImportError as e:
         logger.info("Module monitoring non installe.")
