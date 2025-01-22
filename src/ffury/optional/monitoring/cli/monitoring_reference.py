@@ -9,13 +9,13 @@ from ffury.misc.logging import create_logger
 
 
 from .monitoring import monitoring_group
+from ..azure_blob_storage import (
+    download_file,
+    upload_file
+)
 from ..azure_blob_storage.properties import (
     _REFERENCE_BLOB,
-    _REFERENCE_CONTAINER
-)
-from ..azure_blob_storage import (
-    download,
-    upload
+    _REFERENCE_CONTAINER,
 )
 from ..misc.timestamp import (
     date_from_timestamp,
@@ -32,12 +32,11 @@ def upload_reference(project_config: ProjectConfig) -> None:
     """
     logger = create_logger(file=__file__)
     logger.info("Upload reference features")
-    with open(_get_filename(project_config), "rb") as file:
-        ts = timestamp_now()
-        upload(_REFERENCE_CONTAINER,
-               _REFERENCE_BLOB,
-               file,
-               ts)
+    ts = timestamp_now()
+    upload_file(_get_filename(project_config),
+                _REFERENCE_CONTAINER,
+                _REFERENCE_BLOB,
+                ts)
     logger.info(f"Uploaded reference features timestamp: { date_from_timestamp(ts) }")
 
 @monitoring_group.command()
@@ -49,10 +48,10 @@ def download_reference(project_config: ProjectConfig) -> None:
     """
     logger = create_logger(file=__file__)
     logger.info("Download reference features")
-    data, timestamp = download(_REFERENCE_CONTAINER, _REFERENCE_BLOB)
-    with open(_get_filename(project_config), "wb") as file:
-        file.write(data)
-    logger.info(f"Downloaded reference features timestamp: { date_from_timestamp(timestamp) }")
+    ts = download_file(_REFERENCE_CONTAINER,
+                       _REFERENCE_BLOB,
+                       _get_filename(project_config))
+    logger.info(f"Downloaded reference features timestamp: { date_from_timestamp(ts) }")
 
 def _get_filename(project_config: ProjectConfig) -> str:
     return Path.joinpath(project_config.paths.BUILD_DIR, "monitoring_features.csv")

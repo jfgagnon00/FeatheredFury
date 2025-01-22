@@ -24,3 +24,16 @@ def upload(container_name: str,
             metadata = blob_client.get_blob_properties().metadata
             metadata.update({_TIMESTAMP: str(timestamp)})
             blob_client.set_blob_metadata(metadata)
+
+def upload_file(filename: str,
+                container_name: str,
+                blob_name: str,
+                timestamp: float) -> None:
+    """
+    Upload un fichier. AZURE_STORAGE_CONNECTION_STRING doit etre defini.
+    """
+    with open(filename, "rb") as file:
+        upload(container_name,
+               blob_name,
+               file,
+               timestamp)

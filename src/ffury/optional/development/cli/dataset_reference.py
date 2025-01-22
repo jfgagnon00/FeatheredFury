@@ -36,13 +36,14 @@ def reference(project_config: ProjectConfig) -> None:
     logger.info("Extraction features")
     _, group_features = model.predict(dataset.spectrogram_groups)
 
-    print(group_features.shape)
+    logger.info(f"Shape: {group_features.shape}")
     group_features = np.mean(group_features, axis=1)
-    print(group_features.shape)
+    logger.info(f"Shape: {group_features.shape}")
 
     logger.info("Sauvegarde features")
     features_df = DataFrame(data=group_features,
                             columns=[f"feat_{i}" for i in range(group_features.shape[-1])])
 
     filename = Path.joinpath(project_config.paths.BUILD_DIR, "monitoring_features.csv")
+    filename.parent.mkdir(parents=True, exist_ok=True)
     features_df.to_csv(filename, index=False)

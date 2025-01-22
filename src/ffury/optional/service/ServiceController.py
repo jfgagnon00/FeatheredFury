@@ -1,3 +1,4 @@
+import json
 import matplotlib
 
 # permet d'exporter les figures en png
@@ -16,8 +17,8 @@ from ffury.configs import (
 from ffury.misc.logging import pretty_format
 from ffury.optional.monitoring.misc.timestamp import timestamp_now
 from ffury.optional.monitoring.azure_blob_storage import (
-    PREDICTIONS_CONTAINER,
-    upload
+    upload,
+    upload_file
 )
 from ffury.transforms import (
     waveform_apply_config,
@@ -31,7 +32,10 @@ from librosa.display import (
     waveshow
 )
 from numpy.typing import NDArray
-from pandas import read_csv
+from pandas import (
+    DataFrame,
+    read_csv
+)
 from pathlib import Path
 from typing import (
     Dict,
@@ -45,7 +49,8 @@ from ..keras_adapters import _load_model
 
 class ServiceController:
     def __init__(self, project_config: ProjectConfig):
-        self._config = project_config.preprocess
+        self._paths_config = project_config.paths
+        self._preprocess_config = project_config.preprocess
         self._init_species_label(project_config)
         self._init_thresholds(project_config)
         self._load_model(project_config)
@@ -70,13 +75,13 @@ class ServiceController:
 
         duration = get_duration(y=audio, sr=sampling_rate)
         predictions, features = self._make_prediction(group_batches)
-        id = self._monitor(features)
+        id = self._monitor(features, predictions)
 
         logger = current_app.config["LOGGER"]
         logger.info(f"Duree audio: {round(duration * 1000, 1)} ms")
-        logger.info(f"Duree groupe: {self._config.group_ms_infos()[0]} ms")
+        logger.info(f"Duree groupe: {self._preprocess_config.group_ms_infos()[0]} ms")
         logger.info(f"Spectrogramme shape: {spectrogram.shape}")
-        logger.info(f"Groupe info: {self._config.group_segment_count} {self._config.group_frame_infos()}")
+        logger.info(f"Groupe info: {self._preprocess_config.group_segment_count} {self._preprocess_config.group_frame_infos()}")
         logger.info(f"Groupe batch shape: {group_batches.shape}")
         logger.info(f"Num predictions: {len(predictions)}")
 
@@ -87,22 +92,22 @@ class ServiceController:
     
     def _transform(self, filename: str) -> Tuple[NDArray, int, NDArray]:
         audio, sampling_rate = waveform_from_file(filename, 
-                                                  self._config)
+                                                  self._preprocess_config)
         
         audio, sampling_rate =  waveform_apply_config(audio, 
                                                       sampling_rate, 
-                                                      self._config) 
+                                                      self._preprocess_config) 
         
         spectrogram = spectrogram_from_audio(audio, 
                                              sampling_rate,
-                                             self._config)
+                                             self._preprocess_config)
         
         return audio, sampling_rate, spectrogram
 
     def _make_groups(self, 
                      spectrogram: NDArray) -> NDArray:
         # information pour slicer le spectrogram
-        group_length, segment_length, group_hop_length = self._config.group_frame_infos()
+        group_length, segment_length, group_hop_length = self._preprocess_config.group_frame_infos()
 
         groups = []
         group_start = 0
@@ -113,12 +118,12 @@ class ServiceController:
             # slicer 1 groupe a la fois
             segments = []
             segment_start = group_start
-            for _ in range(self._config.group_segment_count):
+            for _ in range(self._preprocess_config.group_segment_count):
                 segment = spectrogram[:, segment_start:segment_start + segment_length]
                 segments.append(segment)
                 segment_start += group_hop_length
 
-            # self._config.group_segment_count segments consecutifs
+            # self._preprocess_config.group_segment_count segments consecutifs
             group = np.stack(segments, axis=0)
             groups.append(group)
 
@@ -155,7 +160,7 @@ class ServiceController:
 
         # TODO: la prediction pourrait faire mieux comme les segments se chevauchent
         #       pour le moment 1 prediction par groupe
-        group_length, _, group_hop_length = self._config.group_ms_infos()
+        group_length, _, group_hop_length = self._preprocess_config.group_ms_infos()
         predictions = []
 
         time = group_length // 2
@@ -166,7 +171,7 @@ class ServiceController:
                 label = self._species[specie_index]
                 prediction = dict(
                     name=f"{name} [{label}]",
-                    label=specie_index,
+                    label=int(specie_index),
                     time=time,
                     probabilities=species_prob[i].tolist(),
                     info_url=f"https://ebird.org/species/{label}",
@@ -210,8 +215,8 @@ class ServiceController:
                  y_axis='mel',
                  sr=sr,
                  ax=ax,
-                 n_fft=self._config.spectrogram_n_ftt,
-                 hop_length=self._config.spectrogram_hop_length,
+                 n_fft=self._preprocess_config.spectrogram_n_ftt,
+                 hop_length=self._preprocess_config.spectrogram_hop_length,
                  cmap="gray_r")
         ax.set_xlim(left=0.0, right=duration)
         plt.xlabel("")
@@ -254,15 +259,41 @@ class ServiceController:
 
         self._thresholds = np.array(thresholds)
 
-    def _monitor(self, features: NDArray) -> str:
-        ts = timestamp_now()
-        id = str(ts)
+    def _monitor(self, 
+                 features: NDArray,
+                 predictions: List[Dict]) -> str:
+        if features is None or len(features.shape) != 3:
+            return ""
 
-        if False:
-            # TODO: transformer features en CSV puis uploader
-            upload(id,
-                "features",
-                None,
-                ts)
+        logger = current_app.config["LOGGER"]
 
-        return id
+        try:
+            group_features = np.mean(features, axis=1)
+
+            ts = timestamp_now()
+            id = str(ts)
+            id = id.replace(".", "-")
+            id = id.replace(",", "-")
+            id = "p" + id
+
+            logger.info(f"Monitoring id        : {id}")
+            logger.info(f"Features. shape      : {features.shape}")
+            logger.info(f"Group Features. shape: {group_features.shape}")
+            logger.info(f"Predictions          : {len(predictions)}")
+
+            features_df = DataFrame(data=group_features,
+                                    columns=[f"feat_{i}" for i in range(group_features.shape[-1])])
+            filename = Path.joinpath(self._paths_config.BUILD_DIR, "prediction_features.csv")
+            filename.parent.mkdir(parents=True, exist_ok=True)
+            features_df.to_csv(filename, index=False)
+            upload_file(str(filename), id, "features", ts)
+            filename.unlink()
+
+            predictions = json.dumps(predictions)
+            upload(id, "predictions", predictions.encode(encoding="UTF-8"), ts)
+
+            return id
+        except Exception as e:
+            logger.error("Erreur lors du monitoring")
+            logger.error(str(e))
+            return ""
