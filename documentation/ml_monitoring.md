@@ -1,5 +1,11 @@
 # ML Monitoring
 
+## Drift Metrics: How to Select the Right Metric to Analyze Drift
+https://towardsdatascience.com/drift-metrics-how-to-select-the-right-metric-to-analyze-drift-24da63e497e
+
+# How to calculate Embeddings drift?
+https://github.com/evidentlyai/evidently/blob/main/examples/how_to_questions/how_to_calculate_embeddings_drift.ipynb
+
 ## Besoin a haut niveau
 - Notre app n'est pas realtime ; volume d'appels est assumé petit
 - Mode batch m'apparait approprié

@@ -73,5 +73,6 @@ def ffury():
         _cli.add_command(monitoring_group)
     except ImportError as e:
         logger.info("Module monitoring non installe.")
+        logger.error(str(e))
 
     _cli()

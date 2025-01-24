@@ -2,6 +2,7 @@ import ffury
 
 from .ApplicationConfig import ApplicationConfig
 from .BirdClefConfig import BirdClefConfig
+from .EvidentlyConfig import EvidentlyConfig
 from .PathsConfig import PathsConfig
 from .PreprocessConfig import PreprocessConfig
 from .ProjectConfig import (

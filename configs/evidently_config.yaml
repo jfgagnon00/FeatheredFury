@@ -1,0 +1,5 @@
+!ffury.configs.EvidentlyConfig
+
+threshold: 0.55
+quantile_probability: 0.95
+pca_components: null

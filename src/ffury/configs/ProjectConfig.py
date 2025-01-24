@@ -8,6 +8,7 @@ from ..yaml import YamlDeserializable
 
 from .ApplicationConfig import ApplicationConfig
 from .BirdClefConfig import BirdClefConfig
+from .EvidentlyConfig import EvidentlyConfig
 from .PathsConfig import PathsConfig
 from .PreprocessConfig import PreprocessConfig
 from .ServiceConfig import ServiceConfig
@@ -50,6 +51,7 @@ class ProjectConfig:
         self.train = TrainConfig()
         self.application = ApplicationConfig()
         self.service = ServiceConfig()
+        self.evidently = EvidentlyConfig()
 
         # configs interne
         self._ulimit_workaround = 2048

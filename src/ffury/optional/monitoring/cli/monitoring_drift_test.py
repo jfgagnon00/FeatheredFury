@@ -19,6 +19,7 @@ from ..azure_blob_storage.properties import (
     _REFERENCE_BLOB,
     _REFERENCE_CONTAINER,
 )
+from ..evidently.embeddings_drift import test_embeddings_drift
 from ..misc.reference import get_filename
 from ..misc.timestamp import (
     date_from_timestamp,
@@ -52,10 +53,18 @@ def drift_test(project_config: ProjectConfig) -> None:
             predictions_features_df = concat([predictions_features_df, features_df], 
                                               axis=0, 
                                               ignore_index=True)
+    if predictions_features_df is None or len(predictions_features_df) == 0:
+        raise ValueError("Aucune prediction disponible")
 
     logger.info("Download features reference")
     filename = get_filename(project_config)
     download_file(_REFERENCE_CONTAINER, _REFERENCE_BLOB, filename)
     reference_features_df = read_csv(filename)
+    if reference_features_df is None or len(reference_features_df) == 0:
+        raise ValueError("Aucune referencer disponible")
 
-    # faire le test avec evidently
+    success = test_embeddings_drift(reference_features_df,
+                                    predictions_features_df,
+                                    project_config.evidently)
+
+    exit( 0 if success else -1 )
