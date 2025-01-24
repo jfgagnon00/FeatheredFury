@@ -15,12 +15,11 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup-build-environment
 
-      - name: Synchroniser Donnees Minimales
+      - name: Synchroniser Donnees
         uses: ./.github/actions/dvc-sync
         with:
           GDRIVE_URL: ${{ secrets.GDRIVE_URL }}
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
-          MINIMAL_SYNC: "1" 
 
       - name: Synchroniser Modele
         uses: ./.github/actions/neptune-sync-model

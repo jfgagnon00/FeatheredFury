@@ -33,6 +33,7 @@ services:
       args:
         PYTHON_VERSION: ${PYTHON_VERSION}
         PORT: ${FFURY_SERVICE_PORT}
+        AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
     image: ffury-web_service
     ports:
       - "${FFURY_SERVICE_PORT}:${FFURY_SERVICE_PORT}"

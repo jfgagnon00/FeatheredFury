@@ -30,6 +30,7 @@ resource  "null_resource" "docker_push" {
     environment = {
       FFURY_REGISTRY_SERVER = azurerm_container_registry.acr.login_server
       FFURY_REGISTRY_NAME = azurerm_container_registry.acr.name
+      AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.asa.primary_connection_string
     }
   }
 

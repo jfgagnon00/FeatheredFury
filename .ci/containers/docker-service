@@ -3,6 +3,7 @@ ARG PYTHON_VERSION=3.9-slim
 FROM python:${PYTHON_VERSION}
 
 ARG PORT
+ARG AZURE_STORAGE_CONNECTION_STRING
 
 WORKDIR /app
 
@@ -26,5 +27,7 @@ RUN pip install --no-cache-dir --use-pep517 -e .\[service\] && \
     rm setup.py
 
 EXPOSE ${PORT}
+
+ENV AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
 
 CMD ["ffury", "service"]
