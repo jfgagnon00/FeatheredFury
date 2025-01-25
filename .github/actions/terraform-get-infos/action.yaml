@@ -34,7 +34,14 @@ runs:
           ./terraform_refresh.sh
 
           # creer repertoire d'output
-          mkdir build
+          mkdir ../build
+
+          ls -la
+
+          echo "Gne"
+
+          ls -la ..
+          
 
           # generer output
           terraform output -json web_app_url > ../build/web_app_url.txt
