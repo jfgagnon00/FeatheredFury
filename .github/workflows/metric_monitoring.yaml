@@ -25,5 +25,5 @@ jobs:
 
       - name: Monitoring
         run: |
-          cat ./build/web_app_url.txt
-          cat ./build/storage_connection_string.txt
+          export AZURE_STORAGE_CONNECTION_STRING=$(cat ./build/storage_connection_string.txt)
+          ffury monitoring drift-test

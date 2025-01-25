@@ -2,8 +2,8 @@ import click
 
 from ffury.cli import ProjectConfigDecorator
 from ffury.configs import ProjectConfig
-
 from ffury.misc.logging import create_logger
+from pathlib import Path
 
 
 from .monitoring import monitoring_group
@@ -46,8 +46,10 @@ def download_reference(project_config: ProjectConfig) -> None:
     """
     logger = create_logger(file=__file__)
     logger.info("Download reference features")
+    filename = get_filename(project_config)
+    Path(filename).parent.mkdir(exist_ok=True)
     ts = download_file(_REFERENCE_CONTAINER,
                        _REFERENCE_BLOB,
-                       get_filename(project_config),
+                       filename,
                        project_config.azure)
     logger.info(f"Downloaded reference features timestamp: { date_from_timestamp(ts) }")

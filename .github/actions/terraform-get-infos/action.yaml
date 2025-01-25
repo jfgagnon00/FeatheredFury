@@ -36,13 +36,6 @@ runs:
           # creer repertoire d'output
           mkdir ../build
 
-          ls -la
-
-          echo "Gne"
-
-          ls -la ..
-          
-
           # generer output
           terraform output -json web_app_url > ../build/web_app_url.txt
           terraform output -json storage_connection_string > ../build/storage_connection_string.txt

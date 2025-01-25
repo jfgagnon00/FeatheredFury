@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/actions/neptune-sync-model
         with:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-          NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
+          NEPTUNE_TAG: staging_latest
 
       - name: Deploy Staging
         uses: ./.github/actions/terraform-deploy
