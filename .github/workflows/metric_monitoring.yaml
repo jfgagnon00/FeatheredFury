@@ -1,28 +1,29 @@
-# name: "Production Metric Monitoring"
+name: "Production Metric Monitoring"
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  schedule:
+    # https://jasonet.co/posts/scheduled-actions/
+    - cron: ${{vars.MONITORING_CRON_FREQEUNCY}}
 
-#   schedule:
-#     - cron: ${{vars.MONITORING_CRON_FREQEUNCY}}
+jobs:
+  MetricMonitoring:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
 
-# jobs:
-#   MetricMonitoring:
-#     runs-on: [ubuntu-latest]
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v2
+      - name: "Setup Environment"
+        uses: ./.github/actions/setup-build-environment
 
-#       - name: Setup Environment
-#         run: |
-#           pip install -r .ci/requirements-build.txt
+      - name: Get Azure Infos
+        uses: ./.github/actions/terraform-get-infos
+        with:
+          TERRAFORM_ENVIRONMENT: production
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-#       - name: Monitoring
-#         env:
-#           NEPTUNE_PROJECT: ${{ secrets.NEPTUNE_PROJECT }}
-#           NEPTUNE_TAG: ${{ secrets.NEPTUNE_TAG }}
-#           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-#         run: |
-#           ffury metric analyze 
+      - name: Monitoring
+        run: |
+          cat ./build/web_app_url.txt
+          cat ./build/storage_connection_string.txt

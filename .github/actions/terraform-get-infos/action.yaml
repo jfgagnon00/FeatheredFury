@@ -1,0 +1,35 @@
+name: "Terraform Fetch Info"
+description: "Obtiens les informations d'un deploiement"
+
+inputs:
+  TERRAFORM_ENVIRONMENT:
+    description: "Environment sur lequel deployer"
+    required: true
+
+  AZURE_CREDENTIALS:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ inputs.AZURE_CREDENTIALS }}
+
+      - name: Get ${{ inputs.TERRAFORM_ENVIRONMENT }} infos
+        env:
+          TF_VAR_environment: ${{ inputs.TERRAFORM_ENVIRONMENT }}
+        shell: bash
+        run: |
+          cd .cd 
+          terraform init
+          terraform plan
+          ./terraform_refresh.sh
+          terraform output -json web_app_url > ../build/web_app_url.txt
+          terraform output -json storage_connection_string > ../build/storage_connection_string.txt
