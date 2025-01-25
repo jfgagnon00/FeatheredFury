@@ -3,7 +3,7 @@ name: "Production Metric Monitoring"
 on:
   schedule:
     # https://jasonet.co/posts/scheduled-actions/
-    - cron: ${{vars.MONITORING_CRON_FREQEUNCY}}
+    - cron: "* * * * *"
 
 jobs:
   MetricMonitoring:
