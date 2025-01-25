@@ -1,4 +1,4 @@
-name: "Production Metric Monitoring"
+name: "Monitoring Production Metric"
 
 on:
   schedule:
