@@ -1,4 +1,4 @@
-# TODO: n'est pas la facon recommender, revoir 
+# TODO: n'est pas la facon recommender, revoir
 resource  "null_resource" "reference-data" {
   provisioner "local-exec" {
     working_dir = "${path.module}/../"
