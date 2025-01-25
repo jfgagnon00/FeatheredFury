@@ -1,6 +1,7 @@
 import ffury
 
 from .ApplicationConfig import ApplicationConfig
+from .AzureConfig import AzureConfig
 from .BirdClefConfig import BirdClefConfig
 from .EvidentlyConfig import EvidentlyConfig
 from .PathsConfig import PathsConfig

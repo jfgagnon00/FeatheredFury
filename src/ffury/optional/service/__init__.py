@@ -7,6 +7,7 @@ from ffury.misc.logging import (
 )
 from pathlib import Path
 
+from .misc.status import get_flask_app_status
 from .ServiceController import ServiceController
 from .blueprints.api.routes import register_blueprint
 
@@ -25,7 +26,8 @@ def create_flask_app(project_config: ProjectConfig) -> Flask:
 
     register_blueprint(app, url_prefix="/api")
 
-    message = pretty_format(app.config["CONTROLLER"].status)
+    status = get_flask_app_status(app)
+    message = pretty_format(status)
     app.config["LOGGER"].info(message)
 
     return app, Swagger(app)

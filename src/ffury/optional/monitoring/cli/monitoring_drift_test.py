@@ -33,7 +33,6 @@ def drift_test(project_config: ProjectConfig) -> None:
     """
     Effectue un test de drift sur la distribution des features references. Prend 
     les predictions des derniers 24h.
-    AZURE_STORAGE_CONNECTION_STRING doit etre defini.
     """
     logger = create_logger(file=__file__)
 
@@ -41,7 +40,10 @@ def drift_test(project_config: ProjectConfig) -> None:
     logger.info(f"Test [{date_from_timestamp(yesterday)}, {date_from_timestamp(today)}]")
 
     predictions_features_df = None
-    for container in get_containers("p", yesterday, today):
+    for container in get_containers("p", 
+                                    yesterday, 
+                                    today,
+                                    project_config.azure):
         logger.info(f"Obtenir features de {container.container_name}")
         blob_client = container.get_blob_client(FEATURES_BLOB)
         bytes = blob_client.download_blob().readall()
@@ -58,7 +60,10 @@ def drift_test(project_config: ProjectConfig) -> None:
 
     logger.info("Download features reference")
     filename = get_filename(project_config)
-    download_file(_REFERENCE_CONTAINER, _REFERENCE_BLOB, filename)
+    download_file(_REFERENCE_CONTAINER, 
+                  _REFERENCE_BLOB, 
+                  filename,
+                  project_config.azure)
     reference_features_df = read_csv(filename)
     if reference_features_df is None or len(reference_features_df) == 0:
         raise ValueError("Aucune referencer disponible")

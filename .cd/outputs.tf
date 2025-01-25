@@ -25,10 +25,14 @@ output "web_app_url" {
   description = "URL pour l'application"
 }
 
+############ Monitoring
+
 output "storage_connection_string" {
     value     = azurerm_storage_account.asa.primary_connection_string
     sensitive = true
 }
+
+############ General
 
 output "subscription" {
     value = data.azurerm_subscription.current.id

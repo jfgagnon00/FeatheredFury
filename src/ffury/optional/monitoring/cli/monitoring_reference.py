@@ -27,7 +27,6 @@ from ..misc.timestamp import (
 def upload_reference(project_config: ProjectConfig) -> None:
     """
     Upload les features de reference pour traitement ulterieur.
-    AZURE_STORAGE_CONNECTION_STRING doit etre defini.
     """
     logger = create_logger(file=__file__)
     logger.info("Upload reference features")
@@ -35,7 +34,8 @@ def upload_reference(project_config: ProjectConfig) -> None:
     upload_file(get_filename(project_config),
                 _REFERENCE_CONTAINER,
                 _REFERENCE_BLOB,
-                ts)
+                ts,
+                project_config.azure)
     logger.info(f"Uploaded reference features timestamp: { date_from_timestamp(ts) }")
 
 @monitoring_group.command()
@@ -43,11 +43,11 @@ def upload_reference(project_config: ProjectConfig) -> None:
 def download_reference(project_config: ProjectConfig) -> None:
     """
     Download les features de reference pour traitement ulterieur.
-    AZURE_STORAGE_CONNECTION_STRING doit etre defini.
     """
     logger = create_logger(file=__file__)
     logger.info("Download reference features")
     ts = download_file(_REFERENCE_CONTAINER,
                        _REFERENCE_BLOB,
-                       get_filename(project_config))
+                       get_filename(project_config),
+                       project_config.azure)
     logger.info(f"Downloaded reference features timestamp: { date_from_timestamp(ts) }")

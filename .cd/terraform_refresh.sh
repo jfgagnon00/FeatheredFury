@@ -12,9 +12,5 @@ terraform import azurerm_container_registry.acr "${SUBSCRIPTION}/resourceGroups/
 terraform import azurerm_container_group.acg  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg/providers/Microsoft.ContainerInstance/containerGroups/ffury-${ENVIRONMENT}-instance"
 terraform import azurerm_storage_account.asa  "${SUBSCRIPTION}/resourceGroups/ffury-${ENVIRONMENT}-rg/providers/Microsoft.Storage/storageAccounts/ffury${ENVIRONMENT}asa"
 
-# destruction - pas important si ca existe ou non, ca va etre detruit si ca existe
-terraform destroy -auto-approve
-
-# pas vraiment d'erreur
-# s'il y avait rien, on a rien detruit sinon, on a fait ce qui etait demande
+# pas vraiment d'erreur a reporter
 exit 0

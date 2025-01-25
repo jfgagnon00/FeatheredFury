@@ -35,6 +35,12 @@ def create_logger(name: str = None,
 
     return None
 
+def destroy_logger(logger: Optional[logging.Logger]) -> None:
+    if not logger is None:
+        if not logger.handlers is None:
+            logger.handlers.clear()
+        del logger
+
 def pretty_format(object: object, *args, **kwargs) -> str:
     """
     Format objet a l'aide de pprint dans une string et la retourne

@@ -35,7 +35,8 @@ runs:
           cd .cd 
           terraform init
           terraform plan
-          ./terraform_destroy_previous.sh
+          ./terraform_refresh.sh
+          terraform destroy -auto-approve
           terraform apply -auto-approve
 
       - name: Get ${{ inputs.TERRAFORM_ENVIRONMENT }} infos

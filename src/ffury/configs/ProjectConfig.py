@@ -7,6 +7,7 @@ from pathlib import Path
 from ..yaml import YamlDeserializable
 
 from .ApplicationConfig import ApplicationConfig
+from .AzureConfig import AzureConfig
 from .BirdClefConfig import BirdClefConfig
 from .EvidentlyConfig import EvidentlyConfig
 from .PathsConfig import PathsConfig
@@ -52,6 +53,7 @@ class ProjectConfig:
         self.application = ApplicationConfig()
         self.service = ServiceConfig()
         self.evidently = EvidentlyConfig()
+        self.azure = AzureConfig()
 
         # configs interne
         self._ulimit_workaround = 2048

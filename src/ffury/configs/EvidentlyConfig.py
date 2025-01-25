@@ -1,5 +1,4 @@
-import os
-
+from ..misc.environment_variable import getenv
 from ..yaml import YamlDeserializable
 
 
@@ -13,13 +12,14 @@ class EvidentlyConfig:
         self.quantile_probability = 0
         self.pca_components = None
 
-        self.url = "https://app.evidently.cloud"
-        self.api_token = EvidentlyConfig._getenv("EVIDENTLY_API_TOKEN")
-        self.project_id = EvidentlyConfig._getenv("EVIDENTLY_PROJECT_ID")
+    @property
+    def api_token(self) -> str:
+        return getenv("EVIDENTLY_API_TOKEN")
 
-    @staticmethod
-    def _getenv(var_name):
-        value = os.getenv(var_name)
-        if value is None or value == "":
-            print(f"{var_name} non definie")
-        return value
+    @property
+    def project_id(self) -> str:
+        return getenv("EVIDENTLY_PROJECT_ID")
+    
+    @property
+    def url(self) -> str:
+        return "https://app.evidently.cloud"

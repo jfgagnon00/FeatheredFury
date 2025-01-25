@@ -71,8 +71,7 @@ def ffury():
         )
         from ..optional.monitoring.cli.monitoring_drift_test import drift_test
         _cli.add_command(monitoring_group)
-    except ImportError as e:
+    except ImportError:
         logger.info("Module monitoring non installe.")
-        logger.error(str(e))
 
     _cli()

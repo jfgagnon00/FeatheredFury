@@ -9,8 +9,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from base64 import b64encode
+from copy import deepcopy
 from flask import current_app
 from ffury.configs import (
+    AzureConfig,
     DatasetType,
     ProjectConfig
 )
@@ -39,6 +41,7 @@ from pandas import (
     read_csv
 )
 from pathlib import Path
+from threading import Thread
 from typing import (
     Dict,
     List,
@@ -51,8 +54,10 @@ from ..keras_adapters import _load_model
 
 class ServiceController:
     def __init__(self, project_config: ProjectConfig):
-        self._paths_config = project_config.paths
-        self._preprocess_config = project_config.preprocess
+        self._paths_config = deepcopy(project_config.paths)
+        self._preprocess_config = deepcopy(project_config.preprocess)
+        self._azure_config = deepcopy(project_config.azure)
+
         self._init_species_label(project_config)
         self._init_thresholds(project_config)
         self._load_model(project_config)
@@ -281,21 +286,52 @@ class ServiceController:
             logger.info(f"Monitoring id        : {id}")
             logger.info(f"Features. shape      : {features.shape}")
             logger.info(f"Group Features. shape: {group_features.shape}")
-            logger.info(f"Predictions          : {len(predictions)}")
 
             features_df = DataFrame(data=group_features,
                                     columns=[f"feat_{i}" for i in range(group_features.shape[-1])])
             filename = Path.joinpath(self._paths_config.BUILD_DIR, "prediction_features.csv")
             filename.parent.mkdir(parents=True, exist_ok=True)
             features_df.to_csv(filename, index=False)
-            upload_file(str(filename), id, FEATURES_BLOB, ts)
-            filename.unlink()
-
             predictions = json.dumps(predictions)
-            upload(id, PREDICTIONS_BLOB, predictions.encode(encoding="UTF-8"), ts)
+
+            # TODO: solution temporaire a revoir
+            Thread(
+                target=ServiceController._upload,
+                args=[logger,
+                      id,
+                      ts,
+                      str(filename),
+                      predictions,
+                      self._azure_config]
+            ).start()
 
             return id
         except Exception as e:
             logger.error("Erreur lors du monitoring")
+            logger.error(str(e))
+            return ""
+
+    @staticmethod
+    def _upload(logger,
+                id: str,
+                ts: float,
+                features_filename: str,
+                predictions: str,
+                config: AzureConfig) -> None:
+        try:
+            upload_file(features_filename, 
+                        id, 
+                        FEATURES_BLOB, 
+                        ts,
+                        config)
+            Path(features_filename).unlink()
+            upload(id, 
+                   PREDICTIONS_BLOB, 
+                   predictions.encode(encoding="UTF-8"), 
+                   ts,
+                   config)
+            logger.info(f"Upload {id} done")
+        except Exception as e:
+            logger.error("Erreur lors de monitoring upload")
             logger.error(str(e))
             return ""

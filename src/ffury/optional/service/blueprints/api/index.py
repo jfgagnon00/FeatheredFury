@@ -4,6 +4,7 @@ from flask import (
 )
 
 from . import api
+from ...misc.status import get_flask_app_status
 
 
 @api.route("/", methods=["GET"]) 
@@ -15,4 +16,5 @@ def index():
       200:
         description: API is running
     """
-    return make_response( current_app.config["CONTROLLER"].status )
+    status = get_flask_app_status(current_app)
+    return make_response(status)
