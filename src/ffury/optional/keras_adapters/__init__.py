@@ -11,7 +11,7 @@ def _load_model(project_config: ProjectConfig) -> Any:
         # ces imports sont extremement lent - sortir de l'entete
         # https://github.com/keras-team/keras/issues/7408
         from keras.models import load_model
-        from ._KerasSegmentFeatures import _KerasSegmentFeatures
+        from ._KerasBaselineSegmentFeatures import _KerasBaselineSegmentFeatures
         return load_model(filename)
     else:
         raise ValueError(f"{filename} n'existe pas")

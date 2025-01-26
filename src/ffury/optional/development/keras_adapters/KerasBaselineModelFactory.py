@@ -12,13 +12,12 @@ from .KerasOptimizer import keras_optimizer
 
 
 @YamlDeserializable
-class KerasDummyModelFactory(IFactory):
+class KerasBaselineModelFactory(IFactory):
     """
-    Modele utlise pour tester le pipeline. Ne doit pas etre 
-    utliser autrement.
+    Modele utlise pour tester le pipeline.
     """
     def __init__(self):
-        self.model_name = "Model" # "KerasDummyModel"
+        self.model_name = "Model"
 
     def create_from_config(self, project_config: ProjectConfig) -> Any:
         # (num_segments, n_mels, n_frames)
@@ -62,9 +61,9 @@ class KerasDummyModelFactory(IFactory):
 
         segment_features = input_shape[1] * input_shape[2]
 
-        from ffury.optional.keras_adapters._KerasSegmentFeatures import _KerasSegmentFeatures
-        segment_model = _KerasSegmentFeatures(shape=(segment_features,),
-                                              name="SegmentFeatures")
+        from ffury.optional.keras_adapters._KerasBaselineSegmentFeatures import _KerasBaselineSegmentFeatures
+        segment_model = _KerasBaselineSegmentFeatures(shape=(segment_features,),
+                                                      name="SegmentFeatures")
 
         group_inputs        = Input(shape=input_shape)
         group_features      = Reshape(target_shape=(input_shape[0], segment_features))(group_inputs)

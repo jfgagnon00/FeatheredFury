@@ -7,7 +7,7 @@ from keras.layers import (
 )
 
 
-class _KerasSegmentFeatures(Model):
+class _KerasBaselineSegmentFeatures(Model):
     def __init__(self, shape=None, **kwargs):
         super().__init__()
 
@@ -43,6 +43,6 @@ class _KerasSegmentFeatures(Model):
 
     @classmethod
     def from_config(cls, config):
-        instance = _KerasSegmentFeatures()
+        instance = _KerasBaselineSegmentFeatures()
         instance._model = Model.from_config(config["internal_model_config"])
         return instance

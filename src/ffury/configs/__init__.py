@@ -30,7 +30,7 @@ def load_config(filename : str = DEFAULT_CONFIG_FILE) -> ProjectConfig:
         # types avant de loader un fichier qui peut les utiliser
         # a refactorer
         from ..optional.development.keras_adapters import (
-            KerasDummyModelFactory,
+            KerasBaselineModelFactory,
             KerasTrainable
         )
     except ImportError:

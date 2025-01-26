@@ -1,6 +1,6 @@
 !ffury.configs.TrainConfig
 
-model_factory: !ffury.optional.development.keras_adapters.KerasDummyModelFactory {}
+model_factory: !ffury.optional.development.keras_adapters.KerasBaselineModelFactory {}
 
 measurable: !ffury.optional.development.keras_adapters.KerasMeasurable
   average: macro

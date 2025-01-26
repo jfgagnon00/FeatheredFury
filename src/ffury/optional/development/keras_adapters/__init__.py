@@ -1,3 +1,3 @@
-from .KerasDummyModelFactory import KerasDummyModelFactory
+from .KerasBaselineModelFactory import KerasBaselineModelFactory
 from .KerasMeasurable import KerasMeasurable
 from .KerasTrainable import KerasTrainable
