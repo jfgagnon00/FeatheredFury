@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # https://jasonet.co/posts/scheduled-actions/
-    - cron: "* * * * *"
+    - cron: "0 0 * * *"
 
 jobs:
   MetricMonitoring:
