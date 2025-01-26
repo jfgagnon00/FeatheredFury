@@ -1,6 +1,7 @@
 name: "Monitoring Production Metrics"
 
 on:
+  workflow_dispatch:
   schedule:
     # https://jasonet.co/posts/scheduled-actions/
     - cron: "* * * * *"
