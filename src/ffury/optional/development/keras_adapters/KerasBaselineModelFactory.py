@@ -75,6 +75,6 @@ class KerasBaselineModelFactory(IFactory):
         group_voting        = GlobalMaxPooling1D(name="GroupVoting")(group_probabilities)
         group_model         = Model(inputs=group_inputs, 
                                     outputs=[group_voting, 
-                                            group_features])
+                                             group_features])
 
         return group_model, segment_model

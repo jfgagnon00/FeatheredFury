@@ -72,6 +72,9 @@ class NeptuneRun:
         for name, value in measures.items(): 
             self._run[f"metrics/{name}"].append(value, step=epoch)
 
+    def log_model_thresholds(self, thresholds: List[float]) -> None:
+        self._run["model/thresholds"] = stringify_unsupported(thresholds)
+
     def log_duration(self, duration: float):
         self._run["metrics/duration"] = duration
     

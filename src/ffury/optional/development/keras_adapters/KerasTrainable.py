@@ -72,5 +72,6 @@ class KerasTrainable(ITrainable):
                                callback.best_measure_value)
             
             # aussi noter les metriques sur le data de test apres l'entrainement
-            callback.log_test(parameters.epochs,
-                              x_test, y_test)
+            callback.log_test_and_thresholds(parameters.epochs,
+                                             x_test, y_test,
+                                             parameters.thresholds_optimization_steps)

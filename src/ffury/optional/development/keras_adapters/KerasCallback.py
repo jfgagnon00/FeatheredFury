@@ -90,10 +90,11 @@ class KerasCallback(Callback):
             save_model(self.model, self._best_model_checkpoint)
             self._logger.info(f"\nNouveau meilleur modele:\n  {self._best_model_checkpoint}, {measure_checkpoint}")
 
-    def log_test(self,
-                 epoch: int,
-                 x_test: Any, 
-                 y_test: Any) -> None:
+    def log_test_and_thresholds(self,
+                                epoch: int,
+                                x_test: Any, 
+                                y_test: Any,
+                                thresholds_optimization_steps: float) -> None:
         if self._best_model_checkpoint is None:
             return
 
@@ -104,3 +105,10 @@ class KerasCallback(Callback):
                                         y_pred,
                                         "test")
         self._run.append_measures(epoch, measure_test)
+
+        y_pred, _ = model.predict(self._x_validation, verbose=0)
+        thresholds = self._measurable.optimize_thesholds(self._y_validation_true, 
+                                                         y_pred,
+                                                         thresholds_optimization_steps)
+        self._run.log_model_thresholds(thresholds)
+        self._logger.info(f"Thresholds optimises: {thresholds}")

@@ -1,6 +1,9 @@
-from numpy import argmax
+import numpy as np
+
+
 from sklearn.metrics import (
     average_precision_score,
+    f1_score,
     classification_report
 )
 from typing import (
@@ -33,8 +36,8 @@ class KerasMeasurable(IMeasurable):
         ap = average_precision_score(y_true, 
                                      y_pred, 
                                      average=self.average)
-        report = classification_report(argmax(y_true, axis=-1), 
-                                       argmax(y_pred, axis=-1),
+        report = classification_report(np.argmax(y_true, axis=-1), 
+                                       np.argmax(y_pred, axis=-1),
                                        target_names=class_labels,
                                        output_dict=True,
                                        zero_division=0.0)
@@ -60,6 +63,29 @@ class KerasMeasurable(IMeasurable):
         measure_prefix = KerasMeasurable._measure_prefix(measure_prefix)
         key = f"{measure_prefix}{_F1_KEY}/{self._average_key()}"
         return key, measure[key]
+
+    def optimize_thesholds(self,
+                           y_true: Any, 
+                           y_pred: Any,
+                           thresholds_steps: float) -> List[float]:
+        all_scores = None
+        all_thresholds = []
+        thresholds_steps = max(thresholds_steps, 0.001)
+
+        for t in np.arange(0, 1, thresholds_steps):
+            y_labels = (y_pred >= t).astype(int)
+            scores = f1_score(y_true, y_labels, average=None)
+
+            if all_scores is None:
+                all_scores = scores
+            else:
+                all_scores = np.vstack((all_scores, scores))
+
+            all_thresholds.append(t)
+
+        best_scores_index = np.argmax(all_scores, axis=0)
+        best_thresholds = np.array(all_thresholds)[best_scores_index]
+        return best_thresholds.tolist()
 
     def _average_key(self) -> str:
         return f"{self.average} avg"

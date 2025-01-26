@@ -32,3 +32,14 @@ class IMeasurable(ABC):
         pour obtenir le nom de la metrique et sa valeur pour comparer les checkpoint
         """
         pass
+
+    @abstractmethod
+    def optimize_thesholds(self,
+                           y_true: Any, 
+                           y_pred: Any,
+                           thresholds_steps: float) -> List[float]:
+        """
+        Classes concretes doivent implementer cette methode 
+        pour obtenir les thresholds de classification optimaux
+        """
+        pass

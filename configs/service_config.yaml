@@ -1,4 +1,4 @@
 !ffury.configs.ServiceConfig
 
 # 1 valeur par espece
-predict_thresholds: [0.1, 0.1, 0.1, 0.1, 0.1]
+predict_thresholds: [0.329, 0.269, 0.156, 0.325, 0.425]

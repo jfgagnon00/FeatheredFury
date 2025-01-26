@@ -5,4 +5,5 @@ epochs:  50
 batch_size: 100
 optimizer: "adam"
 loss: "binary_crossentropy"
+thresholds_optimization_steps: 0.001
 

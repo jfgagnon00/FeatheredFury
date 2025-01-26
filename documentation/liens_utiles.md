@@ -2,6 +2,7 @@
 * Machine learning robust characteristics for image
 * Robust features for audio
 * Tout ce qui a mot clef pour robust features
+* [Optimiser thresholds](https://machinelearningmastery.com/threshold-moving-for-imbalanced-classification/)
 
 # Machine Learning Sound Event Detection
 * [Audio Classification with Machine Learning (EuroPython 2019)](https://www.youtube.com/watch?v=uCGROOUO_wY)
