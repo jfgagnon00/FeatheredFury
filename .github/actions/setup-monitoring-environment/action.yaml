@@ -1,5 +1,5 @@
-name: "Setup Build Environment"
-description: "Setup environment de build"
+name: "Setup Monitoring Environment"
+description: "Setup environment de monitoring"
 
 runs:
   using: "composite"
@@ -7,5 +7,5 @@ runs:
     - name: Setup Environment
       shell: bash
       run: |
-        # initialiser environment de developpement
+        # initialiser environment
         pip install -e .\[monitoring\]

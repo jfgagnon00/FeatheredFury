@@ -25,6 +25,9 @@ jobs:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Monitoring
+        env:
+          EVIDENTLY_API_TOKEN: ${{ secrets.EVIDENTLY_API_TOKEN }}
+          EVIDENTLY_PROJECT_ID: ${{ secrets.EVIDENTLY_PROJECT_ID }}
         shell: bash
         run: |
           export AZURE_STORAGE_CONNECTION_STRING=$(cat ./build/storage_connection_string.txt)
