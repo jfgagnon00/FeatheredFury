@@ -22,6 +22,7 @@ def _dependencies_ai():
 def _dependencies_development():
     return [
         "azure-cli==2.53.1",
+        "urllib3==1.26.20", # fix probleme avec azure-cli
         "dvc-gdrive==3.0.1",
         "dvc==3.51.3",
         "h5py==3.11.0",
@@ -49,9 +50,11 @@ def _dependencies_service():
 
 def _dependencies_monitoring():
     return [
+        "azure-cli==2.53.1",
         "azure-storage-blob==12.24.0",
         "azure-identity==1.14.1",
         "evidently==0.5.1",
+        "urllib3==1.26.20", # fix probleme avec azure-cli
     ]
 
 def _dependencies_local():
@@ -86,6 +89,7 @@ setup(name="feathered-fury",
                    _dependencies_web_core() + 
                    _dependencies_monitoring() +
                    _dependencies_ai(),
+        "monitoring": _dependencies_monitoring(),
         "all": _dependencies_ai() +
                _dependencies_web_core() +
                _dependencies_development() +  
