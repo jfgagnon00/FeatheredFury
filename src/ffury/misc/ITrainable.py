@@ -26,7 +26,9 @@ class ITrainable(ABC):
                  x_train: Any,
                  y_train: Any,
                  x_valdation: Any,
-                 y_valdation: Any) -> None:
+                 y_valdation: Any,
+                 x_test: Any,
+                 y_test: Any) -> None:
         """
         Classes concretes doivent implementer cette methode 
         pour lancer entrainement

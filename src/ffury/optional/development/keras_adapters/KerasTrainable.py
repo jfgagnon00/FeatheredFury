@@ -31,7 +31,9 @@ class KerasTrainable(ITrainable):
                  x_train: Any,
                  y_train: Any,
                  x_valdation: Any,
-                 y_valdation: Any,) -> None:
+                 y_valdation: Any,
+                 x_test: Any,
+                 y_test: Any,) -> None:
         # ces imports sont extremement lent - sortir de l'entete
         # https://github.com/keras-team/keras/issues/7408
         from tensorflow.config import list_physical_devices
@@ -68,3 +70,7 @@ class KerasTrainable(ITrainable):
                                callback.best_epoch,
                                callback.best_measure_name,
                                callback.best_measure_value)
+            
+            # aussi noter les metriques sur le data de test apres l'entrainement
+            callback.log_test(parameters.epochs,
+                              x_test, y_test)

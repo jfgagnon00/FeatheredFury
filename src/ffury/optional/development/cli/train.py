@@ -41,6 +41,7 @@ def train(project_config: ProjectConfig) -> None:
         with Profile() as profile:
             train = IndexedDataset.create(project_config, DatasetType.TRAIN)
             validation = IndexedDataset.create(project_config, DatasetType.VALIDATION)
+            test = IndexedDataset.create(project_config, DatasetType.TEST)
             run.log_data_infos(train, validation)
 
             model = train_config.model_factory.create_from_config(project_config)
@@ -52,7 +53,8 @@ def train(project_config: ProjectConfig) -> None:
                                 model,
                                 train.species_label,
                                 train.spectrogram_groups, train.y,
-                                validation.spectrogram_groups, validation.y)
+                                validation.spectrogram_groups, validation.y,
+                                test.spectrogram_groups, test.y)
         
         run.log_duration(profile.duration)
 

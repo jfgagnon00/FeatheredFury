@@ -1,7 +1,7 @@
 from copy import deepcopy
 from keras.callbacks import Callback
 from keras.models import (
-    clone_model, 
+    load_model,
     save_model
 )
 from typing import (
@@ -89,3 +89,18 @@ class KerasCallback(Callback):
             self._best_model_checkpoint = self._model_checkpoint_pattern.format(epoch=epoch)
             save_model(self.model, self._best_model_checkpoint)
             self._logger.info(f"\nNouveau meilleur modele:\n  {self._best_model_checkpoint}, {measure_checkpoint}")
+
+    def log_test(self,
+                 epoch: int,
+                 x_test: Any, 
+                 y_test: Any) -> None:
+        if self._best_model_checkpoint is None:
+            return
+
+        model = load_model(self._best_model_checkpoint)
+        y_pred, _ = model.predict(x_test, verbose=0)
+        measure_test = self._measurable(self._class_labels,
+                                        y_test,
+                                        y_pred,
+                                        "test")
+        self._run.append_measures(epoch, measure_test)

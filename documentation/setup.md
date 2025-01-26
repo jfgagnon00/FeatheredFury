@@ -4,6 +4,14 @@
 1. Assigner sa valeur à la variable d'environment globale NEPTUNE_API_TOKEN
 1. Demander à être ajouté au projet FeatheredFury
 
+### Accès au suivi de métriques/production 
+1. Créer un compte [Evidently AI](https://www.evidentlyai.com/register)
+1. Obtenir token d'API
+1. Assigner sa valeur à la variable d'environment globale EVIDENTLY_API_TOKEN
+1. Obtenir id de project
+1. Assigner sa valeur à la variable d'environment globale EVIDENTLY_PROJECT_ID
+1. Demander à être ajouté au projet FeatheredFury
+
 ### Accès au dataset
 1. Créer un compte [Kaggle](https://www.kaggle.com/)
 1. Suivre ces [instructions](https://www.kaggle.com/docs/api) pour obtenir un token d'API
