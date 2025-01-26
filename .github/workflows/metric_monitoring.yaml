@@ -29,6 +29,6 @@ jobs:
           export AZURE_STORAGE_CONNECTION_STRING="${value}"
 
           cat ./build/storage_connection_string.txt
-          getenv | grep AZ
+          env | grep AZ
 
           ffury monitoring drift-test
