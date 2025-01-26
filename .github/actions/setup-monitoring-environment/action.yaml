@@ -1,0 +1,11 @@
+name: "Setup Build Environment"
+description: "Setup environment de build"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Environment
+      shell: bash
+      run: |
+        # initialiser environment de developpement
+        pip install -e .\[monitoring\]

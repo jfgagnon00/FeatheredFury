@@ -15,7 +15,7 @@ jobs:
           ref: main
 
       - name: "Setup Environment"
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/setup-monitoring-environment
 
       - name: Get Azure Infos
         uses: ./.github/actions/terraform-get-infos
@@ -24,11 +24,7 @@ jobs:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Monitoring
+        shell: bash
         run: |
-          value=$(cat ./build/storage_connection_string.txt)
-          export AZURE_STORAGE_CONNECTION_STRING="${value}"
-
-          cat ./build/storage_connection_string.txt
-          env | grep AZ
-
+          export AZURE_STORAGE_CONNECTION_STRING=$(cat ./build/storage_connection_string.txt)
           ffury monitoring drift-test

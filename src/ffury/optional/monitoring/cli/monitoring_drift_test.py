@@ -8,6 +8,7 @@ from pandas import (
     concat,
     read_csv
 )
+from pathlib import Path
 
 from .monitoring import monitoring_group
 from ..azure_blob_storage import (
@@ -60,6 +61,7 @@ def drift_test(project_config: ProjectConfig) -> None:
 
     logger.info("Download features reference")
     filename = get_filename(project_config)
+    Path(filename).parent.mkdir(exist_ok=True)
     download_file(_REFERENCE_CONTAINER, 
                   _REFERENCE_BLOB, 
                   filename,

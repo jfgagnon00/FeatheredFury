@@ -37,5 +37,5 @@ runs:
           mkdir ../build
 
           # generer output
-          terraform output -json web_app_url > ../build/web_app_url.txt
-          terraform output -json storage_connection_string > ../build/storage_connection_string.txt
+          terraform output -json web_app_url | tr -d '"' > ../build/web_app_url.txt
+          terraform output -json storage_connection_string | tr -d '"' > ../build/storage_connection_string.txt

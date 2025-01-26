@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - "./.github/workflows/metric_monitoring.yaml"
+      - "**/workflows/metric_monitoring.yaml"
 
 jobs:
   ProductionDeployment:
