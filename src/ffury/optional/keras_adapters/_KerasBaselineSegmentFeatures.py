@@ -43,6 +43,6 @@ class _KerasBaselineSegmentFeatures(Model):
 
     @classmethod
     def from_config(cls, config):
-        instance = _KerasBaselineSegmentFeatures()
+        instance = cls()
         instance._model = Model.from_config(config["internal_model_config"])
         return instance

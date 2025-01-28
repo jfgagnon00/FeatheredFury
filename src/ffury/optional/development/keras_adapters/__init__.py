@@ -1,3 +1,4 @@
 from .KerasBaselineModelFactory import KerasBaselineModelFactory
+from .KerasCNNModelFactory import KerasCNNModelFactory
 from .KerasMeasurable import KerasMeasurable
 from .KerasTrainable import KerasTrainable

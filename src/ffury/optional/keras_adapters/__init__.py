@@ -12,6 +12,7 @@ def _load_model(project_config: ProjectConfig) -> Any:
         # https://github.com/keras-team/keras/issues/7408
         from keras.models import load_model
         from ._KerasBaselineSegmentFeatures import _KerasBaselineSegmentFeatures
+        from ._KerasCNNSegmentFeatures import _KerasCNNSegmentFeatures
         return load_model(filename)
     else:
         raise ValueError(f"{filename} n'existe pas")
