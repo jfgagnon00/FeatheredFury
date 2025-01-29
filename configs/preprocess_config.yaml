@@ -16,7 +16,7 @@ spectrogram_stft_window_size_ms: 150
 spectrogram_stft_frame_size_ms: 100
 spectrogram_fmin: 500
 spectrogram_fmax: 10000
-spectrogram_n_mels: 100
+spectrogram_n_mels: 80
 
 # segmentation - 'classifie' les frames du spectogramme en 
 #                'contient'/'ne contient pas' des chants d'oiseaux
