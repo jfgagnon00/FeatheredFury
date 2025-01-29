@@ -76,6 +76,10 @@ class IndexedDataset():
         return self._species_label
     
     @property
+    def species_short_label(self):
+        return self._species_short_label
+
+    @property
     def y(self):
         """
         y tient compte du masque calcule a partir des spectrogrammes
@@ -105,6 +109,7 @@ class IndexedDataset():
         filename = project_config.get_csv_filename(DatasetType._SPECIES)
         species_df = read_csv(filename)
         self._species_label = species_df["common_name"].to_list()
+        self._species_short_label = species_df["primary_label"].to_list()
 
         assert project_config.num_classes == len(self._species_label)
 

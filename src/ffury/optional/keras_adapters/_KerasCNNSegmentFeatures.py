@@ -18,7 +18,7 @@ class _KerasCNNSegmentFeatures(Model):
 
             # Conv block #1
             segment_features = BatchNormalization()(segment_inputs)
-            segment_features = Conv2D(filters=24, 
+            segment_features = Conv2D(filters=32, 
                                       kernel_size=(5, 5),
                                       padding="same",
                                       data_format="channels_last",
@@ -27,7 +27,7 @@ class _KerasCNNSegmentFeatures(Model):
             segment_features = Dropout(rate=0.2)(segment_features)
 
             # Conv block #2
-            segment_features = Conv2D(filters=48, 
+            segment_features = Conv2D(filters=64, 
                                       kernel_size=(5, 5),
                                       padding="same",
                                       data_format="channels_last",
@@ -36,7 +36,7 @@ class _KerasCNNSegmentFeatures(Model):
             segment_features = Dropout(rate=0.2)(segment_features)
 
             # Conv block #3
-            segment_features = Conv2D(filters=48, 
+            segment_features = Conv2D(filters=96, 
                                       kernel_size=(5, 5),
                                       padding="same",
                                       data_format="channels_last",
