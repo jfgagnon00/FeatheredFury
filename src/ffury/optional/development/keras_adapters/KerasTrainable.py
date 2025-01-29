@@ -27,7 +27,6 @@ class KerasTrainable(ITrainable):
                  parameters: TrainParameters,
                  measurable: IMeasurable,
                  model: Any, 
-                 class_labels: List[str],
                  x_train: Any,
                  y_train: Any,
                  x_valdation: Any,
@@ -51,8 +50,7 @@ class KerasTrainable(ITrainable):
         model_checkpoint = Path.joinpath(paths.MODELS_DIR, model.name + ".keras")
         model_checkpoint.parent.mkdir(exist_ok=True, parents=True)
 
-        callback = KerasCallback(class_labels,
-                                 x_train, y_train,
+        callback = KerasCallback(x_train, y_train,
                                  x_valdation, y_valdation,
                                  run,
                                  measurable,

@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import (
-    Any,
-    List
-)
+from typing import Any
 
 from ..configs import (
     PathsConfig,
@@ -22,7 +19,6 @@ class ITrainable(ABC):
                  parameters: TrainParameters,
                  measurable: IMeasurable,
                  model: Any, 
-                 class_labels: List[str],
                  x_train: Any,
                  y_train: Any,
                  x_valdation: Any,

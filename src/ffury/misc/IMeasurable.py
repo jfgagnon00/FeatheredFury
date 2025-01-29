@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+from numpy.typing import NDArray
 from typing import (
     Any,
     List,
-    Tuple
+    Tuple,
+    Union,
 )
 
 
@@ -13,9 +15,9 @@ class IMeasurable(ABC):
 
     @abstractmethod
     def __call__(self,
-                 class_labels: List[str],
-                 y_true: Any,
-                 y_pred: Any,
+                 y_true: NDArray,
+                 y_pred: NDArray,
+                 y_pred_thresholds: Union[float, NDArray] = 0.5,
                  measure_prefix: str = None) -> Any:
         """
         Classes concretes doivent implementer cette methode 
@@ -34,10 +36,19 @@ class IMeasurable(ABC):
         pass
 
     @abstractmethod
+    def init_class_labels(self,
+                          class_labels: List[str]) -> None:
+        """
+        Classes concretes doivent implementer cette methode 
+        pour initialiser les labels des classes. La gestion de la classe
+        "unknown" implicite est laisse aux implementations concretes.
+        """
+        pass
+
+    @abstractmethod
     def optimize_thesholds(self,
-                           y_true: Any, 
-                           y_pred: Any,
-                           thresholds_steps: float) -> List[float]:
+                           y_true: NDArray, 
+                           y_pred: NDArray) -> List[float]:
         """
         Classes concretes doivent implementer cette methode 
         pour obtenir les thresholds de classification optimaux

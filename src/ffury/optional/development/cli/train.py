@@ -45,16 +45,16 @@ def train(project_config: ProjectConfig) -> None:
             run.log_data_infos(train, validation)
 
             model = train_config.model_factory.create_from_config(project_config)
+            train_config.measurable.init_class_labels(train.species_label)
 
             train_config.trainable(run,
-                                project_config.paths,
-                                train_config.parameters,
-                                train_config.measurable,
-                                model,
-                                train.species_label,
-                                train.spectrogram_groups, train.y,
-                                validation.spectrogram_groups, validation.y,
-                                test.spectrogram_groups, test.y)
+                                   project_config.paths,
+                                   train_config.parameters,
+                                   train_config.measurable,
+                                   model,
+                                   train.spectrogram_groups, train.y,
+                                   validation.spectrogram_groups, validation.y,
+                                   test.spectrogram_groups, test.y)
         
         run.log_duration(profile.duration)
 

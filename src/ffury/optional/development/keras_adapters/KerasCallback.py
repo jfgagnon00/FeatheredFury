@@ -4,10 +4,9 @@ from keras.models import (
     load_model,
     save_model
 )
-from typing import (
-    Any,
-    List
-)
+from numpy import array as np_array
+from numpy.typing import NDArray
+from typing import Any
 
 from ffury.misc.IMeasurable import IMeasurable
 from ffury.misc.logging import create_logger
@@ -19,15 +18,13 @@ class KerasCallback(Callback):
     Collige les metriques et les log via Neptune AI
     """
     def __init__(self,
-                 class_labels: List[str],
-                 x_train: Any, 
-                 y_train: Any,
-                 x_validation: Any, 
-                 y_validation: Any,
+                 x_train: NDArray, 
+                 y_train: NDArray,
+                 x_validation: NDArray, 
+                 y_validation: NDArray,
                  run: NeptuneRun,
                  measurable: IMeasurable,
                  model_checkpoint: str):
-        self._class_labels = class_labels
         self._x_train = x_train
         self._y_train_true = y_train
         self._x_validation = x_validation
@@ -63,15 +60,13 @@ class KerasCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
         # le modele a 2 outputs :  prediction + features (pour le monitoring)
         y_pred, _ = self.model.predict(self._x_train, verbose=0)
-        measure_train = self._measurable(self._class_labels,
-                                         self._y_train_true,
+        measure_train = self._measurable(self._y_train_true,
                                          y_pred)
 
         y_pred, _ = self.model.predict(self._x_validation, verbose=0)
-        measure_validation = self._measurable(self._class_labels,
-                                              self._y_validation_true,
+        measure_validation = self._measurable(self._y_validation_true,
                                               y_pred,
-                                              "val")
+                                              measure_prefix="val")
 
         if not logs is None:
             measure_train["loss"] = logs["loss"]
@@ -92,21 +87,22 @@ class KerasCallback(Callback):
 
     def log_test_and_thresholds(self,
                                 epoch: int,
-                                x_test: Any, 
-                                y_test: Any) -> None:
+                                x_test: NDArray, 
+                                y_test: NDArray) -> None:
         if self._best_model_checkpoint is None:
             return
 
         model = load_model(self._best_model_checkpoint)
-        y_pred, _ = model.predict(x_test, verbose=0)
-        measure_test = self._measurable(self._class_labels,
-                                        y_test,
-                                        y_pred,
-                                        "test")
-        self._run.append_measures(epoch, measure_test)
 
-        y_pred, _ = model.predict(self._x_validation, verbose=0)
-        thresholds = self._measurable.optimize_thesholds(self._y_validation_true, 
+        y_pred, _ = model.predict(self._x_train, verbose=0)
+        thresholds = self._measurable.optimize_thesholds(self._y_train_true, 
                                                          y_pred)
         self._run.log_model_thresholds(thresholds)
         self._logger.info(f"Thresholds optimises: {thresholds}")
+
+        y_pred, _ = model.predict(x_test, verbose=0)
+        measure_test = self._measurable(y_test,
+                                        y_pred,
+                                        y_pred_thresholds=np_array(thresholds),
+                                        measure_prefix="test")
+        self._run.append_measures(epoch, measure_test)

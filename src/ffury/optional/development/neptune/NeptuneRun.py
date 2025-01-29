@@ -50,7 +50,7 @@ class NeptuneRun:
         self._run["data/validation/md5/indexed"] = validation.md5_indexed
 
     def log_model_infos(self, model_infos: Dict) -> None:
-        self._run["model/infos"] = dumps(model_infos, indent=4)
+        self._run["model/infos"] = dumps(model_infos)
 
     def log_best_model(self, 
                        model_checkpoint: str,

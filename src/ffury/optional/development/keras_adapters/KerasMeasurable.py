@@ -1,21 +1,23 @@
 import numpy as np
 
 
+from copy import deepcopy
 from sklearn.metrics import (
-    average_precision_score,
     precision_recall_curve,
     classification_report
 )
+from numpy.typing import NDArray
 from typing import (
     Any,
     List,
-    Tuple
+    Tuple,
+    Union
 )
 
+from ffury.optional.keras_adapters import _predict_from_probabilities
 from ffury.misc.IMeasurable import IMeasurable
 from ffury.yaml.yaml_decorators import YamlDeserializable
 
-_AVERAGE_PRECISION_KEY = "ap"
 _F1_KEY = "f1"
 _F1_SCORE_KEY = "f1-score"
 _PRECISION_KEY = "precision"
@@ -26,30 +28,27 @@ _RECALL_KEY = "recall"
 class KerasMeasurable(IMeasurable):
     def __init__(self) -> None:
         self.average = "macro"
+        self._class_labels = None
 
     def __call__(self, 
-                 class_labels: List[str], 
-                 y_true: Any, 
-                 y_pred: Any,
+                 y_true: NDArray, 
+                 y_pred: NDArray,
+                  y_pred_thresholds: Union[float, NDArray] = 0.5,
                  measure_prefix: str = None) -> Any:
         # calculer les metriques
-        ap = average_precision_score(y_true, 
-                                     y_pred, 
-                                     average=self.average)
-        report = classification_report(np.argmax(y_true, axis=-1), 
-                                       np.argmax(y_pred, axis=-1),
-                                       target_names=class_labels,
+        report = classification_report(_predict_from_probabilities(y_true=y_true), 
+                                       _predict_from_probabilities(y_pred=y_pred, thresholds=y_pred_thresholds),
+                                       target_names=self._class_labels,
                                        output_dict=True,
                                        zero_division=0.0)
 
         measure_prefix = KerasMeasurable._measure_prefix(measure_prefix)
 
         new_report = {}
-        new_report[f"{measure_prefix}{_AVERAGE_PRECISION_KEY}/{self._average_key()}"] = ap
 
         # report est liste par label
         # le transformer pour le lister par metrique
-        for label in (class_labels + [self._average_key()]):
+        for label in (self._class_labels + [self._average_key()]):
             for metric, metric_name in ((_F1_SCORE_KEY, _F1_KEY),
                                         (_PRECISION_KEY, _PRECISION_KEY),
                                         (_RECALL_KEY, _RECALL_KEY)):
@@ -64,9 +63,14 @@ class KerasMeasurable(IMeasurable):
         key = f"{measure_prefix}{_F1_KEY}/{self._average_key()}"
         return key, measure[key]
 
+    def init_class_labels(self, 
+                          class_labels: List[str]) -> None:
+        self._class_labels = deepcopy(class_labels)
+        self._class_labels.append("unknown")
+
     def optimize_thesholds(self,
-                           y_true: Any, 
-                           y_pred: Any) -> List[float]:
+                           y_true: NDArray, 
+                           y_pred: NDArray) -> List[float]:
         best_thresholds = []
         for c in range(y_true.shape[-1]):
             precision, recall, thresholds = precision_recall_curve(y_true[:, c], y_pred[:, c])
