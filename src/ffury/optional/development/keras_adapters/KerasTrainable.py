@@ -73,5 +73,4 @@ class KerasTrainable(ITrainable):
             
             # aussi noter les metriques sur le data de test apres l'entrainement
             callback.log_test_and_thresholds(parameters.epochs,
-                                             x_test, y_test,
-                                             parameters.thresholds_optimization_steps)
+                                             x_test, y_test)

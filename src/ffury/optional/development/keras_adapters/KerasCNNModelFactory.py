@@ -79,10 +79,6 @@ class KerasCNNModelFactory(IFactory):
                                     activation="relu")(group_probabilities)
 
         group_probabilities = Dropout(rate=0.2)(group_probabilities)
-        group_probabilities = Dense(units=32, 
-                                    activation="relu")(group_probabilities)
-
-        group_probabilities = Dropout(rate=0.2)(group_probabilities)
         group_probabilities = Dense(units=num_classes, 
                                     activation="sigmoid",
                                     name="GroupProbabilities")(group_probabilities)

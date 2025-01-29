@@ -13,4 +13,3 @@ class TrainParameters:
         self.batch_size = 0
         self.optimizer = ""
         self.loss = ""
-        self.thresholds_optimization_steps = 0.001

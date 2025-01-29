@@ -93,8 +93,7 @@ class KerasCallback(Callback):
     def log_test_and_thresholds(self,
                                 epoch: int,
                                 x_test: Any, 
-                                y_test: Any,
-                                thresholds_optimization_steps: float) -> None:
+                                y_test: Any) -> None:
         if self._best_model_checkpoint is None:
             return
 
@@ -108,7 +107,6 @@ class KerasCallback(Callback):
 
         y_pred, _ = model.predict(self._x_validation, verbose=0)
         thresholds = self._measurable.optimize_thesholds(self._y_validation_true, 
-                                                         y_pred,
-                                                         thresholds_optimization_steps)
+                                                         y_pred)
         self._run.log_model_thresholds(thresholds)
         self._logger.info(f"Thresholds optimises: {thresholds}")
