@@ -71,9 +71,8 @@ class KerasMeasurable(IMeasurable):
         for c in range(y_true.shape[-1]):
             precision, recall, thresholds = precision_recall_curve(y_true[:, c], y_pred[:, c])
             f1_scores = (2 * precision * recall) / (precision + recall)
-            f1_scores = np.round(f1_scores, 5)
             best_f1_score_index = np.argmax(f1_scores)
-            best_thresholds.append( thresholds[best_f1_score_index] )
+            best_thresholds.append( round(thresholds[best_f1_score_index], 5) )
         return best_thresholds
 
     def _average_key(self) -> str:
