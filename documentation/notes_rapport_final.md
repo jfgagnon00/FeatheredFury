@@ -22,13 +22,22 @@
         - mettre screenshot sur ressources bustés (https://github.com/jfgagnon00/FeatheredFury/actions/runs/13033028002 vs https://github.com/jfgagnon00/FeatheredFury/actions/runs/13034156731)
 
     - tester si ca aide a ne pas mettre de faux positif
-        - 
+        - pas vraiment au final
+        - etude sur la classe unkown??
+
+    - Pour présentation finale:
+        - on veut piste amelioration pour le produit
+        - pour la presentation, on veut une grosse demo technique du produit (le focus est le client)
+        - je pense que le prof veut voir son diagramme et ce qui lui correspond dans mon pipeline
+        - je pense que l'approche ou on vend la solution pourrait etre bonne pour faire la pres:
+            - voici mon flow
+            - voici comment vous pourriez l'integrer chez-vous
+                - va montrer 
+        - les pistes d'améliorations sont importantes aussi
 
 # Semaine du 2 février 2025
 
-- 
-
-
+- Commencer power point ; sert pas a grand chose de faire un meilleur modele car demande beaucoup de temps
 
 ================= Problèmes rencontrés
 
