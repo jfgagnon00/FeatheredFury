@@ -51,6 +51,7 @@ class KerasCNNModelFactory(IFactory):
             Dense,
             Dropout,
             Input,
+            GlobalAveragePooling1D,
             GlobalMaxPooling1D,
             Reshape,
             TimeDistributed,
