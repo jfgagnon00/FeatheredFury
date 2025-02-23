@@ -11,7 +11,7 @@ ffury --help
 ffury [COMMAND] --help
 ```
 
-Les commandes les plus usuelles. Obtenir le dataset:
+La commande la plus usuelle. Obtenir le dataset:
 ```
 ffury dataset install
 ffury dataset preprocess
