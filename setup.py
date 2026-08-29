@@ -59,8 +59,8 @@ def _dependencies_monitoring():
 
 def _dependencies_local():
     return [
-        "ipykernel==6.29.5",
-        "ipywidgets==8.1.3",
+        "ipykernel==6.31.0",
+        "ipywidgets==8.1.9",
         "jupyterlab==4.2.3",
         "kaggle==1.6.14",
         "seaborn==0.13.2",
