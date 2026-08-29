@@ -57,20 +57,25 @@ class NeptuneRun:
                        epoch: int,
                        measure_name: str,
                        measure_value: float) -> None:
-        self._run["model/best_model"].upload(model_checkpoint)
+        # self._run["model/best_model"].upload(model_checkpoint)
         self._run["model/best_epoch"] = epoch
         self._run["model/best_metric_name"] = measure_name
         self._run["model/best_metric_value"] = measure_value
 
     def save_best_model(self,
                          destination: str) -> None:
-        self._run["model/best_model"].download(destination=destination)
+        # self._run["model/best_model"].download(destination=destination)
+        pass
 
     def append_measures(self, 
                         epoch: int,
                         measures: Dict):
-        for name, value in measures.items(): 
-            self._run[f"metrics/{name}"].append(value, step=epoch)
+        for name, value in measures.items():
+            name = f"metrics/{name}"
+            if name not in self._run or self._run[name] is None:
+                self._run[name] = [(value, epoch)]
+            else:
+                self._run[name].append((value, epoch))
 
     def log_model_thresholds(self, thresholds: List[float]) -> None:
         self._run["model/thresholds"] = stringify_unsupported(thresholds)
@@ -95,11 +100,12 @@ class NeptuneRun:
         return self
 
     def __exit__(self, type, value, tb):
-        self._run.stop()
+        # self._run.stop()
+        pass
 
     @staticmethod
     def _run_infos_create() -> Tuple[str, List[str]]:
-        name = NeptuneRun._username()
+        name = "temp" #NeptuneRun._username()
         date = datetime.now().strftime(DATE_FORMAT)
         tags = []
 
@@ -114,51 +120,54 @@ class NeptuneRun:
     def _run_create_for_upload(project_config: ProjectConfig,
                                run_name: str = None,
                                tags: List[str] = None) -> neptune.Run:
-        api_token = environ["NEPTUNE_API_TOKEN"]
+        # api_token = environ["NEPTUNE_API_TOKEN"]
 
-        if len(api_token) == 0:
-            raise ValueError("NEPTUNE_API_TOKEN non defini")
+        # if len(api_token) == 0:
+        #     raise ValueError("NEPTUNE_API_TOKEN non defini")
 
-        return neptune.init_run(
-            project=NeptuneRun._projectname(project_config),
-            api_token=api_token,
-            name=run_name,
-            tags=tags,
-            source_files=[],
-            git_ref=True,
-            capture_stdout=False,
-            capture_stderr=False,
-            capture_hardware_metrics=True)
+        # return neptune.init_run(
+        #     project=NeptuneRun._projectname(project_config),
+        #     api_token=api_token,
+        #     name=run_name,
+        #     tags=tags,
+        #     source_files=[],
+        #     git_ref=True,
+        #     capture_stdout=False,
+        #     capture_stderr=False,
+        #     capture_hardware_metrics=True)
+        return {}
+        
     
     def _run_create_for_download(project_config: ProjectConfig,
                                  tags: List[str] = None) -> neptune.Run:
-        api_token = environ["NEPTUNE_API_TOKEN"]
+        # api_token = environ["NEPTUNE_API_TOKEN"]
 
-        if len(api_token) == 0:
-            raise ValueError("NEPTUNE_API_TOKEN non defini")
+        # if len(api_token) == 0:
+        #     raise ValueError("NEPTUNE_API_TOKEN non defini")
 
-        project = neptune.init_project(project=NeptuneRun._projectname(project_config),
-                                       api_token=api_token,
-                                       mode="read-only")
-        query = []
-        for tag in tags:
-            q = f"(`sys/group_tags`:stringSet CONTAINS '{tag}')"
-            query.append(q)
-        query = " AND ".join(query)
+        # project = neptune.init_project(project=NeptuneRun._projectname(project_config),
+        #                                api_token=api_token,
+        #                                mode="read-only")
+        # query = []
+        # for tag in tags:
+        #     q = f"(`sys/group_tags`:stringSet CONTAINS '{tag}')"
+        #     query.append(q)
+        # query = " AND ".join(query)
 
-        runs_df = project.fetch_runs_table(query=query).to_pandas()
+        # runs_df = project.fetch_runs_table(query=query).to_pandas()
 
-        if len(runs_df) == 0:
-            raise ValueError(f"{tags} n'ont pas ete trouve")
+        # if len(runs_df) == 0:
+        #     raise ValueError(f"{tags} n'ont pas ete trouve")
 
-        if len(runs_df) > 1:
-            raise ValueError(f"Plusieurs run on les tags {tags}")
+        # if len(runs_df) > 1:
+        #     raise ValueError(f"Plusieurs run on les tags {tags}")
 
-        return neptune.init_run(
-            project=NeptuneRun._projectname(project_config),
-            api_token=api_token,
-            with_id=runs_df.loc[0, "sys/id"],
-            mode="read-only")
+        # return neptune.init_run(
+        #     project=NeptuneRun._projectname(project_config),
+        #     api_token=api_token,
+        #     with_id=runs_df.loc[0, "sys/id"],
+        #     mode="read-only")
+        return {}
     
     @staticmethod
     def _username():

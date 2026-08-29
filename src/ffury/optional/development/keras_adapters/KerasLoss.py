@@ -17,12 +17,12 @@ def keras_loss(parameters: TrainParameters) -> Any:
     loss = parameters.loss.lower()
 
     if loss == "sparse_categorical_crossentropy":
-        return SparseCategoricalCrossentropy(from_logits=False)
+        return [SparseCategoricalCrossentropy(from_logits=False)]
 
     if loss == "binary_crossentropy":
-        return BinaryCrossentropy(from_logits=False)
+        return [BinaryCrossentropy(from_logits=False)]
     
     if loss == "categorical_crossentropy":
-        return CategoricalCrossentropy(from_logits=False)
+        return [CategoricalCrossentropy(from_logits=False)]
 
     raise ValueError(f"Loss {parameters.loss} non reconnu")

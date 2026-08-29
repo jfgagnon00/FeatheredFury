@@ -2,69 +2,66 @@ from setuptools import find_namespace_packages, setup
 
 def _dependencies_core():
     return [
-        "click==8.1.7",
-        "pyyaml==6.0.1",
+        "click==8.5.0",
+        "pyyaml==6.0.3",
     ]
 
 def _dependencies_ai():
     return [
-        "dask[distributed]==2024.7.1",
-        "keras==3.3.3",
-        "librosa==0.10.2.post1",
-        "matplotlib==3.9.0",
-        "neptune==1.10.4",
+        "dask[distributed]==2026.8.0",
+        "keras==3.15.1",
+        "librosa==0.11.0",
+        "matplotlib==3.11.1",
+        "neptune==1.14.0.post2",
         "numpy<2", # limitation librosa
-        "pyyaml==6.0.1",
+        "pyyaml==6.0.3",
         "tensorflow==2.17.1",
-        "scipy==1.13.1",
+        "scipy==1.14.0",
     ]
 
 def _dependencies_development():
     return [
-        "azure-cli==2.53.1",
-        "urllib3==1.26.20", # fix probleme avec azure-cli
+        "azure-cli==2.89.0",
         "dvc-gdrive==3.0.1",
         "dvc==3.67.1",
-        "h5py==3.11.0",
-        "pyopenssl==24.2.1", # fix probleme avec dvc & google drive
-        "tqdm==4.66.4",
+        "h5py==3.16.0",
+        "tqdm==4.70.0",
     ]
 
 def _dependencies_web_core():
     return [
-        "pandas==2.2.3",
+        "pandas==3.0.5",
     ]
 
 def _dependencies_application():
     return [
-        "flask==3.1.0",
-        "requests==2.32.3",
+        "flask==3.1.3",
+        "requests==2.34.2",
     ]
 
 def _dependencies_service():
     return [
         "flasgger==0.9.7.1",
-        "flask==3.1.0",
-        "werkzeug==3.1.3",
+        "flask==3.1.3",
+        "werkzeug==3.1.8",
     ]
 
 def _dependencies_monitoring():
     return [
-        "azure-cli==2.53.1",
-        "azure-storage-blob==12.24.0",
-        "azure-identity==1.14.1",
-        "evidently==0.5.1",
-        "urllib3==1.26.20", # fix probleme avec azure-cli
+        "azure-cli==2.89.0",
+        "azure-storage-blob==12.29.0b1",
+        "azure-identity==1.25.3",
+        "evidently==0.7.21",
     ]
 
 def _dependencies_local():
     return [
-        "ipykernel==6.31.0",
+        "ipykernel==7.3.0",
         "ipywidgets==8.1.9",
-        "jupyterlab==4.2.3",
-        "kaggle==1.6.14",
+        "jupyterlab==4.6.3",
+        "kaggle==2.2.4",
         "seaborn==0.13.2",
-        "tensorflow-metal==1.1.0; sys_platform == 'darwin'"
+        "tensorflow-metal==1.2.0 ; sys_platform == 'darwin'"
     ]
 
 setup(name="feathered-fury",
