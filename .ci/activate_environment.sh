@@ -47,7 +47,9 @@ if [ $NeedInstall -eq 1 ]; then
     echo "Installation des dépendences"
 
     $PYTHON_INTERPRETER -m pip install --upgrade pip
-    $PYTHON_INTERPRETER -m pip install --use-pep517 -e .\[all\]
+
+    # --no-compile contourne TypeError: encode() argument 'encoding' must be str, not None
+    $PYTHON_INTERPRETER -m pip install --no-compile -e ".[all]"
 
     # s'assurer que les jupyter notebook pointent aussi sur bon environment
     $PYTHON_INTERPRETER -m ipykernel install --user --name $ENV_NAME --display-name $ENV_NAME
